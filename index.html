@@ -84,6 +84,7 @@
   .tp-listening { bottom: 12px; left: 50%; transform: translateX(-50%); }
   .tp-sleeping { bottom: 24px; left: 36px; }
   .tp-sad { top: 63%; left: 36px; }
+  .tp-scary { top: 26%; left: 36px; }
   .tp-wacky3d { top: 46%; left: 36px; }
   .tp-love { top: 24px; left: 36px; }
   #copyright {
@@ -136,6 +137,7 @@
     <button class="touch-point tp-listening" data-expr="LISTENING" type="button">LISTEN</button>
     <button class="touch-point tp-sleeping" data-expr="SLEEPING" type="button">SLEEP</button>
     <button class="touch-point tp-sad" data-expr="SAD" type="button">SAD</button>
+    <button class="touch-point tp-scary" data-expr="SCARY" type="button">SCARY</button>
     <button class="touch-point tp-wacky3d" data-expr="WACKY3D" type="button">WACKY3D</button>
     <button class="touch-point tp-love" data-expr="LOVING" type="button">LOVING</button>
   </div>
@@ -185,8 +187,8 @@ const REAR_X=166,REAR_Y=145, REAR_W=18, REAR_H=48;
 const NX=114, NY=183, NW=12, NH=6;
 
 // ── Expressions ───────────────────────────────────────────────
-const EXPR = { NEUTRAL:0,HAPPY:1,ANGRY:2,SURPRISED:3,ANXIETY:4,WACKY:5,LISTENING:6,SLEEPING:7,SAD:8,WACKY3D:9,LOVING:10 };
-const EXPR_NAMES = ['NEUTRAL','HAPPY','ANGRY','SURPRISED','ANXIETY','WACKY','LISTENING','SLEEPING','SAD','WACKY3D','LOVING'];
+const EXPR = { NEUTRAL:0,HAPPY:1,ANGRY:2,SURPRISED:3,ANXIETY:4,WACKY:5,LISTENING:6,SLEEPING:7,SAD:8,WACKY3D:9,LOVING:10,SCARY:11 };
+const EXPR_NAMES = ['NEUTRAL','HAPPY','ANGRY','SURPRISED','ANXIETY','WACKY','LISTENING','SLEEPING','SAD','WACKY3D','LOVING','SCARY'];
 
 // ── State ─────────────────────────────────────────────────────
 let curExpr = EXPR.NEUTRAL;
@@ -403,6 +405,32 @@ function drawNose(ctx) {
   fillCircle(ctx,cx+4*SCALE,bottomY,1.4*SCALE,C_TONGUE_DIM);
 }
 
+function drawScaryFaceMarks(ctx, now) {
+  const flicker=(Math.sin(now*0.02)+1)*0.5;
+  ctx.save();
+  ctx.lineWidth=SCALE;
+  ctx.strokeStyle=C_TONGUE_DIM;
+  ctx.beginPath();
+  ctx.moveTo(83*SCALE,171*SCALE);
+  ctx.lineTo(74*SCALE,184*SCALE);
+  ctx.lineTo(80*SCALE,184*SCALE);
+  ctx.lineTo(70*SCALE,198*SCALE);
+  ctx.moveTo(157*SCALE,171*SCALE);
+  ctx.lineTo(166*SCALE,184*SCALE);
+  ctx.lineTo(160*SCALE,184*SCALE);
+  ctx.lineTo(170*SCALE,198*SCALE);
+  ctx.stroke();
+
+  ctx.strokeStyle=flicker>0.45?C_TONGUE:C_ACCENT_Y_DIM;
+  ctx.beginPath();
+  ctx.moveTo(99*SCALE,212*SCALE);
+  ctx.lineTo(92*SCALE,225*SCALE);
+  ctx.moveTo(141*SCALE,212*SCALE);
+  ctx.lineTo(148*SCALE,225*SCALE);
+  ctx.stroke();
+  ctx.restore();
+}
+
 // Push off-screen ctx to scaled main canvas at (x,y)
 function push(mainCtx, x, y, offCtx) {
   mainCtx.drawImage(offCtx.canvas, x*SCALE, y*SCALE, offCtx.canvas.width*SCALE, offCtx.canvas.height*SCALE);
@@ -436,6 +464,18 @@ function drawHair(mainCtx, expr, now) {
         px=x; py=y;
       }
       c.fillStyle='#FFF'; c.fillRect(px,Math.max(0,py-3),1,Math.min(5,HH-Math.max(0,py-3)));
+    }
+  } else if(expr===EXPR.SCARY){
+    const pulse=(Math.sin(now*0.012)+1)*0.5;
+    for(let s=0;s<9;s++){
+      const bx=5+s*8;
+      const lean=Math.sin(now*0.006+s*1.7)*2.6;
+      const spikeH=38+(s%3)*8+pulse*10;
+      const tipX=clamp(Math.round(bx+lean+(s-4)*1.6),1,HW-2);
+      const tipY=clamp(Math.round(HH-spikeH),0,HH-2);
+      fillTriangle(c,bx-5,HH-1,tipX,tipY,bx+5,HH-1,C_ACCENT_Y);
+      drawLine(c,bx-2,HH-3,tipX,tipY,C_FACE_FG);
+      drawLine(c,bx+2,HH-4,tipX,tipY,C_ACCENT_Y_DIM);
     }
   } else {
     const tp=now*0.0035;
@@ -513,6 +553,11 @@ function drawEye(mainCtx,rx,ry,expr,open,scan,vscan,isLeft){
     case EXPR.WACKY:    drawBrow(c,bx0+4,bx1-4,browY+(isLeft?5:1),  0,           C_ACCENT_Y_DIM); break;
     case EXPR.SAD:      drawBrow(c,bx0,  bx1,  browY,   isLeft?7:-7, C_ACCENT_Y_DIM); break;
     case EXPR.LOVING:   drawBrow(c,bx0+5,bx1-5,browY+2, 0,           C_ACCENT_Y_DIM); break;
+    case EXPR.SCARY:
+      drawLine(c,bx0-1,browY+(isLeft?-4:7),bx1+1,browY+(isLeft?7:-4),C_ACCENT_Y);
+      drawLine(c,bx0-1,browY+(isLeft?-3:8),bx1+1,browY+(isLeft?8:-3),C_ACCENT_Y);
+      drawLine(c,bx0+5,browY+1,bx0+11,browY+(isLeft?7:-4),C_TONGUE);
+      break;
     default:            drawBrow(c,bx0+4,bx1-4,browY+1, 0,           C_ACCENT_Y_DIM); break;
   }
 
@@ -556,6 +601,21 @@ function drawEye(mainCtx,rx,ry,expr,open,scan,vscan,isLeft){
     const hy=ey+Math.floor(EYE_H/2)+2;
     fillHeart(c,hx,hy,8,C_BG);
     drawHeart(c,hx,hy,8,C_NOSE,2);
+    push(mainCtx,rx,ry,c); return;
+  }
+
+  if(expr===EXPR.SCARY){
+    const ph=millis()*0.018+(isLeft?0:Math.PI);
+    const glow=Math.sin(ph)*0.8;
+    const cx=ex+Math.floor(EYE_W/2)+Math.round(scan*0.25);
+    const cy=ey+Math.floor(EYE_H/2)+Math.round(vscan*0.25);
+    fillCircle(c,cx,cy,10,C_FACE_FG);
+    fillCircle(c,cx,cy,7,C_BG);
+    fillVCapsule(c,cx-2,cy-8+Math.round(glow),5,17,C_TONGUE);
+    fillVCapsule(c,cx-1,cy-5,3,11,C_PUPIL);
+    drawCircle(c,cx,cy,11,C_ACCENT_Y);
+    drawLine(c,ex+1,ey+2,ex+8,ey+7,C_FACE_DIM);
+    drawLine(c,ex+EYE_W-2,ey+2,ex+EYE_W-9,ey+7,C_FACE_DIM);
     push(mainCtx,rx,ry,c); return;
   }
 
@@ -658,6 +718,57 @@ function drawWackyTeethMouth(c) {
   fillRect(c,cx+13,gapY-7,8,8,C_BG);
 }
 
+function drawScaryMouth(c, now) {
+  const cx=MW/2;
+  const wobble=Math.sin(now*0.017);
+  const snarl=Math.sin(now*0.009+1.1);
+  const left=5, right=MW-5;
+  const topY=18+Math.round(wobble*2);
+  const botY=50+Math.round(snarl*2);
+
+  c.fillStyle=C_FACE_FG;
+  c.beginPath();
+  c.moveTo(left, topY+7);
+  c.quadraticCurveTo(cx, topY-12, right, topY+7);
+  c.lineTo(right-3, botY-2);
+  c.quadraticCurveTo(cx, botY+10, left+3, botY-2);
+  c.closePath();
+  c.fill();
+
+  c.fillStyle=C_BG;
+  c.beginPath();
+  c.moveTo(left+6, topY+10);
+  c.quadraticCurveTo(cx, topY-3, right-6, topY+10);
+  c.lineTo(right-9, botY-8);
+  c.quadraticCurveTo(cx, botY+3, left+9, botY-8);
+  c.closePath();
+  c.fill();
+
+  for(let i=0;i<7;i++){
+    const t=i/6;
+    const x=left+7+t*(right-left-14);
+    const h=9+(i%2)*5+(i===3?4:0);
+    const y=topY+8+Math.sin(t*Math.PI)*-4;
+    fillTriangle(c,Math.round(x-3),Math.round(y),Math.round(x+3),Math.round(y),Math.round(x+(i%2?1:-1)),Math.round(y+h),C_FACE_FG);
+  }
+  for(let i=0;i<6;i++){
+    const t=i/5;
+    const x=left+10+t*(right-left-20);
+    const h=8+((i+1)%2)*5;
+    const y=botY-8+Math.sin(t*Math.PI)*3;
+    fillTriangle(c,Math.round(x-3),Math.round(y),Math.round(x+3),Math.round(y),Math.round(x+(i%2?-1:1)),Math.round(y-h),C_FACE_FG);
+  }
+
+  c.strokeStyle=C_TONGUE_DIM;
+  c.lineWidth=1;
+  c.beginPath();
+  c.moveTo(cx-10,botY-13);
+  c.bezierCurveTo(cx-3,botY-3,cx+5,botY-4,cx+11,botY-15);
+  c.stroke();
+  fillCircle(c,cx-17,topY+13,2,C_TONGUE);
+  fillCircle(c,cx+18,topY+13,2,C_TONGUE);
+}
+
 // ── Mouth region ──────────────────────────────────────────────
 function drawMouth(mainCtx,expr,amp,opts={}){
   const c=mouthCtx; fillScreen(c,C_BG);
@@ -729,6 +840,11 @@ function drawMouth(mainCtx,expr,amp,opts={}){
       if(i>0){ fillTriangle(c,px,pt,x,top,px,pb,C_FACE_FG); fillTriangle(c,x,top,x,bot,px,pb,C_FACE_FG); drawLine(c,px,pm,x,mid,C_FACE_DIM); }
       px=x; pm=mid; pt=top; pb=bot;
     }
+    push(mainCtx,MX,MY,c); return;
+  }
+
+  if(expr===EXPR.SCARY){
+    drawScaryMouth(c, now);
     push(mainCtx,MX,MY,c); return;
   }
 
@@ -831,7 +947,7 @@ function drawMouth(mainCtx,expr,amp,opts={}){
   }
 
   // Tongue (WACKY, SURPRISED, SLEEPING, ANXIETY, SAD — not HAPPY/ANGRY/LISTENING/NEUTRAL)
-  if(!opts.skipTongue && tongueOut && expr!==EXPR.HAPPY && expr!==EXPR.ANGRY && expr!==EXPR.LISTENING && expr!==EXPR.NEUTRAL){
+  if(!opts.skipTongue && tongueOut && expr!==EXPR.HAPPY && expr!==EXPR.ANGRY && expr!==EXPR.LISTENING && expr!==EXPR.NEUTRAL && expr!==EXPR.SCARY){
     drawForwardTongue(c, now, MW/2, iY+27);
   }
 
@@ -849,6 +965,7 @@ function drawFaceToCtx(ctx, expr, opts={}) {
   if(!opts.skipNose) drawNose(ctx);
   drawEye(ctx,EL_X,EL_Y,expr,eyeOpen,-eyeScanX,-eyeScanY,true);
   drawEye(ctx,ER_X,ER_Y,expr,eyeOpen, eyeScanX, eyeScanY,false);
+  if(expr===EXPR.SCARY) drawScaryFaceMarks(ctx, now);
   drawMouth(ctx,expr,micAmp,opts);
   ctx.fillStyle=C_BG; ctx.fillRect(0,270*SCALE,SCREEN_W*SCALE,24*SCALE);
   if(expr===EXPR.SLEEPING){
@@ -877,8 +994,13 @@ function update(){
   const now=millis();
 
   // Blink
-  if(!eyeOpen && now>=blinkEndTime){ eyeOpen=true; nextBlinkTime=now+2500+Math.random()*3500; }
-  if(eyeOpen  && now>=nextBlinkTime){ eyeOpen=false; blinkEndTime=now+100; }
+  if(curExpr===EXPR.SCARY){
+    eyeOpen=true;
+    nextBlinkTime=now+500;
+  } else {
+    if(!eyeOpen && now>=blinkEndTime){ eyeOpen=true; nextBlinkTime=now+2500+Math.random()*3500; }
+    if(eyeOpen  && now>=nextBlinkTime){ eyeOpen=false; blinkEndTime=now+100; }
+  }
 
   // Mouth morph cycle (mirrors firmware logic)
   if(tongueOut && now>=tongueUntil){
@@ -1190,7 +1312,8 @@ function loop(){ update(); render(); requestAnimationFrame(loop); }
 document.addEventListener('keydown', e => {
   const map={'1':EXPR.NEUTRAL,'2':EXPR.HAPPY,'3':EXPR.ANGRY,'4':EXPR.SURPRISED,
              '5':EXPR.ANXIETY,'6':EXPR.WACKY,'7':EXPR.LISTENING,'8':EXPR.SLEEPING,
-             '9':EXPR.SAD,'0':EXPR.WACKY3D,'l':EXPR.LOVING,'L':EXPR.LOVING};
+             '9':EXPR.SAD,'0':EXPR.WACKY3D,'l':EXPR.LOVING,'L':EXPR.LOVING,
+             's':EXPR.SCARY,'S':EXPR.SCARY};
   if(map[e.key]!==undefined){
     setExpression(map[e.key]);
   }
