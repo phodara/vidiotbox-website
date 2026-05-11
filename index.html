@@ -83,6 +83,7 @@
   .tp-wacky { bottom: 24px; right: 36px; }
   .tp-listening { bottom: 12px; left: 50%; transform: translateX(-50%); }
   .tp-sleeping { bottom: 24px; left: 36px; }
+  .tp-dizzy { bottom: 82px; left: 36px; }
   .tp-sad { top: 63%; left: 36px; }
   .tp-scary { top: 26%; left: 36px; }
   .tp-wacky3d { top: 46%; left: 36px; }
@@ -136,6 +137,7 @@
     <button class="touch-point tp-wacky" data-expr="WACKY" type="button">WACKY</button>
     <button class="touch-point tp-listening" data-expr="LISTENING" type="button">LISTEN</button>
     <button class="touch-point tp-sleeping" data-expr="SLEEPING" type="button">SLEEP</button>
+    <button class="touch-point tp-dizzy" data-expr="DIZZY" type="button">DIZZY</button>
     <button class="touch-point tp-sad" data-expr="SAD" type="button">SAD</button>
     <button class="touch-point tp-scary" data-expr="SCARY" type="button">SCARY</button>
     <button class="touch-point tp-wacky3d" data-expr="WACKY3D" type="button">WACKY3D</button>
@@ -187,8 +189,8 @@ const REAR_X=166,REAR_Y=145, REAR_W=18, REAR_H=48;
 const NX=114, NY=183, NW=12, NH=6;
 
 // ── Expressions ───────────────────────────────────────────────
-const EXPR = { NEUTRAL:0,HAPPY:1,ANGRY:2,SURPRISED:3,ANXIETY:4,WACKY:5,LISTENING:6,SLEEPING:7,SAD:8,WACKY3D:9,LOVING:10,SCARY:11 };
-const EXPR_NAMES = ['NEUTRAL','HAPPY','ANGRY','SURPRISED','ANXIETY','WACKY','LISTENING','SLEEPING','SAD','WACKY3D','LOVING','SCARY'];
+const EXPR = { NEUTRAL:0,HAPPY:1,ANGRY:2,SURPRISED:3,ANXIETY:4,WACKY:5,LISTENING:6,SLEEPING:7,SAD:8,WACKY3D:9,LOVING:10,SCARY:11,DIZZY:12 };
+const EXPR_NAMES = ['NEUTRAL','HAPPY','ANGRY','SURPRISED','ANXIETY','WACKY','LISTENING','SLEEPING','SAD','WACKY3D','LOVING','SCARY','DIZZY'];
 
 // ── State ─────────────────────────────────────────────────────
 let curExpr = EXPR.NEUTRAL;
@@ -431,6 +433,39 @@ function drawScaryFaceMarks(ctx, now) {
   ctx.restore();
 }
 
+function drawDizzyStars(ctx, now) {
+  const cx=120, cy=104;
+  const phase=now*0.0038;
+  const stars=[
+    { a:0.1, r:48, s:5 },
+    { a:2.1, r:42, s:4 },
+    { a:4.0, r:50, s:5 }
+  ];
+  ctx.save();
+  ctx.lineWidth=SCALE;
+  for(const star of stars){
+    const wobble=Math.sin(phase*2+star.a)*4;
+    const x=(cx+Math.cos(phase+star.a)*(star.r+wobble))*SCALE;
+    const y=(cy+Math.sin(phase+star.a)*15+Math.cos(phase*1.3+star.a)*8)*SCALE;
+    const s=star.s*SCALE;
+    ctx.strokeStyle=C_ACCENT_Y;
+    ctx.beginPath();
+    ctx.moveTo(x-s,y);
+    ctx.lineTo(x+s,y);
+    ctx.moveTo(x,y-s);
+    ctx.lineTo(x,y+s);
+    ctx.stroke();
+    ctx.strokeStyle=C_FACE_DIM;
+    ctx.beginPath();
+    ctx.moveTo(x-s*0.55,y-s*0.55);
+    ctx.lineTo(x+s*0.55,y+s*0.55);
+    ctx.moveTo(x+s*0.55,y-s*0.55);
+    ctx.lineTo(x-s*0.55,y+s*0.55);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
 // Push off-screen ctx to scaled main canvas at (x,y)
 function push(mainCtx, x, y, offCtx) {
   mainCtx.drawImage(offCtx.canvas, x*SCALE, y*SCALE, offCtx.canvas.width*SCALE, offCtx.canvas.height*SCALE);
@@ -476,6 +511,18 @@ function drawHair(mainCtx, expr, now) {
       fillTriangle(c,bx-5,HH-1,tipX,tipY,bx+5,HH-1,C_ACCENT_Y);
       drawLine(c,bx-2,HH-3,tipX,tipY,C_FACE_FG);
       drawLine(c,bx+2,HH-4,tipX,tipY,C_ACCENT_Y_DIM);
+    }
+  } else if(expr===EXPR.DIZZY){
+    const spin=now*0.008;
+    for(let s=0;s<6;s++){
+      const bx=8+s*11;
+      const lean=Math.sin(spin+s*1.2)*7;
+      const curl=Math.cos(spin*0.8+s)*5;
+      const tipX=clamp(Math.round(bx+lean+curl),1,HW-2);
+      const tipY=clamp(Math.round(8+Math.abs(Math.sin(spin+s))*10),0,HH-8);
+      drawQuadStroke(c,bx,HH-3,bx+lean*0.35,42,tipX,tipY,C_ACCENT_Y,2);
+      fillCircle(c,tipX,tipY,2,C_FACE_FG);
+      drawLine(c,tipX-3,tipY+3,tipX+3,tipY-3,C_ACCENT_Y_DIM);
     }
   } else {
     const tp=now*0.0035;
@@ -537,6 +584,29 @@ function drawSpiralEye(c,ex,ey,scan,vscan,isLeft){
   drawCircle(c,Math.round(cx),Math.round(cy),7,C_FACE_DIM);
 }
 
+function drawDizzyEye(c,ex,ey,scan,vscan,isLeft){
+  const phase0=(millis()%1300)*(Math.PI*2/1300);
+  const phase=isLeft?phase0:-phase0+Math.PI*0.35;
+  const bob=Math.sin(phase0+(isLeft?0:Math.PI))*2.3;
+  const cx=ex+EYE_W/2+scan*0.2+(isLeft?-1:1);
+  const cy=ey+EYE_H/2+vscan*0.15+bob;
+  const maxR=Math.min(EYE_W,EYE_H)*0.72;
+  fillCircle(c,Math.round(cx),Math.round(cy),10,C_FACE_FG);
+  fillCircle(c,Math.round(cx),Math.round(cy),8,C_BG);
+  let px=cx, py=cy;
+  for(let i=1;i<=32;i++){
+    const t=i/32;
+    const angle=phase+t*7.6*Math.PI;
+    const r=maxR*t;
+    const x=clamp(Math.round(cx+Math.cos(angle)*r),ex+2,ex+EYE_W-3);
+    const y=clamp(Math.round(cy+Math.sin(angle)*r*0.78),ey+2,ey+EYE_H-3);
+    drawLine(c,Math.round(px),Math.round(py),x,y,C_FACE_FG);
+    px=x; py=y;
+  }
+  fillCircle(c,Math.round(cx),Math.round(cy),2,C_ACCENT_Y);
+  drawCircle(c,Math.round(cx),Math.round(cy),11,C_FACE_DIM);
+}
+
 // ── Eye region ────────────────────────────────────────────────
 function drawEye(mainCtx,rx,ry,expr,open,scan,vscan,isLeft){
   const c=isLeft?lEyeCtx:rEyeCtx;
@@ -553,6 +623,7 @@ function drawEye(mainCtx,rx,ry,expr,open,scan,vscan,isLeft){
     case EXPR.WACKY:    drawBrow(c,bx0+4,bx1-4,browY+(isLeft?5:1),  0,           C_ACCENT_Y_DIM); break;
     case EXPR.SAD:      drawBrow(c,bx0,  bx1,  browY,   isLeft?7:-7, C_ACCENT_Y_DIM); break;
     case EXPR.LOVING:   drawBrow(c,bx0+5,bx1-5,browY+2, 0,           C_ACCENT_Y_DIM); break;
+    case EXPR.DIZZY:    drawBrow(c,bx0+3,bx1-4,browY+(isLeft?4:-1), isLeft?-3:4, C_ACCENT_Y_DIM); break;
     case EXPR.SCARY:
       drawLine(c,bx0-1,browY+(isLeft?-4:7),bx1+1,browY+(isLeft?7:-4),C_ACCENT_Y);
       drawLine(c,bx0-1,browY+(isLeft?-3:8),bx1+1,browY+(isLeft?8:-3),C_ACCENT_Y);
@@ -616,6 +687,11 @@ function drawEye(mainCtx,rx,ry,expr,open,scan,vscan,isLeft){
     drawCircle(c,cx,cy,11,C_ACCENT_Y);
     drawLine(c,ex+1,ey+2,ex+8,ey+7,C_FACE_DIM);
     drawLine(c,ex+EYE_W-2,ey+2,ex+EYE_W-9,ey+7,C_FACE_DIM);
+    push(mainCtx,rx,ry,c); return;
+  }
+
+  if(expr===EXPR.DIZZY){
+    drawDizzyEye(c,ex,ey,scan,vscan,isLeft);
     push(mainCtx,rx,ry,c); return;
   }
 
@@ -769,6 +845,29 @@ function drawScaryMouth(c, now) {
   fillCircle(c,cx+18,topY+13,2,C_TONGUE);
 }
 
+function drawDizzyMouth(c, now, iX, iY, iW, iH, bY) {
+  const phase=now*0.009;
+  let px=iX, pt=bY, pb=bY;
+  for(let i=0;i<=iW;i+=2){
+    const t=i/iW;
+    const wobble=Math.sin(t*Math.PI*3.4+phase)*4.4+Math.sin(t*Math.PI*8-phase*0.7)*1.3;
+    const sag=Math.sin(t*Math.PI)*5.8;
+    const x=iX+i;
+    const mid=clamp(Math.round(bY+wobble+sag),iY,iY+iH);
+    const thick=3+Math.sin(t*Math.PI)*2;
+    const top=clamp(Math.round(mid-thick),iY,iY+iH);
+    const bot=clamp(Math.round(mid+thick),iY,iY+iH);
+    if(i>0){
+      fillTriangle(c,px,pt,x,top,px,pb,C_FACE_FG);
+      fillTriangle(c,x,top,x,bot,px,pb,C_FACE_FG);
+      drawLine(c,px,Math.round((pt+pb)/2),x,mid,C_FACE_DIM);
+    }
+    px=x; pt=top; pb=bot;
+  }
+  fillCircle(c,MW/2-13,bY+7+Math.sin(phase)*2,2,C_BG);
+  fillCircle(c,MW/2+14,bY+5-Math.sin(phase)*2,2,C_BG);
+}
+
 // ── Mouth region ──────────────────────────────────────────────
 function drawMouth(mainCtx,expr,amp,opts={}){
   const c=mouthCtx; fillScreen(c,C_BG);
@@ -845,6 +944,11 @@ function drawMouth(mainCtx,expr,amp,opts={}){
 
   if(expr===EXPR.SCARY){
     drawScaryMouth(c, now);
+    push(mainCtx,MX,MY,c); return;
+  }
+
+  if(expr===EXPR.DIZZY){
+    drawDizzyMouth(c, now, iX, iY, iW, iH, bY);
     push(mainCtx,MX,MY,c); return;
   }
 
@@ -966,6 +1070,7 @@ function drawFaceToCtx(ctx, expr, opts={}) {
   drawEye(ctx,EL_X,EL_Y,expr,eyeOpen,-eyeScanX,-eyeScanY,true);
   drawEye(ctx,ER_X,ER_Y,expr,eyeOpen, eyeScanX, eyeScanY,false);
   if(expr===EXPR.SCARY) drawScaryFaceMarks(ctx, now);
+  if(expr===EXPR.DIZZY) drawDizzyStars(ctx, now);
   drawMouth(ctx,expr,micAmp,opts);
   ctx.fillStyle=C_BG; ctx.fillRect(0,270*SCALE,SCREEN_W*SCALE,24*SCALE);
   if(expr===EXPR.SLEEPING){
@@ -994,7 +1099,7 @@ function update(){
   const now=millis();
 
   // Blink
-  if(curExpr===EXPR.SCARY){
+  if(curExpr===EXPR.SCARY || curExpr===EXPR.DIZZY){
     eyeOpen=true;
     nextBlinkTime=now+500;
   } else {
@@ -1313,7 +1418,7 @@ document.addEventListener('keydown', e => {
   const map={'1':EXPR.NEUTRAL,'2':EXPR.HAPPY,'3':EXPR.ANGRY,'4':EXPR.SURPRISED,
              '5':EXPR.ANXIETY,'6':EXPR.WACKY,'7':EXPR.LISTENING,'8':EXPR.SLEEPING,
              '9':EXPR.SAD,'0':EXPR.WACKY3D,'l':EXPR.LOVING,'L':EXPR.LOVING,
-             's':EXPR.SCARY,'S':EXPR.SCARY};
+             's':EXPR.SCARY,'S':EXPR.SCARY,'d':EXPR.DIZZY,'D':EXPR.DIZZY};
   if(map[e.key]!==undefined){
     setExpression(map[e.key]);
   }
