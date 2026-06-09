@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.wrap {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 14px 14px;
+    box-sizing: border-box;
+}
+
+.card {
+    width: 100%;
+    max-width: 420px;
+    background: #000;
+    border: 2px solid #ffffff;
+    padding: 28px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.createdby {
+    color: #bbbbbb;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+}
+
+.logo {
+    font-size: 44px;
+    font-weight: bold;
+    color: #00E5FF;
+    margin-bottom: 12px;
+    letter-spacing: 2px;
+    line-height: 1.1;
+}
+
+.tagline {
+    color: #bbbbbb;
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 24px;
+}
+
+.button {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    text-decoration: none;
+    color: #00E5FF;
+    border: 2px solid #00E5FF;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all .2s ease;
+    box-sizing: border-box;
+}
+
+.button:hover {
+    background: #00E5FF;
+    color: #000;
+}
+
+.footer {
+    margin-top: 18px;
+    color: #666666;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 600px) {
+    .wrap {
+        align-items: center;
+        padding: 14px;
+    }
+
+    .logo {
+        font-size: 38px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+    <div class="card">
+
+        <div class="createdby">Created by:</div>
+
+        <div class="logo">Paul Hodara</div>
+
+        <div class="tagline">
+            Making tools, art, and technology that connect people
+        </div>
+
+        <a class="button" href="https://www.vidiotbox.net" target="_blank">
+            Vidiotbox
+        </a>
+
+        <a class="button" href="https://www.instagram.com/phodara" target="_blank">
+            Instagram
+        </a>
+
+        <a class="button" href="https://www.paulhodara.com" target="_blank">
+            Photography Portfolio
+        </a>
+
+        <a class="button" href="https://www.thelivingmuseum.org" target="_blank">
+            The Living Museum
+        </a>
+
+        <a class="button" href="https://github.com/phodara" target="_blank">
+            GitHub Projects
+        </a>
+
+        <div class="footer">
+            TOTALLY USELESS DIGITAL ART
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
