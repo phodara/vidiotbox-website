@@ -41,14 +41,13 @@
         linear-gradient(rgba(0,0,0,0.035) 1px, transparent 1px) 0 0 / 40px 40px,
         var(--paper);
       min-height: 100vh;
-      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
 
     img { max-width: 100%; height: auto; }
 
     .page {
-      padding: 32px;
+      padding: 32px 32px 128px;
     }
 
     .masthead {
@@ -364,7 +363,6 @@
 
     .footer {
       margin-top: 34px;
-      margin-bottom: 96px;
       padding: 18px;
       background: var(--ink);
       color: white;
@@ -397,7 +395,12 @@
     }
 
     @media (max-width: 760px) {
-      .page { padding: 18px; }
+      html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+      .page { padding: 18px 18px 96px; }
       .masthead,
       .section,
       .grid-2,
@@ -406,9 +409,27 @@
         grid-template-columns: 1fr;
       }
       .mast-copy { border-right: 0; border-bottom: 4px solid var(--ink); }
+      .masthead > *,
+      .section > *,
+      .grid-2 > *,
+      .grid-3 > *,
+      .grid-4 > *,
+      .gallery > * {
+        min-width: 0;
+      }
       .strip { grid-template-columns: repeat(2, 1fr); }
       .num { border-right: 0; border-bottom: 4px solid var(--ink); min-height: auto; }
       .gallery { grid-template-columns: repeat(2, 1fr); }
+      h1,
+      h2,
+      .subtitle,
+      .credit span,
+      .deck,
+      .callout,
+      td,
+      th {
+        overflow-wrap: anywhere;
+      }
     }
   </style>
 </head>
