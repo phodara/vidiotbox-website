@@ -36,6 +36,9 @@ When adding or changing an expression:
 - Added `SCARY` expression.
 - Added `.gitignore` entry for `.DS_Store`.
 - `.DS_Store` should stay untracked; it is Finder metadata only.
+- Added `docs/USER_GUIDE_PUBLISH_WORKFLOW.md` to document that simulator commits
+  sync to `phodara/roboface-simulator`, while the live RobotFace user guide is
+  published separately to `phodara/roboface-audio`.
 
 ## Design Preferences
 
