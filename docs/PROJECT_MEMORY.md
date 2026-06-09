@@ -39,6 +39,9 @@ When adding or changing an expression:
 - Added `docs/USER_GUIDE_PUBLISH_WORKFLOW.md` to document that simulator commits
   sync to `phodara/roboface-simulator`, while the live RobotFace user guide is
   published separately to `phodara/roboface-audio`.
+- Clarified that local `index.html` is the simulator app, while the live
+  `roboface-audio` GitHub Pages file is `docs/user-guide/index.html` in the
+  `phodara/roboface-audio` repo.
 
 ## Design Preferences
 

@@ -15,6 +15,15 @@ https://phodara.github.io/roboface-audio/docs/user-guide/index.html
 `phodara/roboface-simulator` repository. Publishing the user guide is a
 separate deployment step to `phodara/roboface-audio`.
 
+## Index File Map
+
+`index.html` in this repository is the simulator app for
+`phodara/roboface-simulator`; it is not the live GitHub Pages file staged on
+`roboface-audio`.
+
+The live `roboface-audio` page is `docs/user-guide/index.html` in the
+`phodara/roboface-audio` repository.
+
 ## Source File
 
 Edit the source guide in the firmware/project workspace:
@@ -74,4 +83,3 @@ curl -I 'https://phodara.github.io/roboface-audio/docs/user-guide/index.html'
 ```
 
 Expected result: `HTTP/2 200`.
-
