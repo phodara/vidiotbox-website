@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>roboface User Guide - System/Form Edition</title>
+  <style>
+    :root {
+      --ink: #080808;
+      --paper: #f6f3ea;
+      --panel: #ffffff;
+      --muted: #5b5b55;
+      --line: #111111;
+      --yellow: #fff200;
+      --cyan: #00d7ff;
+      --red: #ff2a2a;
+      --pink: #ff4fd8;
+      --green: #00d46a;
+      --blue: #234cff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      background: #d8d4c8;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      line-height: 1.35;
+      min-height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body {
+      margin: 0 auto;
+      width: 100%;
+      max-width: 1120px;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.045) 1px, transparent 1px) 0 0 / 40px 40px,
+        linear-gradient(rgba(0,0,0,0.035) 1px, transparent 1px) 0 0 / 40px 40px,
+        var(--paper);
+      min-height: 100vh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    img { max-width: 100%; height: auto; }
+
+    .page {
+      padding: 32px;
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 22px;
+      border: 4px solid var(--ink);
+      background: var(--panel);
+      min-height: 430px;
+    }
+
+    .mast-copy {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 4px solid var(--ink);
+    }
+
+    .kicker {
+      display: inline-block;
+      width: max-content;
+      background: var(--yellow);
+      border: 3px solid var(--ink);
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    h1 {
+      margin: 22px 0 10px;
+      font-size: clamp(58px, 10vw, 132px);
+      line-height: 0.82;
+      letter-spacing: -0.055em;
+      text-transform: uppercase;
+      font-weight: 950;
+    }
+
+    .subtitle {
+      font-size: 22px;
+      font-weight: 800;
+      max-width: 560px;
+    }
+
+    .credit {
+      margin-top: 24px;
+      display: grid;
+      gap: 5px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .mast-art {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, var(--cyan), transparent 38%),
+        linear-gradient(315deg, var(--pink), transparent 42%),
+        #111;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      align-items: center;
+      gap: 0;
+    }
+
+    .mast-art img {
+      width: 100%;
+      aspect-ratio: 340 / 500;
+      object-fit: contain;
+      filter: drop-shadow(10px 10px 0 rgba(0,0,0,0.35));
+    }
+
+    .mast-art .dreaming {
+      grid-column: 1 / 3;
+      width: 66%;
+      justify-self: center;
+      margin-top: -28px;
+    }
+
+    .strip {
+      margin: 22px 0;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      border: 3px solid var(--ink);
+      background: var(--ink);
+      gap: 3px;
+    }
+
+    .strip span {
+      background: var(--yellow);
+      padding: 9px 7px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .section {
+      margin-top: 32px;
+      display: grid;
+      grid-template-columns: 132px 1fr;
+      border-top: 6px solid var(--ink);
+      gap: 22px;
+      padding-top: 16px;
+    }
+
+    .num {
+      font-size: 84px;
+      line-height: 0.85;
+      font-weight: 950;
+      letter-spacing: -0.08em;
+      border-right: 4px solid var(--ink);
+      min-height: 120px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 38px;
+      line-height: 0.92;
+      letter-spacing: -0.035em;
+      text-transform: uppercase;
+      font-weight: 950;
+    }
+
+    .deck {
+      margin: 0 0 16px;
+      font-size: 18px;
+      font-weight: 750;
+      max-width: 760px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card,
+    .callout,
+    table {
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .card { padding: 16px; }
+
+    .callout {
+      padding: 16px;
+      font-weight: 850;
+      font-size: 18px;
+    }
+
+    .callout.yellow { background: var(--yellow); }
+    .callout.cyan { background: var(--cyan); }
+    .callout.red { background: var(--red); color: white; }
+    .callout.green { background: var(--green); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 18px;
+      box-shadow: none;
+    }
+
+    th, td {
+      border: 2px solid var(--ink);
+      padding: 8px 9px;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--ink);
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11px;
+      text-align: left;
+    }
+
+    td strong { font-weight: 950; }
+
+    code, pre {
+      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+      background: var(--ink);
+      color: var(--yellow);
+    }
+
+    code {
+      padding: 1px 4px;
+      font-size: 0.92em;
+    }
+
+    pre {
+      margin: 0;
+      padding: 14px;
+      border: 3px solid var(--ink);
+      overflow: auto;
+    }
+
+    .face-note {
+      display: grid;
+      grid-template-columns: 86px 1fr;
+      gap: 12px;
+      align-items: center;
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      padding: 8px 12px;
+      margin: 10px 0;
+    }
+
+    .face-note img {
+      width: 76px;
+      aspect-ratio: 340 / 500;
+      object-fit: contain;
+    }
+
+    .touch-map,
+    .vu {
+      background: white;
+      border: 4px solid var(--ink);
+      padding: 10px 10px 6px;
+      margin-bottom: 8px;
+    }
+
+    .touch-map img,
+    .vu img {
+      display: block;
+      margin: 0 auto;
+      width: 100%;
+      max-height: 720px;
+      object-fit: contain;
+    }
+
+    .touch-map img { aspect-ratio: 960 / 1060; }
+    .vu img { aspect-ratio: 820 / 560; }
+
+    img[src*="hold-indicators"] {
+      aspect-ratio: 760 / 260;
+      object-fit: contain;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .face-tile {
+      background: white;
+      border: 3px solid var(--ink);
+      min-height: 170px;
+      padding: 8px;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      align-items: end;
+      text-align: center;
+      font-weight: 950;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+    }
+
+    .face-tile img {
+      max-height: 126px;
+      aspect-ratio: 340 / 500;
+      object-fit: contain;
+      justify-self: center;
+    }
+
+    .face-tile svg {
+      max-height: 126px;
+      justify-self: center;
+    }
+
+    .face-tile.listening-face img {
+      max-height: 126px;
+      width: min(100%, 210px);
+      aspect-ratio: 420 / 500;
+    }
+
+    .ticker {
+      margin-top: 26px;
+      background: var(--ink);
+      color: var(--yellow);
+      padding: 10px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border-top: 3px solid var(--ink);
+      border-bottom: 3px solid var(--ink);
+    }
+
+    .ticker span { padding-left: 18px; }
+
+    .footer {
+      margin-top: 34px;
+      margin-bottom: 96px;
+      padding: 18px;
+      background: var(--ink);
+      color: white;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .end-marker {
+      margin-top: 28px;
+      padding: 18px;
+      border: 4px solid var(--ink);
+      background: var(--yellow);
+      text-align: center;
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    @media print {
+      html { background: white; }
+      body { max-width: none; }
+      .page { padding: 18mm; }
+      .section { break-inside: avoid; page-break-inside: avoid; }
+      .masthead, .card, .callout, table, .touch-map, .vu, .face-tile {
+        box-shadow: none;
+      }
+      a { color: inherit; text-decoration: none; }
+    }
+
+    @media (max-width: 760px) {
+      .page { padding: 18px; }
+      .masthead,
+      .section,
+      .grid-2,
+      .grid-3,
+      .grid-4 {
+        grid-template-columns: 1fr;
+      }
+      .mast-copy { border-right: 0; border-bottom: 4px solid var(--ink); }
+      .strip { grid-template-columns: repeat(2, 1fr); }
+      .num { border-right: 0; border-bottom: 4px solid var(--ink); min-height: auto; }
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div class="mast-copy">
+        <div>
+          <span class="kicker">System / Form Edition</span>
+          <h1>robo<br>face</h1>
+          <p class="subtitle">A field guide to a touchy, sound-reactive, occasionally dramatic little screen creature.</p>
+        </div>
+        <div class="credit">
+          <span>Another Fine Piece of Useless Digital Art by Paul Hodara</span>
+          <span>Version 52 / Copyright (c) 2026 Paul Hodara / All rights reserved</span>
+        </div>
+      </div>
+      <div class="mast-art" aria-label="roboface expression collage">
+        <img src="system_form_faces_png/happy.png" alt="Happy roboface">
+        <img src="system_form_faces_png/proud.png" alt="Proud roboface">
+        <img class="dreaming" src="system_form_faces_png/dreaming.png" alt="Dreaming roboface">
+      </div>
+    </header>
+
+    <div class="strip" aria-label="Quick feature strip">
+      <span>Touch Map</span>
+      <span>Moods</span>
+      <span>VU Bar</span>
+      <span>Battery</span>
+      <span>Setup Wi-Fi</span>
+      <span>Personality</span>
+    </div>
+
+    <section class="section">
+      <div class="num">01</div>
+      <div>
+        <h2>Wake The Face</h2>
+        <p class="deck">Portrait orientation. USB at the bottom. Magnetic cap at the top. Simple rules, large consequences.</p>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Action</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Remove magnetic cap</td><td>roboface turns on.</td></tr>
+              <tr><td>Place cap back on top</td><td>Battery is physically disconnected.</td></tr>
+              <tr><td>Remove cap, then plug in USB</td><td>Battery can charge.</td></tr>
+            </tbody>
+          </table>
+          <div class="callout yellow">Important: the cap must be off before USB charging can work.</div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <strong>Startup setup portal</strong>
+            <pre>SETUP WIFI
+roboface-XXXX
+&lt;password&gt;
+192.168.4.1</pre>
+          </div>
+          <div class="face-note">
+            <img src="system_form_faces_png/neutral.png" alt="Neutral roboface">
+            <p>The setup access point is temporary. It shuts down after about 30 seconds of no client activity.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">02</div>
+      <div>
+        <h2>Touch The Mood Map</h2>
+        <p class="deck">Tap one of the 13 screen regions. The selected face appears immediately, then holds briefly after release.</p>
+        <div class="touch-map">
+          <img src="whimsical_faces_png/touch-expression-map.png" alt="roboface touch expression map">
+        </div>
+        <table>
+          <thead><tr><th>Zone</th><th>Expression</th><th>Tendency</th></tr></thead>
+          <tbody>
+            <tr><td>Top far left</td><td>SURPRISED</td><td>Playful</td></tr>
+            <tr><td>Top center</td><td>DREAMING</td><td>Dreamy / idle</td></tr>
+            <tr><td>Top far right</td><td>CONFUSED</td><td>Curious-friendly</td></tr>
+            <tr><td>Upper row</td><td>LISTENING, PROUD, ANXIETY</td><td>Curious / positive / curious</td></tr>
+            <tr><td>Middle row</td><td>HAPPY, BEAT-BOP, NEUTRAL, ANGRY</td><td>Playful / beat face / calm / annoyed</td></tr>
+            <tr><td>Bottom row</td><td>WACKY, SLEEPING, SAD</td><td>Playful / sleepy / curious</td></tr>
+          </tbody>
+        </table>
+        <div class="callout cyan">LOVING and SCARY are automatic-only expressions. They appear in moods, not direct touch zones.</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">03</div>
+      <div>
+        <h2>Expression Index</h2>
+        <p class="deck">The black reference-sheet backgrounds have been removed so the faces can work as signs, warnings, and little emotional punctuation marks.</p>
+        <div class="gallery">
+          <div class="face-tile"><img src="system_form_faces_png/neutral.png" alt="Neutral"><span>NEUTRAL</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/happy.png" alt="Happy"><span>HAPPY</span></div>
+          <div class="face-tile">
+            <svg viewBox="35 35 170 250" role="img" aria-label="Beat-bop roboface">
+              <path d="M 60,78 H 180 V 258 H 60 Z" fill="#06120C"/>
+              <path d="M 52,202 Q 41,191 42,177 Q 43,162 55,151 Q 62,145 67,150" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M 188,202 Q 199,191 198,177 Q 197,162 185,151 Q 178,145 173,150" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <text x="54" y="96" fill="#008866" font-size="18">♪</text>
+              <text x="172" y="108" fill="#008866" font-size="16">♫</text>
+              <path d="M 92,136 C 86,116 98,98 92,80 C 86,62 98,56 93,54" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M 120,136 C 114,116 126,98 120,80 C 114,62 126,56 120,54" stroke="#111" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <path d="M 148,136 C 142,116 154,98 148,80 C 142,62 154,56 147,54" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <rect x="76" y="154" width="30" height="18" rx="9" fill="#111"/>
+              <rect x="134" y="154" width="30" height="18" rx="9" fill="#111"/>
+              <rect x="86" y="157" width="18" height="12" rx="6" fill="#fff"/>
+              <rect x="144" y="157" width="18" height="12" rx="6" fill="#fff"/>
+              <circle cx="95" cy="163" r="3" fill="#111"/>
+              <circle cx="153" cy="163" r="3" fill="#111"/>
+              <circle cx="127" cy="186" r="6" fill="#111"/>
+              <rect x="100" y="197" width="54" height="60" rx="0" fill="#111"/>
+              <path d="M 99,212 Q 127,228 155,212 L 155,242 Q 127,255 99,242 Z" fill="#fff"/>
+              <ellipse cx="127" cy="229" rx="8" ry="12" fill="#111"/>
+            </svg>
+            <span>BEAT-BOP</span>
+          </div>
+          <div class="face-tile"><img src="system_form_faces_png/angry.png" alt="Angry"><span>ANGRY</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/surprised.png" alt="Surprised"><span>SURPRISED</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/loving.png" alt="Loving"><span>LOVING</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/scary.png" alt="Scary"><span>SCARY</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/sad.png" alt="Sad"><span>SAD</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/sleeping.png" alt="Sleeping"><span>SLEEPING</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/wacky.png" alt="Wacky"><span>WACKY</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/confused.png" alt="Confused"><span>CONFUSED</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/anxiety.png" alt="Anxiety"><span>ANXIETY</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/proud.png" alt="Proud"><span>PROUD</span></div>
+          <div class="face-tile"><img src="system_form_faces_png/dreaming.png" alt="Dreaming"><span>DREAMING</span></div>
+          <div class="face-tile listening-face"><img src="system_form_faces_png/listening.png" alt="Listening"><span>LISTENING</span></div>
+          <div class="card"><strong>LOVING + SCARY</strong><br>System-called only. They do not have direct touch zones.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">04</div>
+      <div>
+        <h2>Hidden Holds</h2>
+        <p class="deck">Hold actions are time-based. The spot under your finger does not matter once the hold begins.</p>
+        <div class="grid-2">
+          <div class="card">
+            <img src="whimsical_faces_png/hold-indicators.png" alt="Hold indicators">
+          </div>
+          <table>
+            <thead><tr><th>Hold time</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Tap and release</td><td>Selected expression shows immediately.</td></tr>
+              <tr><td>About 2.5 seconds</td><td>Expression labels toggle on or off.</td></tr>
+              <tr><td>About 5 seconds</td><td>Emotional Rescue QR/credit screen opens.</td></tr>
+              <tr><td>About 10 seconds total</td><td>Battery status screen opens.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">05</div>
+      <div>
+        <h2>Poke Patterns</h2>
+        <p class="deck">roboface remembers recent taps. Rapid means about 2.5 seconds apart. Repeat means the same expression within about 6 seconds.</p>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Pattern</th><th>Reaction</th></tr></thead>
+            <tbody>
+              <tr><td>HAPPY, BEAT-BOP, WACKY, or SURPRISED</td><td>Queues PLAYFUL.</td></tr>
+              <tr><td>ANGRY</td><td>Shows ANGRY and queues ANNOYED.</td></tr>
+              <tr><td>DREAMING twice</td><td>Queues DREAMY.</td></tr>
+              <tr><td>SLEEPING twice while calm</td><td>Queues DREAMY.</td></tr>
+              <tr><td>PLAYFUL/ANNOYED alternation twice</td><td>Queues TORN.</td></tr>
+            </tbody>
+          </table>
+          <div class="face-note">
+            <img src="system_form_faces_png/wacky.png" alt="Wacky roboface">
+            <p>Queued moods wait until the post-touch hold ends and roboface returns to idle.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">06</div>
+      <div>
+        <h2>Mood Parade</h2>
+        <p class="deck">A mood is a compact expression sequence. Touch interrupts it. Sound can interrupt it when sound detection is allowed.</p>
+        <table>
+          <thead><tr><th>Mood</th><th>Trigger</th><th>Sequence</th></tr></thead>
+          <tbody>
+            <tr><td>CALM</td><td>Default idle</td><td>NEUTRAL -> PROUD -> HAPPY -> NEUTRAL</td></tr>
+            <tr><td>CURIOUS</td><td>Soft sound or gentle touch</td><td>NEUTRAL -> LISTENING -> SURPRISED/PROUD/HAPPY -> LISTENING</td></tr>
+            <tr><td>PLAYFUL</td><td>HAPPY/BEAT-BOP/WACKY/SURPRISED touch or personality</td><td>HAPPY, WACKY, LOVING, SURPRISED, PROUD</td></tr>
+            <tr><td>ANNOYED</td><td>ANGRY, over-poking, very loud sound</td><td>ANGRY, SCARY, ANXIETY</td></tr>
+            <tr><td>SLEEPY</td><td>Long idle</td><td>NEUTRAL -> SAD -> SLEEPING</td></tr>
+            <tr><td>DREAMY</td><td>DREAMING twice or calm SLEEPING twice</td><td>DREAMING and SLEEPING alternate</td></tr>
+            <tr><td>TORN</td><td>Fast playful/annoyed alternation</td><td>WACKY and CONFUSED alternate</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">07</div>
+      <div>
+        <h2>Listening / VU</h2>
+        <p class="deck">The microphone level is compared to the recent background level. roboface chooses the highest matching sound reaction.</p>
+        <div class="vu">
+          <img src="whimsical_faces_png/vu-bar-reference.png" alt="Sound detection VU bar">
+        </div>
+        <div class="grid-4">
+          <div class="callout green">Green = background noise floor.</div>
+          <div class="callout cyan">Blue = LOVING floor.</div>
+          <div class="callout yellow">Yellow = GIF/image trigger.</div>
+          <div class="callout red">Red = ANNOYED threshold. Very loud sounds win.</div>
+        </div>
+        <table>
+          <thead><tr><th>Sound</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Quiet</td><td>Background adjusts.</td></tr>
+            <tr><td>Soft</td><td>CURIOUS can start.</td></tr>
+            <tr><td>Sustained friendly</td><td>LOVING can show after about 0.5 seconds in range.</td></tr>
+            <tr><td>Strong</td><td>GIF/image plays after the decision window.</td></tr>
+            <tr><td>Very loud</td><td>ANNOYED starts and GIF/image playback is skipped.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">08</div>
+      <div>
+        <h2>Setup Portal</h2>
+        <p class="deck">Connect to the temporary startup Wi-Fi, then open <code>http://192.168.4.1/</code>.</p>
+        <table>
+          <thead><tr><th>Page</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td><code>/config</code></td><td>General config and brightness.</td></tr>
+            <tr><td><code>/sound</code></td><td>Microphone thresholds, timing, and VU meter.</td></tr>
+            <tr><td><code>/events</code></td><td>Low, medium, and high sound-event behavior.</td></tr>
+            <tr><td><code>/audio</code></td><td>Idle/random audio, uploads, per-file volume, and deletion.</td></tr>
+            <tr><td><code>/personality</code></td><td>Personality axes, derived behavior, and reset.</td></tr>
+            <tr><td><code>/expr</code></td><td>Idle expression probabilities.</td></tr>
+            <tr><td><code>/gif</code></td><td>GIF selection, upload, delete, and tint.</td></tr>
+            <tr><td><code>/images</code>, <code>/images/edit</code></td><td>Faceimator RGB565 image assets and message metadata.</td></tr>
+            <tr><td><code>/info</code>, <code>/reboot</code></td><td>Device info and restart.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">09</div>
+      <div>
+        <h2>Battery / Rest</h2>
+        <p class="deck">roboface checks battery voltage after the startup grace period, then sleeps before the LiPo gets dangerously low.</p>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>State</th><th>Approximate value</th></tr></thead>
+            <tbody>
+              <tr><td>Full</td><td>raw about 2445, about 4.2 V</td></tr>
+              <tr><td>Resume</td><td>raw 2100, about 3.4 V</td></tr>
+              <tr><td>Low warning</td><td>raw 2000, about 3.2 V</td></tr>
+              <tr><td>Flat reference</td><td>raw about 1560, about 2.7 V</td></tr>
+            </tbody>
+          </table>
+          <div class="face-note">
+            <img src="system_form_faces_png/sleeping.png" alt="Sleeping roboface">
+            <p>Three consecutive low readings trigger the Charge Me warning and deep sleep. Charge-rest checks again every 15 minutes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">10</div>
+      <div>
+        <h2>Personality</h2>
+        <p class="deck">The personality file lives at <code>/faceimator/personality.txt</code>. It reflects recent behavior, then fades back toward neutral.</p>
+        <table>
+          <thead><tr><th>Axis</th><th>Low side</th><th>High side</th></tr></thead>
+          <tbody>
+            <tr><td>Energy</td><td>Calmer, sleepier</td><td>More playful</td></tr>
+            <tr><td>Patience</td><td>Easier to annoy</td><td>More tolerant</td></tr>
+            <tr><td>Sociability</td><td>Slower sound reactions</td><td>Quicker curious reactions</td></tr>
+          </tbody>
+        </table>
+        <div class="callout yellow">To reset personality, open the setup portal, go to <code>/personality</code>, and use the reset button.</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">11</div>
+      <div>
+        <h2>Charm Card</h2>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Action</th><th>Do this</th></tr></thead>
+            <tbody>
+              <tr><td>Turn on</td><td>Remove the magnetic cap.</td></tr>
+              <tr><td>Turn off</td><td>Put the magnetic cap back on top.</td></tr>
+              <tr><td>Charge</td><td>Remove cap, connect USB to bottom port.</td></tr>
+              <tr><td>Pick a face</td><td>Tap a touch-map zone.</td></tr>
+              <tr><td>Open QR</td><td>Hold about 5 seconds.</td></tr>
+              <tr><td>Open battery</td><td>Keep holding about 10 seconds total.</td></tr>
+            </tbody>
+          </table>
+          <div class="mast-art">
+            <img src="system_form_faces_png/surprised.png" alt="Surprised roboface">
+            <img src="system_form_faces_png/loving.png" alt="Loving roboface">
+            <img class="dreaming" src="system_form_faces_png/sleeping.png" alt="Sleeping roboface">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ticker">
+      <span>Touch gently / listen closely / charge before the drama / DREAMING lives at the top center / SCARY is automatic only /</span>
+    </div>
+
+    <footer class="footer">
+      roboface v52 - Copyright (c) 2026 Paul Hodara - All rights reserved.
+      This project is proprietary. No use, copying, modification, distribution,
+      commercialization, or derivative work is permitted without prior explicit
+      written permission from Paul Hodara. Design treatment is an original
+      roboface guide layout inspired by modular editorial systems, not an
+      official magazine template.
+    </footer>
+    <div class="end-marker">End of roboface User Guide</div>
+  </main>
+</body>
+</html>
