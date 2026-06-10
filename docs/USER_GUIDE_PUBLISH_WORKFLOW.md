@@ -36,7 +36,6 @@ The guide should use relative image paths:
 
 ```text
 system_form_faces_png/...
-whimsical_faces_png/...
 ```
 
 Do not point guide images at `raw.githubusercontent.com` for the canonical live
@@ -49,7 +48,6 @@ Copy the guide package into the `roboface-audio` checkout as:
 ```text
 docs/user-guide/index.html
 docs/user-guide/system_form_faces_png/
-docs/user-guide/whimsical_faces_png/
 ```
 
 Then commit and push from the `roboface-audio` repository.
@@ -63,7 +61,6 @@ git pull --ff-only origin main
 mkdir -p docs/user-guide
 cp /Users/paulhodara/Documents/PlatformIO/roboface5/docs/user-guides/print/RobotFace_User_Guide_System_Form_GitHub.html docs/user-guide/index.html
 cp -R /Users/paulhodara/Documents/PlatformIO/roboface5/docs/user-guides/print/system_form_faces_png docs/user-guide/
-cp -R /Users/paulhodara/Documents/PlatformIO/roboface5/docs/user-guides/print/whimsical_faces_png docs/user-guide/
 
 rg "raw.githubusercontent.com|https://" docs/user-guide/index.html
 git status --short
