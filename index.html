@@ -29,6 +29,36 @@
     font-family: monospace;
     color: #ccc;
   }
+  .site-header {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto 10px;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    text-align: center;
+  }
+  .site-header h1 {
+    margin: 0;
+    color: #7dd3fc;
+    font-size: clamp(28px, 5vw, 54px);
+    line-height: 1;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+  .site-kicker {
+    margin-top: 2px;
+    color: #fff;
+    font-size: clamp(14px, 2vw, 22px);
+    font-weight: 700;
+  }
+  .site-tagline {
+    margin-top: 0;
+    color: #b7bbc6;
+    font-size: clamp(13px, 1.5vw, 17px);
+    line-height: 1.3;
+    font-style: italic;
+  }
  canvas {
   display: block;
   width: 100%;
@@ -98,6 +128,20 @@
     text-align: center;
     letter-spacing: 1px;
   }
+  #AboutLink {
+    margin-top: 10px;
+    color: #7dd3fc;
+    font-size: 11px;
+    text-align: center;
+    text-decoration: none;
+    letter-spacing: 1px;
+  }
+  #AboutLink:hover,
+  #AboutLink:focus {
+    color: #0f0;
+    text-decoration: underline;
+    outline: none;
+  }
 @media (max-width: 520px) {
   #screen-wrap {
     width: 100%;
@@ -129,6 +173,11 @@
 </style>
 </head>
 <body>
+<header class="site-header">
+  <h1>VIDIOTBOX</h1>
+  <div class="site-kicker">Roboface</div>
+  <div class="site-tagline">Totally Useless Digital Art</div>
+</header>
 <div id="screen-wrap">
   <canvas id="screen"></canvas>
   <div id="touch-points">
@@ -149,6 +198,7 @@
 </div>
 <div id="controls">
 </div>
+<a id="AboutLink" href="https://www.vidiotbox.net/businesscard">About This Nonsense</a>
 <div id="copyright">&copy; 2026 Paul Hodara. Licensed under PolyForm Noncommercial 1.0.0.</div>
 <script>
 // ── Scale & canvas setup ──────────────────────────────────────
