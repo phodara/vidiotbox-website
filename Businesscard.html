@@ -25,7 +25,7 @@ html, body {
     width: 100%;
     max-width: 420px;
     background: #000;
-    border: 2px solid #ffffff;
+    border: 2px solid #2a6f78;
     padding: 28px;
     box-sizing: border-box;
     text-align: center;
@@ -60,18 +60,22 @@ html, body {
     width: 100%;
     padding: 14px;
     margin-bottom: 12px;
+    background: transparent;
     text-decoration: none;
-    color: #00E5FF;
-    border: 2px solid #00E5FF;
+    color: #7dd3fc;
+    border: 2px solid #2a6f78;
     font-size: 16px;
     font-weight: bold;
     transition: all .2s ease;
     box-sizing: border-box;
+    font-family: inherit;
+    cursor: pointer;
+    appearance: none;
 }
 
 .button:hover {
-    background: #00E5FF;
-    color: #000;
+    background: #003840;
+    color: #ffffff;
 }
 
 .footer {
@@ -127,12 +131,24 @@ html, body {
             GitHub Projects
         </a>
 
+        <button class="button" id="emailButton" type="button">
+            Email
+        </button>
+
         <div class="footer">
             TOTALLY USELESS DIGITAL ART
         </div>
 
     </div>
 </div>
+
+<script>
+document.getElementById('emailButton').addEventListener('click', function () {
+    const user = ['p', 'h', 'o', 'd', 'a', 'r', 'a'].join('');
+    const host = ['g', 'm', 'a', 'i', 'l'].join('') + '.' + ['c', 'o', 'm'].join('');
+    window.location.href = 'mailto:' + user + '@' + host;
+});
+</script>
 
 </body>
 </html>
