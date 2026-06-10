@@ -85,7 +85,111 @@ html, body {
     letter-spacing: 1px;
 }
 
+.site-menu {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 20;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.menu-toggle {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: #02191d;
+    border: 2px solid #00E5FF;
+    color: #7dd3fc;
+    box-shadow: 0 0 0 1px rgba(0, 229, 255, .24);
+    cursor: pointer;
+}
+
+.menu-toggle:hover,
+.menu-toggle:focus {
+    background: #003840;
+    color: #fff;
+    outline: none;
+}
+
+.menu-toggle span,
+.menu-toggle::before,
+.menu-toggle::after {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    transition: transform .2s ease, opacity .2s ease;
+}
+
+.menu-toggle::before {
+    transform: translateY(-6px);
+}
+
+.menu-toggle::after {
+    transform: translateY(6px);
+}
+
+.site-menu[data-open="true"] .menu-toggle span {
+    opacity: 0;
+}
+
+.site-menu[data-open="true"] .menu-toggle::before {
+    transform: translateY(2px) rotate(45deg);
+}
+
+.site-menu[data-open="true"] .menu-toggle::after {
+    transform: translateY(-2px) rotate(-45deg);
+}
+
+.menu-panel {
+    position: absolute;
+    top: 54px;
+    right: 0;
+    width: min(260px, calc(100vw - 28px));
+    display: none;
+    padding: 10px;
+    background: #000;
+    border: 2px solid #00E5FF;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .42);
+}
+
+.site-menu[data-open="true"] .menu-panel {
+    display: grid;
+    gap: 8px;
+}
+
+.menu-panel a {
+    display: block;
+    padding: 12px;
+    color: #7dd3fc;
+    border: 1px solid #2a6f78;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.menu-panel a:hover,
+.menu-panel a:focus {
+    background: #003840;
+    color: #fff;
+    outline: none;
+}
+
 @media (max-width: 600px) {
+    .site-menu {
+        left: 14px;
+        right: auto;
+    }
+
+    .menu-panel {
+        left: 0;
+        right: auto;
+    }
+
     .wrap {
         align-items: center;
         padding: 14px;
@@ -99,6 +203,19 @@ html, body {
 </head>
 
 <body>
+
+<nav class="site-menu" data-open="false" aria-label="Site navigation">
+    <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+        <span></span>
+    </button>
+    <div class="menu-panel">
+        <a href="index.html">Roboface</a>
+        <a href="robofacedocs.html">Roboface Docs</a>
+        <a href="Businesscard.html">Business Card</a>
+        <a href="https://www.vidiotbox.net" target="_blank" rel="noopener">Vidiotbox</a>
+        <a href="https://github.com/phodara" target="_blank" rel="noopener">GitHub</a>
+    </div>
+</nav>
 
 <div class="wrap">
     <div class="card">
@@ -143,6 +260,33 @@ html, body {
 </div>
 
 <script>
+const siteMenu = document.querySelector('.site-menu');
+const menuToggle = document.querySelector('.menu-toggle');
+
+function setMenuOpen(isOpen) {
+    siteMenu.dataset.open = String(isOpen);
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+}
+
+menuToggle.addEventListener('click', function () {
+    setMenuOpen(siteMenu.dataset.open !== 'true');
+});
+
+document.addEventListener('click', function (event) {
+    if (!siteMenu.contains(event.target)) setMenuOpen(false);
+});
+
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') setMenuOpen(false);
+});
+
+document.querySelectorAll('.menu-panel a').forEach(function (link) {
+    link.addEventListener('click', function () {
+        setMenuOpen(false);
+    });
+});
+
 document.getElementById('emailButton').addEventListener('click', function () {
     const user = ['p', 'h', 'o', 'd', 'a', 'r', 'a'].join('');
     const host = ['g', 'm', 'a', 'i', 'l'].join('') + '.' + ['c', 'o', 'm'].join('');

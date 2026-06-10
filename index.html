@@ -142,7 +142,96 @@
     text-decoration: underline;
     outline: none;
   }
+  .site-menu {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    z-index: 20;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  .menu-toggle {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: #101010;
+    border: 1px solid #00E5FF;
+    color: #7dd3fc;
+    box-shadow: 0 0 0 1px rgba(0, 229, 255, .2);
+    cursor: pointer;
+  }
+  .menu-toggle:hover,
+  .menu-toggle:focus {
+    border-color: #0f0;
+    color: #0f0;
+    outline: none;
+  }
+  .menu-toggle span,
+  .menu-toggle::before,
+  .menu-toggle::after {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+  .menu-toggle::before {
+    transform: translateY(-6px);
+  }
+  .menu-toggle::after {
+    transform: translateY(6px);
+  }
+  .site-menu[data-open="true"] .menu-toggle span {
+    opacity: 0;
+  }
+  .site-menu[data-open="true"] .menu-toggle::before {
+    transform: translateY(2px) rotate(45deg);
+  }
+  .site-menu[data-open="true"] .menu-toggle::after {
+    transform: translateY(-2px) rotate(-45deg);
+  }
+  .menu-panel {
+    position: absolute;
+    top: 54px;
+    right: 0;
+    width: min(260px, calc(100vw - 28px));
+    display: none;
+    padding: 10px;
+    background: #101010;
+    border: 1px solid #00E5FF;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+  }
+  .site-menu[data-open="true"] .menu-panel {
+    display: grid;
+    gap: 8px;
+  }
+  .menu-panel a {
+    display: block;
+    padding: 12px;
+    color: #7dd3fc;
+    border: 1px solid #2a6f78;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .menu-panel a:hover,
+  .menu-panel a:focus {
+    border-color: #0f0;
+    color: #0f0;
+    outline: none;
+  }
 @media (max-width: 520px) {
+  .site-menu {
+    left: 14px;
+    right: auto;
+  }
+  .menu-panel {
+    left: 0;
+    right: auto;
+  }
   #screen-wrap {
     width: 100%;
     padding: 0;
@@ -173,6 +262,18 @@
 </style>
 </head>
 <body>
+<nav class="site-menu" data-open="false" aria-label="Site navigation">
+  <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
+    <span></span>
+  </button>
+  <div class="menu-panel">
+    <a href="index.html">Roboface</a>
+    <a href="robofacedocs.html">Roboface Docs</a>
+    <a href="Businesscard.html">Business Card</a>
+    <a href="https://www.vidiotbox.net" target="_blank" rel="noopener">Vidiotbox</a>
+    <a href="https://github.com/phodara" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
 <header class="site-header">
   <h1>VIDIOTBOX</h1>
   <div class="site-kicker">Roboface</div>
@@ -198,7 +299,7 @@
 </div>
 <div id="controls">
 </div>
-<a id="AboutLink" href="https://www.vidiotbox.net/businesscard">About This Nonsense</a>
+<a id="AboutLink" href="Businesscard.html">About This Nonsense</a>
 <div id="copyright">&copy; 2026 Paul Hodara. Licensed under PolyForm Noncommercial 1.0.0.</div>
 <script>
 // ── Scale & canvas setup ──────────────────────────────────────
@@ -1476,6 +1577,33 @@ document.addEventListener('keydown', e => {
     setExpression(map[e.key]);
   }
   if(e.key==='b'||e.key==='B'){ eyeOpen=false; blinkEndTime=millis()+300; }
+});
+
+const siteMenu = document.querySelector('.site-menu');
+const menuToggle = document.querySelector('.menu-toggle');
+
+function setMenuOpen(isOpen) {
+  siteMenu.dataset.open = String(isOpen);
+  menuToggle.setAttribute('aria-expanded', String(isOpen));
+  menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+}
+
+menuToggle.addEventListener('click', () => {
+  setMenuOpen(siteMenu.dataset.open !== 'true');
+});
+
+document.addEventListener('click', event => {
+  if (!siteMenu.contains(event.target)) setMenuOpen(false);
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') setMenuOpen(false);
+});
+
+document.querySelectorAll('.menu-panel a').forEach(link => {
+  link.addEventListener('click', () => {
+    setMenuOpen(false);
+  });
 });
 
 // Mouse drag to rotate WACKY3D, double-click to resume auto-sweep
