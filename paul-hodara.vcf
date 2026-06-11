@@ -1,0 +1,14 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Hodara;Paul;;;
+FN:Paul Hodara
+TITLE:Artist & Engineer
+ORG:Art and Technology
+EMAIL;TYPE=INTERNET,HOME:phodara@gmail.com
+TEL;TYPE=CELL:+13478039330
+URL;TYPE=Instagram:https://www.instagram.com/phodara
+URL;TYPE=Photography:https://www.paulhodara.com
+URL;TYPE=LinkedIn:https://www.linkedin.com/in/paulhodara/
+URL;TYPE=GitHub:https://github.com/phodara
+URL;TYPE=The Living Museum:https://www.thelivingmuseum.org
+END:VCARD
