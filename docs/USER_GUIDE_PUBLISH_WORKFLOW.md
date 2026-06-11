@@ -35,11 +35,11 @@ Edit the source guide in the firmware/project workspace:
 The guide should use relative image paths:
 
 ```text
-system_form_faces_png/...
+../../assets/system_form_faces_png/...
 ```
 
 Do not point guide images at `raw.githubusercontent.com` for the canonical live
-page. The HTML and image folders should live together in `roboface-audio`.
+page. The HTML and shared asset folders should live together in `roboface-audio`.
 
 ## Publish Target
 
@@ -47,7 +47,7 @@ Copy the guide package into the `roboface-audio` checkout as:
 
 ```text
 docs/user-guide/index.html
-docs/user-guide/system_form_faces_png/
+assets/system_form_faces_png/
 ```
 
 Then commit and push from the `roboface-audio` repository.
@@ -58,9 +58,9 @@ Then commit and push from the `roboface-audio` repository.
 cd /private/tmp/roboface-audio-upload
 git pull --ff-only origin main
 
-mkdir -p docs/user-guide
+mkdir -p docs/user-guide assets
 cp /Users/paulhodara/Documents/PlatformIO/roboface5/docs/user-guides/print/RobotFace_User_Guide_System_Form_GitHub.html docs/user-guide/index.html
-cp -R /Users/paulhodara/Documents/PlatformIO/roboface5/docs/user-guides/print/system_form_faces_png docs/user-guide/
+cp -R /Users/paulhodara/Documents/PlatformIO/roboface5/docs/user-guides/print/system_form_faces_png assets/
 
 rg "raw.githubusercontent.com|https://" docs/user-guide/index.html
 git status --short

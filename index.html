@@ -261,12 +261,12 @@
   <div class="menu-panel">
     <a href="index.html">Vidiotbox</a>
     <a href="robofacedocs.html">Vidiotbox Docs</a>
-    <a href="businesscard.html">Business Card</a>
     <a href="https://www.instagram.com/phodara" target="_blank" rel="noopener">Follow me on Instagram</a>
-    <a href="https://www.paulhodara.com" target="_blank" rel="noopener">Photography</a>
+    <a href="https://www.paulhodara.com" target="_blank" rel="noopener">My Photgraphy</a>
     <a href="https://www.linkedin.com/in/paulhodara/" target="_blank" rel="noopener">Connect with me on LinkedIn</a>
     <a href="https://github.com/phodara" target="_blank" rel="noopener">My stuff on GitHub</a>
     <a href="https://www.thelivingmuseum.org" target="_blank" rel="noopener">The Living Museum</a>
+    <a href="businesscard.html">My Business Card</a>
   </div>
 </nav>
 <header class="site-header">
@@ -365,15 +365,15 @@ const startTime = Date.now();
 function millis() { return Date.now() - startTime; }
 
 const expressionAudio = {
-  [EXPR.HAPPY]: new Audio('https://raw.githubusercontent.com/phodara/roboface-audio/main/happy.mp3'),
-  [EXPR.ANGRY]: new Audio('https://raw.githubusercontent.com/phodara/roboface-audio/main/angry.mp3'),
-  [EXPR.SURPRISED]: new Audio('https://raw.githubusercontent.com/phodara/roboface-audio/main/surprise.mp3'),
-  [EXPR.ANXIETY]: new Audio('https://raw.githubusercontent.com/phodara/roboface-audio/main/Anxiety.mp3'),
-  [EXPR.WACKY]: new Audio('https://raw.githubusercontent.com/phodara/roboface-audio/main/whacky.mp3'),
-  [EXPR.LISTENING]: new Audio('https://raw.githubusercontent.com/phodara/roboface-audio/main/listening.mp3'),
-  [EXPR.SLEEPING]: new Audio('https://raw.githubusercontent.com/phodara/roboface-audio/main/sleep.mp3'),
-  [EXPR.SAD]: new Audio('https://raw.githubusercontent.com/phodara/roboface-audio/main/sad.mp3'),
-  [EXPR.WACKY3D]: new Audio('https://raw.githubusercontent.com/phodara/roboface-audio/main/whacky3d.mp3')
+  [EXPR.HAPPY]: new Audio('assets/audio/happy.mp3'),
+  [EXPR.ANGRY]: new Audio('assets/audio/angry.mp3'),
+  [EXPR.SURPRISED]: new Audio('assets/audio/surprise.mp3'),
+  [EXPR.ANXIETY]: new Audio('assets/audio/Anxiety.mp3'),
+  [EXPR.WACKY]: new Audio('assets/audio/whacky.mp3'),
+  [EXPR.LISTENING]: new Audio('assets/audio/listening.mp3'),
+  [EXPR.SLEEPING]: new Audio('assets/audio/sleep.mp3'),
+  [EXPR.SAD]: new Audio('assets/audio/sad.mp3'),
+  [EXPR.WACKY3D]: new Audio('assets/audio/whacky3d.mp3')
 };
 Object.values(expressionAudio).forEach(audio => {
   audio.preload = 'auto';
