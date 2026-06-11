@@ -78,6 +78,25 @@ html, body {
     color: #ffffff;
 }
 
+.contact-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.contact-button::before {
+    content: "";
+    width: 24px;
+    height: 16px;
+    border: 2px solid currentColor;
+    box-sizing: border-box;
+    background:
+        linear-gradient(currentColor, currentColor) 12px 5px / 7px 2px no-repeat,
+        linear-gradient(currentColor, currentColor) 12px 10px / 8px 2px no-repeat,
+        radial-gradient(circle, currentColor 0 3px, transparent 3px) 5px 8px / 8px 8px no-repeat;
+}
+
 .footer {
     margin-top: 18px;
     color: #666666;
@@ -245,13 +264,13 @@ html, body {
             The Living Museum
         </a>
 
-        <a class="button" href="paul-hodara.vcf">
-            Add to Contacts
-        </a>
-
         <button class="button" id="emailButton" type="button">
             Email
         </button>
+
+        <a class="button contact-button" href="paul-hodara.vcf">
+            Add to Contacts
+        </a>
 
         <div class="footer">
             TOTALLY USELESS DIGITAL ART
