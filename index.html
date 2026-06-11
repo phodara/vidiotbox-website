@@ -333,8 +333,8 @@ const EYE_OX=2, EYE_OY=14, EYE_W=30, EYE_H=18, EYE_R=9;
 const IRIS_W=18, IRIS_H=12, PUP_W=6;
 const MX=92, MY=195, MW=56, MH=64;
 const HX=86, HY=54,  HW=72, HH=82;
-const LEAR_X=56, LEAR_Y=145, LEAR_W=18, LEAR_H=48;
-const REAR_X=166,REAR_Y=145, REAR_W=18, REAR_H=48;
+const LEAR_X=51, LEAR_Y=145, LEAR_W=18, LEAR_H=48;
+const REAR_X=171,REAR_Y=145, REAR_W=18, REAR_H=48;
 const NX=114, NY=183, NW=12, NH=6;
 
 // ── Expressions ───────────────────────────────────────────────
@@ -373,7 +373,9 @@ const expressionAudio = {
   [EXPR.LISTENING]: new Audio('assets/audio/listening.mp3'),
   [EXPR.SLEEPING]: new Audio('assets/audio/sleep.mp3'),
   [EXPR.SAD]: new Audio('assets/audio/sad.mp3'),
-  [EXPR.WACKY3D]: new Audio('assets/audio/whacky3d.mp3')
+  [EXPR.WACKY3D]: new Audio('assets/audio/whacky3d.mp3'),
+  [EXPR.LOVING]: new Audio('assets/audio/kiss1.mp3'),
+  [EXPR.SCARY]: new Audio('assets/audio/scary1.mp3')
 };
 Object.values(expressionAudio).forEach(audio => {
   audio.preload = 'auto';
@@ -687,31 +689,26 @@ function drawHair(mainCtx, expr, now) {
   push(mainCtx,HX,HY,c);
 }
 
-// ── Ears ──────────────────────────────────────────────────────
-const fx=(x)=>(LEAR_W-1)-x;
-
 function drawEar(mainCtx,rx,ry,isRight,deploy,amp){
   const c=isRight?rEarCtx:lEarCtx;
   fillScreen(c,C_BG);
   if(deploy<=0.02){ push(mainCtx,rx,ry,c); return; }
-  const settle=1-deploy;
-  const sway=Math.sin(millis()*0.01+(isRight?0.9:0))*(0.8+amp*8);
-  if(!isRight){
-    drawQuadStroke(c,fx(12.5)+sway,4+settle*3,  fx(4)+sway,5+settle*3.5, fx(4)+sway,15.5+settle*2,C_EAR,2);
-    drawQuadStroke(c,fx(4)+sway,   15.5+settle*2,fx(5.5)+sway,30.5,      fx(12)+sway,42,           C_EAR,2);
-    drawQuadStroke(c,fx(12)+sway,  42,           fx(14.5)+sway,44,        fx(15)+sway,40,           C_EAR,1);
-    drawQuadStroke(c,fx(11.5)+sway,7+settle*2,   fx(8.5)+sway,9+settle*2,fx(8.5)+sway,19,          C_EAR_SHADE,1);
-    drawQuadStroke(c,fx(8.5)+sway, 19,           fx(9)+sway,  26,        fx(12.5)+sway,31,         C_EAR_SHADE,1);
-    drawQuadStroke(c,fx(12.5)+sway,31,           fx(14)+sway, 34,        fx(13.5)+sway,37,         C_EAR_SHADE,1);
+  const now=millis();
+  const hardwarePulse=1+0.10*Math.sin(now*0.0035);
+  const pulse=1+(hardwarePulse-1)*deploy;
+  const centerX=isRight?6:12, centerY=22;
+  const sx=(x)=>centerX+(x-centerX)*pulse;
+  const sy=(y)=>centerY+(y-centerY)*pulse;
+  if(isRight){
+    drawQuadStroke(c,sx(6), sy(38), sx(12), sy(30), sx(12), sy(21), C_EAR,2);
+    drawQuadStroke(c,sx(12),sy(21), sx(12), sy(8),  sx(5),  sy(7),  C_EAR,2);
+    drawQuadStroke(c,sx(5), sy(7),  sx(0),  sy(7),  sx(-1), sy(15), C_EAR,2);
   } else {
-    drawQuadStroke(c,fx(4.5)+sway, 4+settle*3,  fx(13)+sway,5+settle*3.5, fx(13)+sway,15.5+settle*2,C_EAR,2);
-    drawQuadStroke(c,fx(13)+sway,  15.5+settle*2,fx(11.5)+sway,30.5,      fx(5)+sway,42,            C_EAR,2);
-    drawQuadStroke(c,fx(5)+sway,   42,           fx(2.5)+sway,44,         fx(2)+sway,40,            C_EAR,1);
-    drawQuadStroke(c,fx(5.5)+sway, 7+settle*2,   fx(8.5)+sway,9+settle*2, fx(8.5)+sway,19,         C_EAR_SHADE,1);
-    drawQuadStroke(c,fx(8.5)+sway, 19,           fx(8)+sway,  26,         fx(4.5)+sway,31,         C_EAR_SHADE,1);
-    drawQuadStroke(c,fx(4.5)+sway, 31,           fx(3)+sway,  34,         fx(3.5)+sway,37,         C_EAR_SHADE,1);
+    drawQuadStroke(c,sx(12),sy(38), sx(6),  sy(30), sx(6),  sy(21), C_EAR,2);
+    drawQuadStroke(c,sx(6), sy(21), sx(6),  sy(8),  sx(13), sy(7),  C_EAR,2);
+    drawQuadStroke(c,sx(13),sy(7),  sx(18), sy(7),  sx(19), sy(15), C_EAR,2);
   }
-  pushRotated(mainCtx,rx,ry,c,isRight?20:-20);
+  push(mainCtx,rx,ry+3,c);
 }
 
 // ── Spiral eye (ANXIETY) ──────────────────────────────────────
