@@ -516,21 +516,7 @@
   </style>
 </head>
 <body>
-  <nav class="site-menu" data-open="false" aria-label="Site navigation">
-    <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
-      <span></span>
-    </button>
-    <div class="menu-panel">
-      <a href="index.html">Vidiotbox-website</a>
-      <a href="robofacedocs.html">Vidiotbox Docs</a>
-      <a href="https://www.instagram.com/phodara" target="_blank" rel="noopener">Follow me on Instagram</a>
-      <a href="https://www.paulhodara.com" target="_blank" rel="noopener">My Photgraphy</a>
-      <a href="https://www.linkedin.com/in/paulhodara/" target="_blank" rel="noopener">Connect with me on LinkedIn</a>
-      <a href="https://github.com/phodara" target="_blank" rel="noopener">My stuff on GitHub</a>
-      <a href="https://www.thelivingmuseum.org" target="_blank" rel="noopener">The Living Museum</a>
-      <a href="businesscard.html">My Business Card</a>
-    </div>
-  </nav>
+  <script src="assets/site-menu.js"></script>
   <main class="page">
     <header class="masthead">
       <div class="mast-copy">
@@ -857,33 +843,5 @@ Vidiotbox-XXXX
     </footer>
     <div class="end-marker">End of Vidiotbox User Guide</div>
   </main>
-  <script>
-    const siteMenu = document.querySelector('.site-menu');
-    const menuToggle = document.querySelector('.menu-toggle');
-
-    function setMenuOpen(isOpen) {
-      siteMenu.dataset.open = String(isOpen);
-      menuToggle.setAttribute('aria-expanded', String(isOpen));
-      menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-    }
-
-    menuToggle.addEventListener('click', function () {
-      setMenuOpen(siteMenu.dataset.open !== 'true');
-    });
-
-    document.addEventListener('click', function (event) {
-      if (!siteMenu.contains(event.target)) setMenuOpen(false);
-    });
-
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') setMenuOpen(false);
-    });
-
-    document.querySelectorAll('.menu-panel a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        setMenuOpen(false);
-      });
-    });
-  </script>
 </body>
 </html>

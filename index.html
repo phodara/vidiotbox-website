@@ -255,21 +255,7 @@
 </style>
 </head>
 <body>
-<nav class="site-menu" data-open="false" aria-label="Site navigation">
-  <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">
-    <span></span>
-  </button>
-  <div class="menu-panel">
-    <a href="index.html">Vidiotbox-website</a>
-    <a href="robofacedocs.html">Vidiotbox Docs</a>
-    <a href="https://www.instagram.com/phodara" target="_blank" rel="noopener">Follow me on Instagram</a>
-    <a href="https://www.paulhodara.com" target="_blank" rel="noopener">My Photgraphy</a>
-    <a href="https://www.linkedin.com/in/paulhodara/" target="_blank" rel="noopener">Connect with me on LinkedIn</a>
-    <a href="https://github.com/phodara" target="_blank" rel="noopener">My stuff on GitHub</a>
-    <a href="https://www.thelivingmuseum.org" target="_blank" rel="noopener">The Living Museum</a>
-    <a href="businesscard.html">My Business Card</a>
-  </div>
-</nav>
+<script src="assets/site-menu.js"></script>
 <header class="site-header">
   <h1>VIDIOTBOX</h1>
   <div class="site-kicker">Roboface</div>
@@ -1570,33 +1556,6 @@ document.addEventListener('keydown', e => {
     setExpression(map[e.key]);
   }
   if(e.key==='b'||e.key==='B'){ eyeOpen=false; blinkEndTime=millis()+300; }
-});
-
-const siteMenu = document.querySelector('.site-menu');
-const menuToggle = document.querySelector('.menu-toggle');
-
-function setMenuOpen(isOpen) {
-  siteMenu.dataset.open = String(isOpen);
-  menuToggle.setAttribute('aria-expanded', String(isOpen));
-  menuToggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-}
-
-menuToggle.addEventListener('click', () => {
-  setMenuOpen(siteMenu.dataset.open !== 'true');
-});
-
-document.addEventListener('click', event => {
-  if (!siteMenu.contains(event.target)) setMenuOpen(false);
-});
-
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') setMenuOpen(false);
-});
-
-document.querySelectorAll('.menu-panel a').forEach(link => {
-  link.addEventListener('click', () => {
-    setMenuOpen(false);
-  });
 });
 
 // Mouse drag to rotate WACKY3D, double-click to resume auto-sweep
