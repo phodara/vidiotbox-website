@@ -1,7 +1,7 @@
 (function () {
   const menuItems = [
     { href: 'index.html', label: 'Vidiotbox-website' },
-    { href: 'robofacedocs.html', label: 'Vidiotbox-hardware Docs' },
+    { href: 'vidiotbox-hardware_docs.html', label: 'Vidiotbox-hardware Docs' },
     { href: 'https://www.instagram.com/phodara', label: 'Follow me on Instagram', external: true },
     { href: 'https://www.paulhodara.com', label: 'My Photgraphy', external: true },
     { href: 'https://www.linkedin.com/in/paulhodara/', label: 'Connect with me on LinkedIn', external: true },
