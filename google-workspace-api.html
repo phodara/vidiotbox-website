@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google Workspace API Utility</title>
+  <link rel="icon" type="image/png" href="assets/images/happy.png">
+  <style>
+    :root {
+      --ink: #080808;
+      --paper: #f6f3ea;
+      --panel: #ffffff;
+      --muted: #5b5b55;
+      --line: #111111;
+      --yellow: #fff200;
+      --cyan: #00d7ff;
+      --red: #ff2a2a;
+      --green: #00d46a;
+      --blue: #234cff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      background: #d8d4c8;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      line-height: 1.35;
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0 auto;
+      width: 100%;
+      max-width: 1120px;
+      min-height: 100vh;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.045) 1px, transparent 1px) 0 0 / 40px 40px,
+        linear-gradient(rgba(0,0,0,0.035) 1px, transparent 1px) 0 0 / 40px 40px,
+        var(--paper);
+    }
+
+    .site-menu {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 30;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .menu-toggle {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      color: var(--ink);
+      box-shadow: 5px 5px 0 var(--ink);
+      cursor: pointer;
+    }
+
+    .menu-toggle:hover,
+    .menu-toggle:focus {
+      background: var(--yellow);
+      outline: none;
+    }
+
+    .menu-toggle span,
+    .menu-toggle::before,
+    .menu-toggle::after {
+      content: "";
+      display: block;
+      width: 22px;
+      height: 3px;
+      background: currentColor;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .menu-toggle::before { transform: translateY(-7px); }
+    .menu-toggle::after { transform: translateY(7px); }
+
+    .site-menu[data-open="true"] .menu-toggle span { opacity: 0; }
+    .site-menu[data-open="true"] .menu-toggle::before { transform: translateY(3px) rotate(45deg); }
+    .site-menu[data-open="true"] .menu-toggle::after { transform: translateY(-3px) rotate(-45deg); }
+
+    .menu-panel {
+      position: absolute;
+      top: 58px;
+      left: 0;
+      width: min(280px, calc(100vw - 32px));
+      display: none;
+      gap: 8px;
+      padding: 12px;
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .site-menu[data-open="true"] .menu-panel { display: grid; }
+
+    .menu-panel a {
+      display: block;
+      padding: 12px 13px;
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .menu-panel a:hover,
+    .menu-panel a:focus {
+      background: var(--cyan);
+      outline: none;
+    }
+
+    main {
+      padding: 32px 32px 96px;
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+      gap: 22px;
+      border: 4px solid var(--ink);
+      background: var(--panel);
+    }
+
+    .mast-copy {
+      padding: 30px;
+      border-right: 4px solid var(--ink);
+    }
+
+    .kicker {
+      display: inline-block;
+      width: max-content;
+      background: var(--yellow);
+      border: 3px solid var(--ink);
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    h1 {
+      margin: 22px 0 12px;
+      font-size: clamp(40px, 6vw, 74px);
+      line-height: 0.9;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      font-weight: 950;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      line-height: 0.96;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      font-weight: 950;
+    }
+
+    p {
+      margin: 0 0 14px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    code {
+      padding: 1px 4px;
+      background: var(--ink);
+      color: var(--yellow);
+      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 0.92em;
+    }
+
+    .status-panel {
+      padding: 22px;
+      display: grid;
+      gap: 12px;
+      align-content: center;
+      background:
+        linear-gradient(135deg, var(--cyan), transparent 36%),
+        linear-gradient(315deg, var(--pink, #ff4fd8), transparent 40%),
+        #111;
+      color: white;
+    }
+
+    .status-panel strong {
+      display: block;
+      width: max-content;
+      max-width: 100%;
+      padding: 5px 8px;
+      background: var(--yellow);
+      border: 3px solid var(--ink);
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .status-panel output {
+      min-height: 126px;
+      padding: 14px;
+      background: white;
+      border: 3px solid var(--ink);
+      color: var(--ink);
+      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .grid {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      padding: 16px;
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 3px solid var(--ink);
+      border-radius: 0;
+      padding: 10px;
+      background: white;
+      color: var(--ink);
+      font: inherit;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button {
+      min-height: 42px;
+      border: 3px solid var(--ink);
+      border-radius: 0;
+      padding: 8px 12px;
+      background: var(--yellow);
+      color: var(--ink);
+      box-shadow: 5px 5px 0 var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    button.secondary { background: var(--cyan); }
+    button.danger { background: var(--red); color: white; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .note {
+      padding: 14px;
+      background: var(--cyan);
+      border: 3px solid var(--ink);
+      font-weight: 850;
+    }
+
+    .footer {
+      margin-top: 28px;
+      padding: 18px;
+      background: var(--ink);
+      color: white;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 760px) {
+      body { max-width: 100%; overflow-x: hidden; }
+      main { padding: 18px 18px 80px; }
+      .masthead,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .mast-copy { border-right: 0; border-bottom: 4px solid var(--ink); }
+      h1,
+      h2,
+      p,
+      input,
+      textarea,
+      button,
+      .status-panel output {
+        overflow-wrap: anywhere;
+      }
+    }
+  </style>
+</head>
+<body>
+  <script src="assets/site-menu.js"></script>
+  <main>
+    <header class="masthead">
+      <div class="mast-copy">
+        <span class="kicker">Direct REST API</span>
+        <h1>Google Workspace Utility</h1>
+        <p>Create Google Docs, create Google Sheets, and append rows to a sheet using browser OAuth. No client secret belongs in this file.</p>
+        <div class="note">
+          Configure a Google OAuth web client and add this page's origin to its authorized JavaScript origins. GitHub Pages works well; direct <code>file://</code> opening usually will not.
+        </div>
+      </div>
+      <div class="status-panel">
+        <strong>API Status</strong>
+        <output id="status">Waiting for Google Identity Services...</output>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <h2>OAuth</h2>
+        <label>
+          OAuth Client ID
+          <input id="clientId" autocomplete="off" placeholder="000000000000-example.apps.googleusercontent.com">
+        </label>
+        <div class="actions">
+          <button id="saveConfig" type="button">Save Config</button>
+          <button id="authorize" class="secondary" type="button">Authorize</button>
+          <button id="clearToken" class="danger" type="button">Forget Token</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Create Doc</h2>
+        <label>
+          Document Title
+          <input id="docTitle" value="Vidiotbox API Test Doc">
+        </label>
+        <label>
+          Document Body
+          <textarea id="docBody">Created from the Vidiotbox Google Workspace API utility.</textarea>
+        </label>
+        <div class="actions">
+          <button id="createDoc" type="button">Create Google Doc</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Create Sheet</h2>
+        <label>
+          Spreadsheet Title
+          <input id="sheetTitle" value="Vidiotbox API Test Sheet">
+        </label>
+        <div class="actions">
+          <button id="createSheet" type="button">Create Google Sheet</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Append Row</h2>
+        <label>
+          Spreadsheet ID
+          <input id="spreadsheetId" autocomplete="off" placeholder="Paste the ID from a Google Sheets URL">
+        </label>
+        <label>
+          Target Range
+          <input id="appendRange" value="Sheet1!A:C">
+        </label>
+        <label>
+          Row Note
+          <textarea id="rowNote">Hello from direct Google Sheets API.</textarea>
+        </label>
+        <div class="actions">
+          <button id="appendRow" type="button">Append Row</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      Uses Google Identity Services plus Docs, Sheets, and Drive-compatible scopes. The OAuth Client ID is public by design; never add a client secret to browser code.
+    </footer>
+  </main>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    (function () {
+      const SCOPES = [
+        'https://www.googleapis.com/auth/documents',
+        'https://www.googleapis.com/auth/spreadsheets',
+        'https://www.googleapis.com/auth/drive.file'
+      ].join(' ');
+
+      const storageKey = 'vidiotboxGoogleWorkspaceApiConfig';
+      const statusEl = document.getElementById('status');
+      const clientIdEl = document.getElementById('clientId');
+      const spreadsheetIdEl = document.getElementById('spreadsheetId');
+      const appendRangeEl = document.getElementById('appendRange');
+      const sheetTitleEl = document.getElementById('sheetTitle');
+      const rowNoteEl = document.getElementById('rowNote');
+      const docTitleEl = document.getElementById('docTitle');
+      const docBodyEl = document.getElementById('docBody');
+      let tokenClient = null;
+      let accessToken = '';
+
+      function setStatus(message) {
+        statusEl.textContent = message;
+      }
+
+      function loadConfig() {
+        try {
+          const config = JSON.parse(localStorage.getItem(storageKey) || '{}');
+          clientIdEl.value = config.clientId || '';
+          spreadsheetIdEl.value = config.spreadsheetId || '';
+          appendRangeEl.value = config.appendRange || appendRangeEl.value;
+        } catch (error) {
+          setStatus('Stored config could not be loaded: ' + error.message);
+        }
+      }
+
+      function saveConfig() {
+        localStorage.setItem(storageKey, JSON.stringify({
+          clientId: clientIdEl.value.trim(),
+          spreadsheetId: spreadsheetIdEl.value.trim(),
+          appendRange: appendRangeEl.value.trim()
+        }));
+        setStatus('Config saved in this browser.');
+      }
+
+      function ensureTokenClient() {
+        const clientId = clientIdEl.value.trim();
+        if (!clientId) throw new Error('Add an OAuth Client ID first.');
+        if (!window.google || !google.accounts || !google.accounts.oauth2) {
+          throw new Error('Google Identity Services has not loaded yet.');
+        }
+        tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: clientId,
+          scope: SCOPES,
+          callback: function (response) {
+            if (response.error) {
+              setStatus('Authorization failed: ' + response.error);
+              return;
+            }
+            accessToken = response.access_token;
+            setStatus('Authorized. You can now create Docs, create Sheets, or append rows.');
+          }
+        });
+        return tokenClient;
+      }
+
+      function authorize() {
+        try {
+          saveConfig();
+          ensureTokenClient().requestAccessToken({ prompt: accessToken ? '' : 'consent' });
+        } catch (error) {
+          setStatus(error.message);
+        }
+      }
+
+      async function authorizedFetch(url, options) {
+        if (!accessToken) throw new Error('Authorize first.');
+        const response = await fetch(url, {
+          ...options,
+          headers: {
+            Authorization: 'Bearer ' + accessToken,
+            'Content-Type': 'application/json',
+            ...(options && options.headers ? options.headers : {})
+          }
+        });
+        const text = await response.text();
+        const data = text ? JSON.parse(text) : {};
+        if (!response.ok) {
+          const message = data.error && data.error.message ? data.error.message : response.statusText;
+          throw new Error(message);
+        }
+        return data;
+      }
+
+      async function createDoc() {
+        try {
+          const title = docTitleEl.value.trim() || 'Untitled API Doc';
+          const body = docBodyEl.value;
+          setStatus('Creating Google Doc...');
+          const doc = await authorizedFetch('https://docs.googleapis.com/v1/documents', {
+            method: 'POST',
+            body: JSON.stringify({ title })
+          });
+          if (body.trim()) {
+            await authorizedFetch('https://docs.googleapis.com/v1/documents/' + encodeURIComponent(doc.documentId) + ':batchUpdate', {
+              method: 'POST',
+              body: JSON.stringify({
+                requests: [{
+                  insertText: {
+                    location: { index: 1 },
+                    text: body.trim() + '\n'
+                  }
+                }]
+              })
+            });
+          }
+          setStatus('Created Doc:\nhttps://docs.google.com/document/d/' + doc.documentId + '/edit');
+        } catch (error) {
+          setStatus('Doc creation failed: ' + error.message);
+        }
+      }
+
+      async function createSheet() {
+        try {
+          const title = sheetTitleEl.value.trim() || 'Untitled API Sheet';
+          setStatus('Creating Google Sheet...');
+          const sheet = await authorizedFetch('https://sheets.googleapis.com/v4/spreadsheets', {
+            method: 'POST',
+            body: JSON.stringify({
+              properties: { title },
+              sheets: [{
+                properties: { title: 'Sheet1' }
+              }]
+            })
+          });
+          await authorizedFetch('https://sheets.googleapis.com/v4/spreadsheets/'
+            + encodeURIComponent(sheet.spreadsheetId)
+            + '/values/'
+            + encodeURIComponent('Sheet1!A1:C1')
+            + '?valueInputOption=USER_ENTERED', {
+            method: 'PUT',
+            body: JSON.stringify({
+              values: [['Timestamp', 'Source', 'Note']]
+            })
+          });
+          spreadsheetIdEl.value = sheet.spreadsheetId;
+          saveConfig();
+          setStatus('Created Sheet:\nhttps://docs.google.com/spreadsheets/d/' + sheet.spreadsheetId + '/edit');
+        } catch (error) {
+          setStatus('Sheet creation failed: ' + error.message);
+        }
+      }
+
+      async function appendRow() {
+        try {
+          const spreadsheetId = spreadsheetIdEl.value.trim();
+          const range = appendRangeEl.value.trim() || 'Sheet1!A:C';
+          if (!spreadsheetId) throw new Error('Add a Spreadsheet ID first.');
+          saveConfig();
+          setStatus('Appending row...');
+          const url = 'https://sheets.googleapis.com/v4/spreadsheets/'
+            + encodeURIComponent(spreadsheetId)
+            + '/values/'
+            + encodeURIComponent(range)
+            + ':append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS';
+          await authorizedFetch(url, {
+            method: 'POST',
+            body: JSON.stringify({
+              values: [[new Date().toISOString(), 'Vidiotbox API Utility', rowNoteEl.value.trim()]]
+            })
+          });
+          setStatus('Row appended to:\nhttps://docs.google.com/spreadsheets/d/' + spreadsheetId + '/edit');
+        } catch (error) {
+          setStatus('Append failed: ' + error.message);
+        }
+      }
+
+      document.getElementById('saveConfig').addEventListener('click', saveConfig);
+      document.getElementById('authorize').addEventListener('click', authorize);
+      document.getElementById('clearToken').addEventListener('click', function () {
+        accessToken = '';
+        setStatus('Token forgotten in this page. Google may still have an active browser session.');
+      });
+      document.getElementById('createDoc').addEventListener('click', createDoc);
+      document.getElementById('createSheet').addEventListener('click', createSheet);
+      document.getElementById('appendRow').addEventListener('click', appendRow);
+
+      loadConfig();
+      window.addEventListener('load', function () {
+        setStatus(window.google ? 'Google Identity Services loaded. Add your Client ID and authorize.' : 'Google Identity Services script is still loading.');
+      });
+    }());
+  </script>
+</body>
+</html>
