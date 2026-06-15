@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>roboface User Guide - System/Form Edition</title>
-  <link rel="icon" type="image/png" href="../../assets/images/happy.png">
+  <title>Vidiotbox User Guide - System/Form Edition</title>
+  <link rel="icon" type="image/png" href="assets/images/happy.png">
   <style>
     :root {
       --ink: #080808;
@@ -47,6 +47,86 @@
 
     img { max-width: 100%; height: auto; }
 
+    .site-menu {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 30;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .menu-toggle {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      color: var(--ink);
+      box-shadow: 5px 5px 0 var(--ink);
+      cursor: pointer;
+    }
+
+    .menu-toggle:hover,
+    .menu-toggle:focus {
+      background: var(--yellow);
+      outline: none;
+    }
+
+    .menu-toggle span,
+    .menu-toggle::before,
+    .menu-toggle::after {
+      content: "";
+      display: block;
+      width: 22px;
+      height: 3px;
+      background: currentColor;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .menu-toggle::before { transform: translateY(-7px); }
+    .menu-toggle::after { transform: translateY(7px); }
+
+    .site-menu[data-open="true"] .menu-toggle span { opacity: 0; }
+    .site-menu[data-open="true"] .menu-toggle::before { transform: translateY(3px) rotate(45deg); }
+    .site-menu[data-open="true"] .menu-toggle::after { transform: translateY(-3px) rotate(-45deg); }
+
+    .menu-panel {
+      position: absolute;
+      top: 58px;
+      left: 0;
+      width: min(280px, calc(100vw - 32px));
+      display: none;
+      gap: 8px;
+      padding: 12px;
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .site-menu[data-open="true"] .menu-panel {
+      display: grid;
+    }
+
+    .menu-panel a {
+      display: block;
+      padding: 12px 13px;
+      background: var(--paper);
+      border: 2px solid var(--ink);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .menu-panel a:hover,
+    .menu-panel a:focus {
+      background: var(--cyan);
+      outline: none;
+    }
+
     .page {
       padding: 32px 32px 128px;
     }
@@ -82,11 +162,12 @@
 
     h1 {
       margin: 22px 0 10px;
-      font-size: clamp(58px, 10vw, 132px);
-      line-height: 0.82;
+      font-size: clamp(42px, 6.5vw, 86px);
+      line-height: 0.9;
       letter-spacing: -0.055em;
       text-transform: uppercase;
       font-weight: 950;
+      white-space: nowrap;
     }
 
     .subtitle {
@@ -435,12 +516,13 @@
   </style>
 </head>
 <body>
+  <script src="assets/site-menu.js"></script>
   <main class="page">
     <header class="masthead">
       <div class="mast-copy">
         <div>
           <span class="kicker">System / Form Edition</span>
-          <h1>robo<br>face</h1>
+          <h1>Vidiotbox</h1>
           <p class="subtitle">A field guide to a touchy, sound-reactive, occasionally dramatic little screen creature.</p>
         </div>
         <div class="credit">
@@ -448,10 +530,10 @@
           <span>Version V10-Basel / Copyright (c) 2026 Paul Hodara / All rights reserved</span>
         </div>
       </div>
-      <div class="mast-art" aria-label="roboface expression collage">
-        <img src="../../assets/images/happy.png" alt="Happy roboface">
-        <img src="../../assets/images/proud.png" alt="Proud roboface">
-        <img class="dreaming" src="../../assets/images/dreaming.png" alt="Dreaming roboface">
+      <div class="mast-art" aria-label="Vidiotbox expression collage">
+        <img src="assets/images/happy.png" alt="Happy Vidiotbox">
+        <img src="assets/images/proud.png" alt="Proud Vidiotbox">
+        <img class="dreaming" src="assets/images/dreaming.png" alt="Dreaming Vidiotbox">
       </div>
     </header>
 
@@ -473,7 +555,7 @@
           <table>
             <thead><tr><th>Action</th><th>Result</th></tr></thead>
             <tbody>
-              <tr><td>Remove magnetic cap</td><td>roboface turns on.</td></tr>
+              <tr><td>Remove magnetic cap</td><td>Vidiotbox turns on.</td></tr>
               <tr><td>Place cap back on top</td><td>Battery is physically disconnected.</td></tr>
               <tr><td>Remove cap, then plug in USB</td><td>Battery can charge.</td></tr>
             </tbody>
@@ -489,7 +571,7 @@ vidiotbox-XXXX
 192.168.4.1</pre>
           </div>
           <div class="face-note">
-            <img src="../../assets/images/neutral.png" alt="Neutral roboface">
+            <img src="assets/images/neutral.png" alt="Neutral Vidiotbox">
             <p>The setup access point is temporary. It shuts down after about 30 seconds of no client activity.</p>
           </div>
         </div>
@@ -502,7 +584,7 @@ vidiotbox-XXXX
         <h2>Touch The Mood Map</h2>
         <p class="deck">Tap one of the 13 screen regions. The selected face appears immediately, then holds briefly after release.</p>
         <div class="touch-map">
-          <img src="../../assets/images/touch-expression-map.png" alt="roboface touch expression map">
+          <img src="assets/images/touch-expression-map.png" alt="Vidiotbox touch expression map">
         </div>
         <table>
           <thead><tr><th>Zone</th><th>Expression</th><th>Tendency</th></tr></thead>
@@ -525,10 +607,10 @@ vidiotbox-XXXX
         <h2>Expression Index</h2>
         <p class="deck">The black reference-sheet backgrounds have been removed so the faces can work as signs, warnings, and little emotional punctuation marks.</p>
         <div class="gallery">
-          <div class="face-tile"><img src="../../assets/images/neutral.png" alt="Neutral"><span>NEUTRAL</span></div>
-          <div class="face-tile"><img src="../../assets/images/happy.png" alt="Happy"><span>HAPPY</span></div>
+          <div class="face-tile"><img src="assets/images/neutral.png" alt="Neutral"><span>NEUTRAL</span></div>
+          <div class="face-tile"><img src="assets/images/happy.png" alt="Happy"><span>HAPPY</span></div>
           <div class="face-tile">
-            <svg viewBox="35 35 170 250" role="img" aria-label="Beat-bop roboface">
+            <svg viewBox="35 35 170 250" role="img" aria-label="Beat-bop Vidiotbox">
               <path d="M 60,78 H 180 V 258 H 60 Z" fill="#06120C"/>
               <path d="M 52,202 Q 41,191 42,177 Q 43,162 55,151 Q 62,145 67,150" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
               <path d="M 188,202 Q 199,191 198,177 Q 197,162 185,151 Q 178,145 173,150" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
@@ -550,18 +632,18 @@ vidiotbox-XXXX
             </svg>
             <span>BEAT-BOP</span>
           </div>
-          <div class="face-tile"><img src="../../assets/images/angry.png" alt="Angry"><span>ANGRY</span></div>
-          <div class="face-tile"><img src="../../assets/images/surprised.png" alt="Surprised"><span>SURPRISED</span></div>
-          <div class="face-tile"><img src="../../assets/images/loving.png" alt="Loving"><span>LOVING</span></div>
-          <div class="face-tile"><img src="../../assets/images/scary.png" alt="Scary"><span>SCARY</span></div>
-          <div class="face-tile"><img src="../../assets/images/sad.png" alt="Sad"><span>SAD</span></div>
-          <div class="face-tile"><img src="../../assets/images/sleeping.png" alt="Sleeping"><span>SLEEPING</span></div>
-          <div class="face-tile"><img src="../../assets/images/wacky.png" alt="Wacky"><span>WACKY</span></div>
-          <div class="face-tile"><img src="../../assets/images/confused.png" alt="Confused"><span>CONFUSED</span></div>
-          <div class="face-tile"><img src="../../assets/images/anxiety.png" alt="Anxiety"><span>ANXIETY</span></div>
-          <div class="face-tile"><img src="../../assets/images/proud.png" alt="Proud"><span>PROUD</span></div>
-          <div class="face-tile"><img src="../../assets/images/dreaming.png" alt="Dreaming"><span>DREAMING</span></div>
-          <div class="face-tile listening-face"><img src="../../assets/images/listening.png" alt="Listening"><span>LISTENING</span></div>
+          <div class="face-tile"><img src="assets/images/angry.png" alt="Angry"><span>ANGRY</span></div>
+          <div class="face-tile"><img src="assets/images/surprised.png" alt="Surprised"><span>SURPRISED</span></div>
+          <div class="face-tile"><img src="assets/images/loving.png" alt="Loving"><span>LOVING</span></div>
+          <div class="face-tile"><img src="assets/images/scary.png" alt="Scary"><span>SCARY</span></div>
+          <div class="face-tile"><img src="assets/images/sad.png" alt="Sad"><span>SAD</span></div>
+          <div class="face-tile"><img src="assets/images/sleeping.png" alt="Sleeping"><span>SLEEPING</span></div>
+          <div class="face-tile"><img src="assets/images/wacky.png" alt="Wacky"><span>WACKY</span></div>
+          <div class="face-tile"><img src="assets/images/confused.png" alt="Confused"><span>CONFUSED</span></div>
+          <div class="face-tile"><img src="assets/images/anxiety.png" alt="Anxiety"><span>ANXIETY</span></div>
+          <div class="face-tile"><img src="assets/images/proud.png" alt="Proud"><span>PROUD</span></div>
+          <div class="face-tile"><img src="assets/images/dreaming.png" alt="Dreaming"><span>DREAMING</span></div>
+          <div class="face-tile listening-face"><img src="assets/images/listening.png" alt="Listening"><span>LISTENING</span></div>
           <div class="card"><strong>LOVING + SCARY</strong><br>System-called only. They do not have direct touch zones.</div>
         </div>
       </div>
@@ -574,7 +656,7 @@ vidiotbox-XXXX
         <p class="deck">Hold actions are time-based. The spot under your finger does not matter once the hold begins.</p>
         <div class="grid-2">
           <div class="card">
-            <img src="../../assets/images/hold-indicators.png" alt="Hold indicators">
+            <img src="assets/images/hold-indicators.png" alt="Hold indicators">
           </div>
           <table>
             <thead><tr><th>Hold time</th><th>Result</th></tr></thead>
@@ -593,7 +675,7 @@ vidiotbox-XXXX
       <div class="num">05</div>
       <div>
         <h2>Poke Patterns</h2>
-        <p class="deck">roboface remembers recent taps. Rapid means about 2.5 seconds apart. Repeat means the same expression within about 6 seconds.</p>
+        <p class="deck">Vidiotbox remembers recent taps. Rapid means about 2.5 seconds apart. Repeat means the same expression within about 6 seconds.</p>
         <div class="grid-2">
           <table>
             <thead><tr><th>Pattern</th><th>Reaction</th></tr></thead>
@@ -608,8 +690,8 @@ vidiotbox-XXXX
             </tbody>
           </table>
           <div class="face-note">
-            <img src="../../assets/images/wacky.png" alt="Wacky roboface">
-            <p>Queued moods wait until the post-touch hold ends and roboface returns to idle.</p>
+            <img src="assets/images/wacky.png" alt="Wacky Vidiotbox">
+            <p>Queued moods wait until the post-touch hold ends and Vidiotbox returns to idle.</p>
           </div>
         </div>
       </div>
@@ -639,10 +721,10 @@ vidiotbox-XXXX
     <section class="section">
       <div class="num">07</div>
       <div>
-        <h2>Listening / VU</h2>
-        <p class="deck">The microphone level is compared to the recent background level. roboface chooses the highest matching sound reaction.</p>
+        <h2>Idle / Sound</h2>
+        <p class="deck">When Vidiotbox is idle, expression checks and sound checks share the stage. Random idle expressions happen on a timer; sound can start moods or configured sound events when the touch and cooldown gates are clear.</p>
         <div class="vu">
-          <img src="../../assets/images/vu-bar-reference.png" alt="Sound detection VU bar">
+          <img src="assets/images/vu-bar-reference.png" alt="Sound detection VU bar">
         </div>
         <div class="grid-4">
           <div class="callout green">Green = background noise floor.</div>
@@ -651,13 +733,26 @@ vidiotbox-XXXX
           <div class="callout red">Red = ANNOYED threshold. Very loud sounds win.</div>
         </div>
         <table>
+          <thead><tr><th>Idle random logic</th><th>Current behavior</th></tr></thead>
+          <tbody>
+            <tr><td>Timer</td><td><code>/faceimator/expr.txt</code> controls <code>check_every_ms</code>; default is 5000 ms, minimum is 1000 ms.</td></tr>
+            <tr><td>Chance</td><td><code>play_probability_percent</code> decides whether the timer picks an idle expression on that check.</td></tr>
+            <tr><td>Weights</td><td>Each expression weight is 0-100. Weight 0 removes it from idle selection; higher weights make it more likely.</td></tr>
+            <tr><td>Audio filter</td><td>If idle expression audio is enabled and not muted, the random picker only uses expressions with matching idle audio files.</td></tr>
+            <tr><td>Current face</td><td>The picker avoids repeating the current expression when another eligible expression exists.</td></tr>
+            <tr><td>Mood priority</td><td>Active mood sequences block random idle expression changes until the mood ends or is interrupted.</td></tr>
+          </tbody>
+        </table>
+        <table>
           <thead><tr><th>Sound</th><th>Result</th></tr></thead>
           <tbody>
             <tr><td>Quiet</td><td>Background adjusts.</td></tr>
-            <tr><td>Soft</td><td>CURIOUS can start.</td></tr>
-            <tr><td>Sustained friendly</td><td>LOVING can show after about 0.5 seconds in range.</td></tr>
-            <tr><td>Strong</td><td>GIF/image plays after the decision window.</td></tr>
-            <tr><td>Very loud</td><td>ANNOYED starts and GIF/image playback is skipped.</td></tr>
+            <tr><td>Soft</td><td>CURIOUS can start while idle after the curious cooldown.</td></tr>
+            <tr><td>Sustained friendly</td><td>The LOW sound event can run after sound stays in the LOVING band for the configured window.</td></tr>
+            <tr><td>Strong</td><td>The MEDIUM sound event runs after the decision window unless the peak upgrades to HIGH.</td></tr>
+            <tr><td>Very loud</td><td>The HIGH sound event runs, or personality may redirect the reaction into PLAYFUL.</td></tr>
+            <tr><td>During an idle mood</td><td>MEDIUM/HIGH sound interrupts the mood and runs the configured event.</td></tr>
+            <tr><td>Gated</td><td>Sound events pause during startup settle, image/GIF cooldown, active touch, post-touch cooldown, touch holds, and ANNOYED mood.</td></tr>
           </tbody>
         </table>
       </div>
@@ -689,7 +784,7 @@ vidiotbox-XXXX
       <div class="num">09</div>
       <div>
         <h2>Battery / Rest</h2>
-        <p class="deck">roboface checks battery voltage after the startup grace period, then sleeps before the LiPo gets dangerously low.</p>
+        <p class="deck">Vidiotbox checks battery voltage after the startup grace period, then sleeps before the LiPo gets dangerously low.</p>
         <div class="grid-2">
           <table>
             <thead><tr><th>State</th><th>Approximate value</th></tr></thead>
@@ -701,7 +796,7 @@ vidiotbox-XXXX
             </tbody>
           </table>
           <div class="face-note">
-            <img src="../../assets/images/sleeping.png" alt="Sleeping roboface">
+            <img src="assets/images/sleeping.png" alt="Sleeping Vidiotbox">
             <p>Three consecutive low readings trigger the Charge Me warning and deep sleep. Charge-rest checks again every 15 minutes.</p>
           </div>
         </div>
@@ -742,9 +837,9 @@ vidiotbox-XXXX
             </tbody>
           </table>
           <div class="mast-art">
-            <img src="../../assets/images/surprised.png" alt="Surprised roboface">
-            <img src="../../assets/images/loving.png" alt="Loving roboface">
-            <img class="dreaming" src="../../assets/images/sleeping.png" alt="Sleeping roboface">
+            <img src="assets/images/surprised.png" alt="Surprised Vidiotbox">
+            <img src="assets/images/loving.png" alt="Loving Vidiotbox">
+            <img class="dreaming" src="assets/images/sleeping.png" alt="Sleeping Vidiotbox">
           </div>
         </div>
       </div>
@@ -755,14 +850,14 @@ vidiotbox-XXXX
     </div>
 
     <footer class="footer">
-      roboface V10-Basel - Copyright (c) 2026 Paul Hodara - All rights reserved.
+      Vidiotbox V10-Basel - Copyright (c) 2026 Paul Hodara - All rights reserved.
       This project is proprietary. No use, copying, modification, distribution,
       commercialization, or derivative work is permitted without prior explicit
       written permission from Paul Hodara. Design treatment is an original
-      roboface guide layout inspired by modular editorial systems, not an
+      Vidiotbox guide layout inspired by modular editorial systems, not an
       official magazine template.
     </footer>
-    <div class="end-marker">End of roboface User Guide</div>
+    <div class="end-marker">End of Vidiotbox User Guide</div>
   </main>
 </body>
 </html>
