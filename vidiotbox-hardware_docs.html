@@ -680,8 +680,10 @@ vidiotbox-XXXX
           <table>
             <thead><tr><th>Pattern</th><th>Reaction</th></tr></thead>
             <tbody>
-              <tr><td>HAPPY, BEAT-BOP, WACKY, or SURPRISED</td><td>Queues PLAYFUL.</td></tr>
-              <tr><td>ANGRY</td><td>Shows ANGRY and queues ANNOYED.</td></tr>
+              <tr><td>HAPPY, BEAT-BOP, WACKY, or SURPRISED once</td><td>Queues PLAYFUL unless a specific two-touch mood pattern wins.</td></tr>
+              <tr><td>WACKY / BEAT-BOP twice within 3 seconds</td><td>Queues WHACKBOP.</td></tr>
+              <tr><td>ANGRY / ANXIOUS twice within 3 seconds</td><td>Queues ANNOYED. One touch only shows that expression.</td></tr>
+              <tr><td>Two CURIOUS expressions within 3 seconds</td><td>NEUTRAL, LISTENING, SURPRISED, PROUD, or HAPPY can queue CURIOUS after the mood cooldown.</td></tr>
               <tr><td>DREAMING twice</td><td>Queues DREAMY.</td></tr>
               <tr><td>SLEEPING twice while calm</td><td>Queues DREAMY.</td></tr>
               <tr><td>PLAYFUL/ANNOYED alternation twice</td><td>Queues TORN.</td></tr>
@@ -704,10 +706,11 @@ vidiotbox-XXXX
           <thead><tr><th>Mood</th><th>Trigger</th><th>Sequence</th></tr></thead>
           <tbody>
             <tr><td>CALM</td><td>Default idle</td><td>NEUTRAL -> PROUD -> HAPPY -> NEUTRAL</td></tr>
-            <tr><td>CURIOUS</td><td>Soft sound or gentle touch</td><td>NEUTRAL -> LISTENING -> SURPRISED/PROUD/HAPPY -> LISTENING</td></tr>
-            <tr><td>PLAYFUL</td><td>HAPPY/BEAT-BOP/WACKY/SURPRISED touch or personality</td><td>HAPPY, WACKY, LOVING, SURPRISED, PROUD</td></tr>
-            <tr><td>ANNOYED</td><td>ANGRY, over-poking, very loud sound</td><td>ANGRY, SCARY, ANXIETY</td></tr>
-            <tr><td>SLEEPY</td><td>Long idle</td><td>NEUTRAL -> SAD -> SLEEPING</td></tr>
+            <tr><td>CURIOUS</td><td>Soft sound, CURIOUS expression pair, or personality</td><td>NEUTRAL -> LISTENING -> SURPRISED/PROUD/HAPPY -> LISTENING; can play surprise then interesting audio</td></tr>
+            <tr><td>PLAYFUL</td><td>Single HAPPY/BEAT-BOP/WACKY/SURPRISED touch or personality</td><td>HAPPY, WACKY, LOVING, SURPRISED, PROUD</td></tr>
+            <tr><td>WHACKBOP</td><td>WACKY/BEAT-BOP two-touch pair</td><td>WACKY -> BEAT-BOP -> WACKY -> BEAT-BOP; can play whacky then happy audio</td></tr>
+            <tr><td>ANNOYED</td><td>ANGRY/ANXIOUS two-touch pair, over-poking, very loud sound</td><td>ANGRY, SCARY, ANXIETY</td></tr>
+            <tr><td>SLEEPY</td><td>Long idle, controlled by personality or Sleepy idle seconds</td><td>DREAMING -> SLEEPING -> SLEEPING -> DREAMING -> SLEEPING</td></tr>
             <tr><td>DREAMY</td><td>DREAMING twice or calm SLEEPING twice</td><td>DREAMING and SLEEPING alternate</td></tr>
             <tr><td>TORN</td><td>Fast playful/annoyed alternation</td><td>WACKY and CONFUSED alternate</td></tr>
           </tbody>
