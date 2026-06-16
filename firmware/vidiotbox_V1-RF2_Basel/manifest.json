@@ -1,15 +1,15 @@
 {
   "name": "Vidiotbox",
-  "version": "vidiotbox_V1-RF2_Basel",
+  "version": "vidiotbox_V1-RF2_Basel-631a48b",
   "new_install_prompt_erase": true,
   "builds": [
     {
       "chipFamily": "ESP32-S3",
       "parts": [
-        { "path": "bootloader.bin", "offset": 0 },
-        { "path": "partitions.bin", "offset": 32768 },
-        { "path": "boot_app0.bin", "offset": 57344 },
-        { "path": "firmware.bin", "offset": 65536 }
+        { "path": "bootloader.bin?v=631a48b", "offset": 0 },
+        { "path": "partitions.bin?v=631a48b", "offset": 32768 },
+        { "path": "boot_app0.bin?v=631a48b", "offset": 57344 },
+        { "path": "firmware.bin?v=631a48b", "offset": 65536 }
       ]
     }
   ]
