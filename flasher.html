@@ -251,6 +251,15 @@
       margin-top: 14px;
     }
 
+    .release-meta {
+      margin: -7px 0 0;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
     esp-web-install-button {
       display: block;
       width: 100%;
@@ -446,15 +455,24 @@
       <div class="panel">
         <h2>Install Firmware</h2>
         <div class="install-box">
-          <h3>V10_Basel</h3>
-          <p>Current Vidiotbox hardware firmware built from the local <code>vidiotbox-hardware</code> project. This writes the bootloader, partition table, boot app, and firmware image.</p>
-          <esp-web-install-button manifest="firmware/V10_Basel/manifest.json"></esp-web-install-button>
+          <h3>vidiotbox_V101-RF2_Basel</h3>
+          <p class="release-meta">Commit date: 2026-06-17</p>
+          <p>Current Vidiotbox RF2 Basel firmware. Connect the board over USB, choose its serial port, then start the install.</p>
+          <esp-web-install-button manifest="firmware/vidiotbox_V101-RF2_Basel/manifest.json?v=20260617"></esp-web-install-button>
         </div>
 
         <div class="install-box">
-          <h3>vidiotbox_V101-RF2_Basel</h3>
-          <p>Connect the board over USB, choose its serial port, then start the install. This writes the bootloader, partition table, boot app, and firmware image.</p>
-          <esp-web-install-button manifest="firmware/vidiotbox_V101-RF2_Basel/manifest.json?v=809ce64"></esp-web-install-button>
+          <h3>vidiotbox_V1-RF2_Basel</h3>
+          <p class="release-meta">Commit date: 2026-06-17</p>
+          <p>Previous RF2 Basel firmware kept for version history. This writes the bootloader, partition table, boot app, and firmware image.</p>
+          <esp-web-install-button manifest="firmware/vidiotbox_V1-RF2_Basel/manifest.json?v=809ce64"></esp-web-install-button>
+        </div>
+
+        <div class="install-box">
+          <h3>V10_Basel</h3>
+          <p class="release-meta">Commit date: 2026-06-16</p>
+          <p>Earlier Vidiotbox hardware firmware built from the local <code>vidiotbox-hardware</code> project.</p>
+          <esp-web-install-button manifest="firmware/V10_Basel/manifest.json"></esp-web-install-button>
         </div>
 
       </div>
