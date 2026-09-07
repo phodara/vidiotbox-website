@@ -2822,10 +2822,12 @@
       return usesCustom ? "custom" : name;
     }
 
-    function promptForGifFilename() {
+    function promptForGifFilename(moodCount = 0) {
       const fromName = loopFilenamePart(loopFromName, loopFromUsesCustom);
       const toName = loopFilenamePart(loopToName, loopToUsesCustom);
-      const defaultName = `facimator - ${fromName} - ${toName}.gif`;
+      const defaultName = moodCount > 1
+        ? `facimator-${moodCount}-moods.gif`
+        : `facimator - ${fromName} - ${toName}.gif`;
       const enteredName = window.prompt("Save GIF as", defaultName);
       if (enteredName === null) return null;
 
@@ -2843,7 +2845,7 @@
         return;
       }
 
-      const filename = promptForGifFilename();
+      const filename = promptForGifFilename(mobileLoopExpressions.length);
       if (!filename) return;
 
       const originalExpression = clonePreset(currentExpression);
