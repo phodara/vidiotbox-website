@@ -1164,33 +1164,6 @@
     const moodPadCornerOrder = ["happy", "angry", "sad", "loving"];
     const moodPadIntensityGamma = 0.6;
 
-    function applyMoodPadDerivedControls(expression, nx, ny, r) {
-      const warm = clamp((nx + 1) / 2, 0, 1);
-      const sharp = 1 - warm;
-      const open = clamp((ny + 1) / 2, 0, 1);
-      const sleepy = 1 - open;
-      const smile = warm * open;
-      const frown = sharp * sleepy;
-      const alert = open * r;
-
-      return normalizeDynamicExpressionConstraints({
-        ...expression,
-        eyelidOpen: clamp(expression.eyelidOpen + (open - 0.5) * 0.28 * r, 0.05, 1.25),
-        eyeSquash: clamp(expression.eyeSquash + (sleepy - open) * 0.14 * r, 0.25, 1.25),
-        eyeTilt: clamp(expression.eyeTilt + nx * 0.16 * r, -1.4, 1.4),
-        eyeballSize: clamp(expression.eyeballSize + alert * 0.14, 0.55, 1.55),
-        pupilSize: clamp(expression.pupilSize + alert * 0.035 - sharp * r * 0.02, 0.05, 0.4),
-        browLift: clamp(expression.browLift + (open * 0.18 - sleepy * 0.08) * r, -0.15, 1),
-        browTilt: clamp(expression.browTilt + (sharp - warm * 0.35) * open * 0.22 * r, -1.8, 1.8),
-        browCurve: clamp(expression.browCurve + (smile * 0.04 - frown * 0.05) * r, -0.4, 0.2),
-        mouthOpen: clamp(expression.mouthOpen + open * r * 0.12, 0, mouthOpenMax),
-        mouthCurve: clamp(expression.mouthCurve + (smile - frown) * 0.16 * r, -1.5, 1.5),
-        mouthDownturn: clamp(expression.mouthDownturn - smile * 0.18 * r + frown * 0.16 * r, -1, 1.2),
-        mouthWidthScale: clamp(expression.mouthWidthScale + warm * r * 0.08 - sharp * r * 0.04, 0.45, 1.3),
-        angryMouth: clamp(expression.angryMouth + sharp * open * 0.18 * r, 0, 2)
-      });
-    }
-
     function blendMoodPad(nx, ny) {
       const rawR = clamp(Math.sqrt(nx * nx + ny * ny), 0, 1);
       const neutralExp = getExpressionByName("neutral");
@@ -1216,7 +1189,7 @@
         const directional = lerp(fromExp[key], toExp[key], withinSector);
         blended[key] = lerp(neutralExp[key], directional, r);
       });
-      return applyMoodPadDerivedControls(blended, nx, ny, r);
+      return normalizeDynamicExpressionConstraints(blended);
     }
 
     function applyMoodPadPosition(nx, ny) {
