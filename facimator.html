@@ -1219,11 +1219,11 @@
       const alert = open * r;
       return normalizeDynamicExpressionConstraints({
         ...expression,
-        eyelidOpen: clamp(expression.eyelidOpen + (open - 0.5) * 0.9 * r, 0.05, 1.25),
-        eyeSquash: clamp(expression.eyeSquash + (sleepy - open) * 0.5 * r, 0.25, 1.25),
-        eyeTilt: clamp(expression.eyeTilt + nx * 0.8 * r, -1.4, 1.4),
-        eyeballSize: clamp(expression.eyeballSize + alert * 0.4 - sleepy * r * 0.12, 0.55, 1.55),
-        pupilSize: clamp(expression.pupilSize + alert * 0.12 - sleepy * r * 0.05, 0.05, 0.4)
+        eyelidOpen: clamp(lerp(0.12, 1.25, open), 0.05, 1.25),
+        eyeSquash: clamp(lerp(1.18, 0.42, open), 0.25, 1.25),
+        eyeTilt: clamp(nx * 1.25 * r, -1.4, 1.4),
+        eyeballSize: clamp(lerp(0.75, 1.35, alert), 0.55, 1.55),
+        pupilSize: clamp(lerp(0.1, 0.34, alert), 0.05, 0.4)
       });
     }
 
