@@ -77,10 +77,10 @@
     .controls {
       width: 100%;
       min-width: 300px;
-      background: var(--panel);
-      border: 4px solid var(--ink);
+      background: transparent;
+      border: 0;
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      box-shadow: none;
     }
 
     .stage {
@@ -666,6 +666,8 @@
       padding: 7px;
       width: 100%;
       max-width: calc(100vw - 24px);
+      background: transparent;
+      border: 0;
     }
 
     body.smartphone .mood-pad-wrap {
@@ -689,6 +691,9 @@
 
     body.smartphone .controls > .control-group:first-child > .export-gif-row {
       display: grid;
+      width: min(calc(100vw - 24px), calc(var(--phone-stage-height) * 1.04));
+      max-width: calc(100vw - 24px);
+      margin-inline: auto;
     }
 
     body.smartphone #previewLoopButton {
