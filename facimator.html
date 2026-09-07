@@ -450,6 +450,36 @@
       padding: 6px 0 2px;
     }
 
+    .mobile-loop-chain {
+      display: grid;
+      grid-template-columns: 72px minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+    }
+
+    .mobile-loop-dots {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 34px;
+      padding: 7px 8px;
+      border: 3px solid var(--ink);
+      background: var(--paper);
+    }
+
+    .mobile-loop-dot {
+      width: 10px;
+      height: 10px;
+      flex: 0 0 auto;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .mobile-loop-dot[data-filled="true"] {
+      background: var(--cyan);
+    }
+
     .mood-pad {
       position: relative;
       width: min(62vw, 260px);
@@ -651,9 +681,9 @@
       </p>
       <section class="control-group" id="moodPadPanel">
         <div class="control-card">
-          <div class="button-row">
-            <button type="button" id="moodPadSetFrom">Loop From</button>
-            <button type="button" id="moodPadSetTo">Loop To</button>
+          <div class="mobile-loop-chain">
+            <button type="button" id="moodPadAddLoop">Add</button>
+            <div class="mobile-loop-dots" id="moodPadLoopDots" aria-label="Loop positions"></div>
           </div>
           <p class="helper-line">Drag inside the circle to blend between moods.</p>
           <div class="mood-pad-wrap">
@@ -666,7 +696,8 @@
             </div>
           </div>
           <div class="button-row">
-            <button id="moodPadPreviewLoop" type="button">Preview Loop</button>
+            <button id="moodPadPreviewLoop" type="button">Preview</button>
+            <button id="moodPadResetLoop" type="button">Reset</button>
           </div>
         </div>
       </section>
@@ -738,9 +769,10 @@
     const moodPadPanel = document.getElementById("moodPadPanel");
     const moodPad = document.getElementById("moodPad");
     const moodPadHandle = document.getElementById("moodPadHandle");
-    const moodPadSetFrom = document.getElementById("moodPadSetFrom");
-    const moodPadSetTo = document.getElementById("moodPadSetTo");
+    const moodPadAddLoop = document.getElementById("moodPadAddLoop");
+    const moodPadLoopDots = document.getElementById("moodPadLoopDots");
     const moodPadPreviewLoop = document.getElementById("moodPadPreviewLoop");
+    const moodPadResetLoop = document.getElementById("moodPadResetLoop");
     const showExportPanel = false;
 
     function applyDeviceLayout() {
@@ -1025,6 +1057,7 @@
 
     const customLoopValue = "__custom__";
     const customLoopSetValue = "__custom_set__";
+    const mobileLoopLimit = 10;
 
     let currentName = "neutral";
     let currentExpression = { ...expressionDefaults, ...clonePreset(presets[currentName]) };
@@ -1036,6 +1069,7 @@
     let loopToCustomExpression = getExpressionByName(loopToName);
     let hasSliderChanges = false;
     let previewAnimation = null;
+    const mobileLoopExpressions = [];
     const sliderEls = new Map();
 
     function clonePreset(value) {
@@ -1063,8 +1097,10 @@
 
     function setPreviewButtons(isPlaying) {
       previewLoopButton.textContent = isPlaying ? "Previewing..." : "Preview Loop";
-      moodPadPreviewLoop.textContent = isPlaying ? "Previewing..." : "Preview Loop";
+      moodPadPreviewLoop.textContent = isPlaying ? "Previewing..." : "Preview";
       moodPadPreviewLoop.disabled = isPlaying;
+      moodPadAddLoop.disabled = isPlaying || mobileLoopExpressions.length >= mobileLoopLimit;
+      moodPadResetLoop.disabled = isPlaying || mobileLoopExpressions.length === 0;
       stopPreviewButton.disabled = !isPlaying;
       expressionSelect.disabled = isPlaying;
       previewLoopTarget.disabled = isPlaying;
@@ -1078,10 +1114,13 @@
 
     function cancelPreviewAnimation({ keepCurrent = true } = {}) {
       if (!previewAnimation) return;
+      const canceledAnimation = previewAnimation;
       previewAnimation = null;
       if (!keepCurrent) {
-        currentExpression = resolveLoopFromExpression();
-        currentName = loopFromName;
+        currentExpression = canceledAnimation.sequenceExpressions
+          ? clonePreset(canceledAnimation.sequenceExpressions[0])
+          : resolveLoopFromExpression();
+        currentName = canceledAnimation.sequenceName || loopFromName;
       }
       setPreviewButtons(false);
     }
@@ -1184,6 +1223,40 @@
       updateControlStatus();
     }
 
+    function renderMobileLoopDots() {
+      moodPadLoopDots.replaceChildren();
+      for (let index = 0; index < mobileLoopLimit; index += 1) {
+        const dot = document.createElement("span");
+        dot.className = "mobile-loop-dot";
+        dot.dataset.filled = String(index < mobileLoopExpressions.length);
+        moodPadLoopDots.append(dot);
+      }
+      moodPadAddLoop.disabled = Boolean(previewAnimation) || mobileLoopExpressions.length >= mobileLoopLimit;
+      moodPadResetLoop.disabled = Boolean(previewAnimation) || mobileLoopExpressions.length === 0;
+    }
+
+    function addCurrentFaceToMobileLoop() {
+      if (mobileLoopExpressions.length >= mobileLoopLimit) {
+        flashButtonLabel(moodPadAddLoop, "Full");
+        return;
+      }
+      cancelPreviewAnimation();
+      mobileLoopExpressions.push({
+        name: currentName,
+        expression: normalizeDynamicExpressionConstraints(clonePreset(currentExpression))
+      });
+      hasSliderChanges = false;
+      renderMobileLoopDots();
+      flashButtonLabel(moodPadAddLoop, "Added");
+    }
+
+    function resetMobileLoop() {
+      cancelPreviewAnimation();
+      mobileLoopExpressions.length = 0;
+      renderMobileLoopDots();
+      render();
+    }
+
     function captureCurrentFaceForLoop(endpoint) {
       const capturedExpression = normalizeDynamicExpressionConstraints(clonePreset(currentExpression));
 
@@ -1211,6 +1284,20 @@
         repeats: Math.max(1, repeats)
       };
       currentName = loopFromName;
+      setPreviewButtons(true);
+    }
+
+    function runPreviewSequence(sequenceItems, repeats) {
+      if (sequenceItems.length === 0) return;
+      const sequenceExpressions = sequenceItems.map((item) => clonePreset(item.expression));
+      previewAnimation = {
+        startTime: performance.now(),
+        phaseDurationMs: 900,
+        sequenceExpressions,
+        sequenceName: sequenceItems[0].name,
+        repeats: Math.max(1, repeats)
+      };
+      currentName = sequenceItems[0].name;
       setPreviewButtons(true);
     }
 
@@ -2787,13 +2874,26 @@
       if (previewAnimation) {
         const elapsed = performance.now() - previewAnimation.startTime;
         const phaseDuration = previewAnimation.phaseDurationMs;
-        const totalPhases = previewAnimation.repeats * 2;
+        const sequenceExpressions = previewAnimation.sequenceExpressions || null;
+        const sequenceLength = sequenceExpressions ? sequenceExpressions.length : 0;
+        const totalPhases = sequenceExpressions
+          ? previewAnimation.repeats * sequenceLength
+          : previewAnimation.repeats * 2;
         const phaseProgress = elapsed / phaseDuration;
         if (phaseProgress >= totalPhases) {
-          currentExpression = clonePreset(previewAnimation.startExpression);
-          currentName = loopFromName;
+          currentExpression = sequenceExpressions
+            ? clonePreset(sequenceExpressions[0])
+            : clonePreset(previewAnimation.startExpression);
+          currentName = previewAnimation.sequenceName || loopFromName;
           previewAnimation = null;
           setPreviewButtons(false);
+        } else if (sequenceExpressions) {
+          const phaseIndex = Math.floor(phaseProgress);
+          const phaseT = easeInOutCubic(phaseProgress - phaseIndex);
+          const fromExpression = sequenceExpressions[phaseIndex % sequenceLength];
+          const toExpression = sequenceExpressions[(phaseIndex + 1) % sequenceLength];
+          currentExpression = mixExpressions(fromExpression, toExpression, phaseT);
+          currentName = previewAnimation.sequenceName;
         } else {
           const phaseIndex = Math.floor(phaseProgress);
           const phaseT = easeInOutCubic(phaseProgress - phaseIndex);
@@ -2910,7 +3010,16 @@
       render();
     });
 
-    moodPadPreviewLoop.addEventListener("click", () => previewLoopButton.click());
+    moodPadPreviewLoop.addEventListener("click", () => {
+      if (mobileLoopExpressions.length === 0) {
+        previewLoopButton.click();
+        return;
+      }
+      const repeats = clamp(Number(previewRepeats.value) || 1, 1, 20);
+      previewRepeats.value = String(repeats);
+      runPreviewSequence(mobileLoopExpressions, repeats);
+      render();
+    });
 
     downloadGifButton.addEventListener("click", () => {
       downloadLoopGif();
@@ -2949,15 +3058,11 @@
       });
     });
 
-    function captureMoodPadForLoop(endpoint) {
-      cancelPreviewAnimation();
-      captureCurrentFaceForLoop(endpoint);
-      updateControlStatus();
+    moodPadAddLoop.addEventListener("click", () => {
+      addCurrentFaceToMobileLoop();
       render();
-    }
-
-    moodPadSetFrom.addEventListener("click", () => captureMoodPadForLoop("from"));
-    moodPadSetTo.addEventListener("click", () => captureMoodPadForLoop("to"));
+    });
+    moodPadResetLoop.addEventListener("click", resetMobileLoop);
 
     applyDeviceLayout();
     applyPanelVisibility();
@@ -2966,6 +3071,7 @@
     createSliders();
     populateExpressions();
     setPreviewButtons(false);
+    renderMobileLoopDots();
     frame();
   </script>
   <!-- Copyright 2025 Paul Hodara All Rights Reserved -->
