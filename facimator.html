@@ -579,6 +579,18 @@
       display: grid;
     }
 
+    body.smartphone .controls > .control-group:first-child h2 {
+      display: none;
+    }
+
+    body.smartphone #previewLoopButton {
+      display: none;
+    }
+
+    body.smartphone #stopPreviewButton {
+      grid-column: 1 / -1;
+    }
+
     @media (max-width: 960px) {
       body {
         overflow-x: hidden;
@@ -638,7 +650,7 @@
             </div>
           </div>
           <div class="button-row">
-            <button id="previewLoopButton" type="button">Preview Loop</button>
+            <button id="moodPadPreviewLoop" type="button">Preview Loop</button>
           </div>
         </div>
       </section>
@@ -646,6 +658,7 @@
 
     <aside class="controls">
       <section class="control-group">
+        <h2>Faceimator V2</h2>
         <div class="control-card">
           <p class="control-card-title">Loop From</p>
           <div class="loop-row">
@@ -669,6 +682,7 @@
           <input id="previewRepeats" type="number" min="1" max="20" step="1" value="3">
         </div>
         <div class="button-row">
+          <button id="previewLoopButton" type="button">Preview Loop</button>
           <button id="stopPreviewButton" type="button">Stop</button>
         </div>
         <div class="button-row">
@@ -709,6 +723,7 @@
     const moodPadHandle = document.getElementById("moodPadHandle");
     const moodPadSetFrom = document.getElementById("moodPadSetFrom");
     const moodPadSetTo = document.getElementById("moodPadSetTo");
+    const moodPadPreviewLoop = document.getElementById("moodPadPreviewLoop");
     const showExportPanel = false;
 
     function applyDeviceLayout() {
@@ -1028,6 +1043,8 @@
 
     function setPreviewButtons(isPlaying) {
       previewLoopButton.textContent = isPlaying ? "Previewing..." : "Preview Loop";
+      moodPadPreviewLoop.textContent = isPlaying ? "Previewing..." : "Preview Loop";
+      moodPadPreviewLoop.disabled = isPlaying;
       stopPreviewButton.disabled = !isPlaying;
       expressionSelect.disabled = isPlaying;
       previewLoopTarget.disabled = isPlaying;
@@ -2872,6 +2889,8 @@
       );
       render();
     });
+
+    moodPadPreviewLoop.addEventListener("click", () => previewLoopButton.click());
 
     downloadGifButton.addEventListener("click", () => {
       downloadLoopGif();
