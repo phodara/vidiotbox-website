@@ -577,6 +577,21 @@
 
     body.smartphone #moodPadPanel {
       display: grid;
+      width: min(100%, calc(var(--phone-stage-height) * 0.75));
+      margin-inline: auto;
+    }
+
+    body.smartphone #moodPadPanel .control-card {
+      padding: 8px;
+    }
+
+    body.smartphone .mood-pad-wrap {
+      padding-top: 2px;
+    }
+
+    body.smartphone .mood-pad {
+      width: 100%;
+      max-width: 100%;
     }
 
     body.smartphone .controls > .control-group:first-child h2 {
@@ -720,6 +735,7 @@
     const previewRepeats = document.getElementById("previewRepeats");
     const loopFromStatus = document.getElementById("loopFromStatus");
     const loopToStatus = document.getElementById("loopToStatus");
+    const moodPadPanel = document.getElementById("moodPadPanel");
     const moodPad = document.getElementById("moodPad");
     const moodPadHandle = document.getElementById("moodPadHandle");
     const moodPadSetFrom = document.getElementById("moodPadSetFrom");
@@ -738,8 +754,11 @@
     function syncMoodPadSize() {
       const rect = canvas.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
-        moodPad.style.width = `${rect.width}px`;
-        moodPad.style.height = `${rect.height}px`;
+        const isPhoneLayout = document.body.classList.contains("smartphone");
+        const size = isPhoneLayout ? Math.max(0, rect.width - 22) : Math.min(rect.width, rect.height);
+        moodPadPanel.style.width = isPhoneLayout ? `${rect.width}px` : "";
+        moodPad.style.width = `${size}px`;
+        moodPad.style.height = `${size}px`;
       }
     }
 
