@@ -445,8 +445,10 @@
     }
 
     .mood-pad-wrap {
+      position: relative;
       display: flex;
-      justify-content: center;
+      justify-content: flex-end;
+      align-items: center;
       padding: 6px 0 2px;
     }
 
@@ -534,25 +536,34 @@
     .mood-pad-label--sad { bottom: 8px; left: 8px; background: var(--blue); color: #fff; }
     .mood-pad-label--loving { bottom: 8px; right: 8px; background: var(--pink); }
 
-    .mood-pad-ring-label {
+    .mood-pad-mode-buttons {
       position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 2px 5px;
-      border: 1px solid var(--ink);
-      background: rgba(255, 255, 255, 0.86);
+      top: 50%;
+      left: 8px;
+      z-index: 2;
+      display: grid;
+      gap: 3px;
+      width: 72px;
+      transform: translateY(-50%);
+    }
+
+    .mood-pad-mode-button {
+      min-height: 21px;
+      padding: 2px 4px;
+      border: 2px solid var(--ink);
+      background: var(--paper);
       color: var(--ink);
       font-size: 0.48rem;
       font-weight: 950;
       letter-spacing: 0.04em;
       line-height: 1;
       text-transform: uppercase;
-      pointer-events: none;
+      box-shadow: 2px 2px 0 var(--ink);
     }
 
-    .mood-pad-ring-label--mood { top: 3%; }
-    .mood-pad-ring-label--nose { top: 20%; }
-    .mood-pad-ring-label--eyes { top: 46%; }
+    .mood-pad-mode-button[data-active="true"] {
+      background: var(--cyan);
+    }
 
     .mood-pad-handle {
       position: absolute;
@@ -604,6 +615,8 @@
 
     body.smartphone .stage {
       flex: 0 0 auto;
+      width: 100vw;
+      margin-inline: calc(50% - 50vw);
       min-height: calc(var(--phone-stage-height) * 0.68);
       justify-content: center;
       align-items: center;
@@ -631,7 +644,8 @@
 
     body.smartphone #moodPadPanel {
       display: grid;
-      width: min(100%, calc(var(--phone-stage-height) * 0.8625));
+      width: min(calc(100vw - 24px), calc(var(--phone-stage-height) * 1.04));
+      max-width: calc(100vw - 24px);
       margin-inline: auto;
       justify-self: center;
     }
@@ -639,6 +653,8 @@
     body.smartphone #moodPadPanel .control-card {
       gap: 7px;
       padding: 7px;
+      width: 100%;
+      max-width: calc(100vw - 24px);
     }
 
     body.smartphone .mood-pad-wrap {
@@ -722,14 +738,19 @@
             <div class="mobile-loop-dots" id="moodPadLoopDots" aria-label="Loop positions"></div>
           </div>
           <div class="mood-pad-wrap">
+            <div class="mood-pad-mode-buttons" id="moodPadModeButtons" aria-label="Mood pad mode">
+              <button class="mood-pad-mode-button" type="button" data-mode="mood">Mood</button>
+              <button class="mood-pad-mode-button" type="button" data-mode="eyes">Eyes</button>
+              <button class="mood-pad-mode-button" type="button" data-mode="brows">Brows</button>
+              <button class="mood-pad-mode-button" type="button" data-mode="hair">Hair</button>
+              <button class="mood-pad-mode-button" type="button" data-mode="nose">Nose</button>
+              <button class="mood-pad-mode-button" type="button" data-mode="mouth">Mouth</button>
+            </div>
             <div class="mood-pad" id="moodPad">
               <div class="mood-pad-label mood-pad-label--happy">Happy</div>
               <div class="mood-pad-label mood-pad-label--angry">Angry</div>
               <div class="mood-pad-label mood-pad-label--sad">Sad</div>
               <div class="mood-pad-label mood-pad-label--loving">Loving</div>
-              <div class="mood-pad-ring-label mood-pad-ring-label--mood">Mood</div>
-              <div class="mood-pad-ring-label mood-pad-ring-label--eyes">Eyes</div>
-              <div class="mood-pad-ring-label mood-pad-ring-label--nose">Nose</div>
               <div class="mood-pad-handle" id="moodPadHandle"></div>
             </div>
           </div>
@@ -807,14 +828,18 @@
     const moodPadPanel = document.getElementById("moodPadPanel");
     const moodPad = document.getElementById("moodPad");
     const moodPadHandle = document.getElementById("moodPadHandle");
+    const moodPadModeButtons = Array.from(document.querySelectorAll(".mood-pad-mode-button"));
     const moodPadAddLoop = document.getElementById("moodPadAddLoop");
     const moodPadLoopDots = document.getElementById("moodPadLoopDots");
     const moodPadPreviewLoop = document.getElementById("moodPadPreviewLoop");
     const moodPadResetLoop = document.getElementById("moodPadResetLoop");
     const showExportPanel = false;
+    let activeMoodPadMode = "mood";
 
     function applyDeviceLayout() {
-      const isPhoneLike = /Android|iPhone|iPod/i.test(navigator.userAgent)
+      const forceMobileLayout = new URLSearchParams(window.location.search).get("mobile") === "1";
+      const isPhoneLike = forceMobileLayout
+        || /Android|iPhone|iPod/i.test(navigator.userAgent)
         || (/Mobile/i.test(navigator.userAgent) && window.innerWidth <= 1024)
         || (window.matchMedia("(pointer: coarse)").matches && window.innerWidth <= 900);
       document.body.classList.toggle("smartphone", isPhoneLike);
@@ -825,10 +850,20 @@
       const rect = canvas.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
         const isPhoneLayout = document.body.classList.contains("smartphone");
-        const size = isPhoneLayout ? Math.max(0, rect.width - 22) : Math.min(rect.width, rect.height);
-        moodPadPanel.style.width = isPhoneLayout ? `${rect.width}px` : "";
+        const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+        const panelWidth = isPhoneLayout
+          ? Math.min(viewportWidth - 24, Math.max(rect.width * 1.18, 330))
+          : rect.width;
+        const size = isPhoneLayout ? Math.max(0, (panelWidth - 22) * 0.6) : Math.min(rect.width, rect.height);
+        moodPadPanel.style.transform = "";
+        moodPadPanel.style.width = isPhoneLayout ? `${panelWidth}px` : "";
         moodPad.style.width = `${size}px`;
         moodPad.style.height = `${size}px`;
+        if (isPhoneLayout) {
+          const panelRect = moodPadPanel.getBoundingClientRect();
+          const centeredLeft = (viewportWidth - panelRect.width) / 2;
+          moodPadPanel.style.transform = `translateX(${centeredLeft - panelRect.left}px)`;
+        }
       }
     }
 
@@ -1188,6 +1223,12 @@
       moodPadHandle.style.top = `${((1 - ny) / 2) * 100}%`;
     }
 
+    function syncMoodPadModeButtons() {
+      moodPadModeButtons.forEach((button) => {
+        button.dataset.active = String(button.dataset.mode === activeMoodPadMode);
+      });
+    }
+
     const moodPadCornerOrder = ["happy", "angry", "sad", "loving"];
     const moodPadIntensityGamma = 0.6;
 
@@ -1236,6 +1277,38 @@
       });
     }
 
+    function applyMoodPadBrowControls(expression, nx, ny, r) {
+      const diagonalCurve = clamp((nx + ny) / Math.SQRT2, -1, 1) * r;
+      return normalizeDynamicExpressionConstraints({
+        ...expression,
+        browTilt: clamp(nx * 1.8 * r, -1.8, 1.8),
+        browLift: clamp(lerp(-0.15, 1, (ny + 1) / 2), -0.15, 1),
+        browCurve: clamp(diagonalCurve * 0.2 - 0.1, -0.4, 0.2)
+      });
+    }
+
+    function applyMoodPadHairControls(expression, nx, ny, r) {
+      const length = lerp(0, 60, clamp((ny + 1) / 2, 0, 1));
+      return normalizeDynamicExpressionConstraints({
+        ...expression,
+        hairLength: clamp(length * Math.max(0.25, r), 0, 60)
+      });
+    }
+
+    function applyMoodPadMouthControls(expression, nx, ny, r) {
+      const open = clamp((ny + 1) / 2, 0, 1);
+      const smile = clamp((nx + 1) / 2, 0, 1);
+      const diagonalWidth = clamp((nx + ny) / Math.SQRT2, -1, 1) * r;
+      return normalizeDynamicExpressionConstraints({
+        ...expression,
+        mouthOpen: clamp(open * mouthOpenMax * r, 0, mouthOpenMax),
+        mouthCurve: clamp(lerp(-1.5, 1.5, smile) * r, -1.5, 1.5),
+        mouthDownturn: clamp(lerp(1.2, -1, smile) * r, -1, 1.2),
+        mouthWidthScale: clamp(1 + diagonalWidth * 0.3, 0.45, 1.3),
+        angryMouth: clamp((1 - smile) * open * 2 * r, 0, 2)
+      });
+    }
+
     function blendMoodPad(nx, ny) {
       const rawR = clamp(Math.sqrt(nx * nx + ny * ny), 0, 1);
       const neutralExp = getExpressionByName("neutral");
@@ -1264,26 +1337,25 @@
       return applyMoodPadDerivedControls(blended, nx, ny, r);
     }
 
-    function moodPadModeFromRadius(rawR) {
-      if (rawR < 0.08) return "hold";
-      if (rawR <= 0.39) return "eyes";
-      if (rawR < 0.79) return "nose";
-      return "mood";
-    }
-
-    function applyMoodPadPosition(nx, ny, baseExpression = currentExpression, mode = null) {
+    function applyMoodPadPosition(nx, ny, baseExpression = currentExpression, mode = activeMoodPadMode) {
       setMoodPadHandlePosition(nx, ny);
       cancelPreviewAnimation();
       currentName = "custom";
       const rawR = clamp(Math.sqrt(nx * nx + ny * ny), 0, 1);
       const r = Math.pow(rawR, moodPadIntensityGamma);
-      const activeMode = mode || moodPadModeFromRadius(rawR);
+      const activeMode = mode || activeMoodPadMode;
       if (activeMode === "hold") {
         currentExpression = normalizeDynamicExpressionConstraints(clonePreset(baseExpression));
       } else if (activeMode === "eyes") {
         currentExpression = applyMoodPadEyeControls(clonePreset(baseExpression), nx, ny, r);
       } else if (activeMode === "nose") {
         currentExpression = applyMoodPadNoseControls(clonePreset(baseExpression), nx, ny, r);
+      } else if (activeMode === "brows") {
+        currentExpression = applyMoodPadBrowControls(clonePreset(baseExpression), nx, ny, r);
+      } else if (activeMode === "hair") {
+        currentExpression = applyMoodPadHairControls(clonePreset(baseExpression), nx, ny, r);
+      } else if (activeMode === "mouth") {
+        currentExpression = applyMoodPadMouthControls(clonePreset(baseExpression), nx, ny, r);
       } else {
         currentExpression = blendMoodPad(nx, ny);
       }
@@ -3170,8 +3242,7 @@
       moodPadDragging = true;
       moodPadDragBaseExpression = clonePreset(currentExpression);
       const point = moodPadPointFromEvent(event);
-      const rawR = clamp(Math.sqrt(point[0] * point[0] + point[1] * point[1]), 0, 1);
-      moodPadDragMode = moodPadModeFromRadius(rawR);
+      moodPadDragMode = activeMoodPadMode;
       moodPad.setPointerCapture(event.pointerId);
       applyMoodPadPosition(...point, moodPadDragBaseExpression, moodPadDragMode);
     });
@@ -3191,6 +3262,16 @@
       });
     });
 
+    moodPadModeButtons.forEach((button) => {
+      button.addEventListener("pointerdown", (event) => {
+        event.stopPropagation();
+      });
+      button.addEventListener("click", () => {
+        activeMoodPadMode = button.dataset.mode;
+        syncMoodPadModeButtons();
+      });
+    });
+
     moodPadAddLoop.addEventListener("click", () => {
       addCurrentFaceToMobileLoop();
       render();
@@ -3205,6 +3286,7 @@
     populateExpressions();
     setPreviewButtons(false);
     renderMobileLoopDots();
+    syncMoodPadModeButtons();
     frame();
   </script>
   <!-- Copyright 2025 Paul Hodara All Rights Reserved -->
