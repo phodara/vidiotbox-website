@@ -518,6 +518,23 @@
       transform: translateX(-1px);
     }
 
+    .mood-pad-diagonal-label {
+      position: absolute;
+      top: 31%;
+      right: 31%;
+      transform: translate(50%, -50%) rotate(-45deg);
+      padding: 2px 5px;
+      border: 1px solid var(--ink);
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--ink);
+      font-size: 0.46rem;
+      font-weight: 950;
+      letter-spacing: 0.04em;
+      line-height: 1;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
     .mood-pad-label {
       position: absolute;
       padding: 3px 7px;
@@ -729,6 +746,7 @@
               <div class="mood-pad-label mood-pad-label--loving">Loving</div>
               <div class="mood-pad-ring-label mood-pad-ring-label--mood">Mood</div>
               <div class="mood-pad-ring-label mood-pad-ring-label--eyes">Eyes</div>
+              <div class="mood-pad-diagonal-label">Gaze</div>
               <div class="mood-pad-ring-label mood-pad-ring-label--nose">Nose</div>
               <div class="mood-pad-handle" id="moodPadHandle"></div>
             </div>
@@ -1217,13 +1235,16 @@
       const open = clamp((ny + 1) / 2, 0, 1);
       const sleepy = 1 - open;
       const alert = open * r;
+      const diagonalGaze = clamp((nx + ny) / Math.SQRT2, -1, 1) * r;
       return normalizeDynamicExpressionConstraints({
         ...expression,
         eyelidOpen: clamp(lerp(0.12, 1.25, open), 0.05, 1.25),
         eyeSquash: clamp(lerp(1.18, 0.42, open), 0.25, 1.25),
         eyeTilt: clamp(nx * 1.25 * r, -1.4, 1.4),
         eyeballSize: clamp(lerp(0.75, 1.35, alert), 0.55, 1.55),
-        pupilSize: clamp(lerp(0.1, 0.34, alert), 0.05, 0.4)
+        pupilSize: clamp(lerp(0.1, 0.34, alert) + diagonalGaze * 0.035, 0.05, 0.4),
+        pupilOffsetX: clamp(diagonalGaze * 0.2, -0.2, 0.2),
+        pupilOffsetY: clamp(-diagonalGaze * 0.12, -0.12, 0.12)
       });
     }
 
