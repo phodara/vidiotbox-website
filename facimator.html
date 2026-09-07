@@ -531,10 +531,18 @@
       color: var(--ink);
     }
 
-    .mood-pad-label--happy { top: 8px; right: 8px; background: var(--yellow); }
-    .mood-pad-label--angry { top: 8px; left: 8px; background: var(--red); color: #fff; }
-    .mood-pad-label--sad { bottom: 8px; left: 8px; background: var(--blue); color: #fff; }
-    .mood-pad-label--loving { bottom: 8px; right: 8px; background: var(--pink); }
+    .mood-pad-label[hidden] {
+      display: none;
+    }
+
+    .mood-pad-label--top-left { top: 8px; left: 8px; background: var(--red); color: #fff; }
+    .mood-pad-label--top { top: 8px; left: 50%; background: var(--green); transform: translateX(-50%); }
+    .mood-pad-label--top-right { top: 8px; right: 8px; background: var(--yellow); }
+    .mood-pad-label--right { top: 50%; right: 8px; background: var(--cyan); transform: translateY(-50%); }
+    .mood-pad-label--bottom-right { bottom: 8px; right: 8px; background: var(--pink); }
+    .mood-pad-label--bottom { bottom: 8px; left: 50%; background: var(--blue); color: #fff; transform: translateX(-50%); }
+    .mood-pad-label--bottom-left { bottom: 8px; left: 8px; background: var(--blue); color: #fff; }
+    .mood-pad-label--left { top: 50%; left: 8px; background: var(--cyan); transform: translateY(-50%); }
 
     .mood-pad-mode-buttons {
       position: absolute;
@@ -750,10 +758,14 @@
               <button class="mood-pad-mode-button" type="button" data-mode="mouth">Mouth</button>
             </div>
             <div class="mood-pad" id="moodPad">
-              <div class="mood-pad-label mood-pad-label--happy">Happy</div>
-              <div class="mood-pad-label mood-pad-label--angry">Angry</div>
-              <div class="mood-pad-label mood-pad-label--sad">Sad</div>
-              <div class="mood-pad-label mood-pad-label--loving">Loving</div>
+              <div class="mood-pad-label mood-pad-label--top-left" data-mood-pad-label="topLeft"></div>
+              <div class="mood-pad-label mood-pad-label--top" data-mood-pad-label="top"></div>
+              <div class="mood-pad-label mood-pad-label--top-right" data-mood-pad-label="topRight"></div>
+              <div class="mood-pad-label mood-pad-label--right" data-mood-pad-label="right"></div>
+              <div class="mood-pad-label mood-pad-label--bottom-right" data-mood-pad-label="bottomRight"></div>
+              <div class="mood-pad-label mood-pad-label--bottom" data-mood-pad-label="bottom"></div>
+              <div class="mood-pad-label mood-pad-label--bottom-left" data-mood-pad-label="bottomLeft"></div>
+              <div class="mood-pad-label mood-pad-label--left" data-mood-pad-label="left"></div>
               <div class="mood-pad-handle" id="moodPadHandle"></div>
             </div>
           </div>
@@ -832,6 +844,7 @@
     const moodPad = document.getElementById("moodPad");
     const moodPadHandle = document.getElementById("moodPadHandle");
     const moodPadModeButtons = Array.from(document.querySelectorAll(".mood-pad-mode-button"));
+    const moodPadLabels = Array.from(document.querySelectorAll("[data-mood-pad-label]"));
     const moodPadAddLoop = document.getElementById("moodPadAddLoop");
     const moodPadLoopDots = document.getElementById("moodPadLoopDots");
     const moodPadPreviewLoop = document.getElementById("moodPadPreviewLoop");
@@ -1226,10 +1239,57 @@
       moodPadHandle.style.top = `${((1 - ny) / 2) * 100}%`;
     }
 
+    const moodPadLabelsByMode = {
+      mood: {
+        topLeft: "Angry",
+        topRight: "Happy",
+        bottomLeft: "Sad",
+        bottomRight: "Loving"
+      },
+      eyes: {
+        top: "Open",
+        right: "Tilt Right",
+        bottom: "Sleepy",
+        left: "Tilt Left"
+      },
+      brows: {
+        top: "Raised",
+        right: "Tilt Right",
+        bottom: "Low",
+        left: "Tilt Left"
+      },
+      hair: {
+        top: "Long",
+        bottom: "Short"
+      },
+      nose: {
+        top: "Bulb",
+        right: "Right",
+        bottom: "Pinch",
+        left: "Left"
+      },
+      mouth: {
+        top: "Open",
+        right: "Smile",
+        bottom: "Closed",
+        left: "Frown"
+      }
+    };
+
+    function syncMoodPadLabels() {
+      const labels = moodPadLabelsByMode[activeMoodPadMode] || moodPadLabelsByMode.mood;
+      moodPadLabels.forEach((label) => {
+        const text = labels[label.dataset.moodPadLabel] || "";
+        label.textContent = text;
+        label.hidden = text.length === 0;
+      });
+    }
+
     function syncMoodPadModeButtons() {
       moodPadModeButtons.forEach((button) => {
         button.dataset.active = String(button.dataset.mode === activeMoodPadMode);
       });
+      syncMoodPadLabels();
     }
 
     const moodPadCornerOrder = ["happy", "angry", "sad", "loving"];
