@@ -634,7 +634,10 @@
               <div class="mood-pad-handle" id="moodPadHandle"></div>
             </div>
           </div>
-          <p class="helper-line">Use Loop From / Loop To below and choose "Custom capture current face" to save this pose into a loop.</p>
+          <div class="button-row">
+            <button type="button" id="moodPadSetFrom">Loop From</button>
+            <button type="button" id="moodPadSetTo">Loop To</button>
+          </div>
         </div>
       </section>
     </section>
@@ -704,6 +707,8 @@
     const loopToStatus = document.getElementById("loopToStatus");
     const moodPad = document.getElementById("moodPad");
     const moodPadHandle = document.getElementById("moodPadHandle");
+    const moodPadSetFrom = document.getElementById("moodPadSetFrom");
+    const moodPadSetTo = document.getElementById("moodPadSetTo");
     const showExportPanel = false;
 
     function applyDeviceLayout() {
@@ -2904,6 +2909,16 @@
         moodPadDragging = false;
       });
     });
+
+    function captureMoodPadForLoop(endpoint) {
+      cancelPreviewAnimation();
+      captureCurrentFaceForLoop(endpoint);
+      updateControlStatus();
+      render();
+    }
+
+    moodPadSetFrom.addEventListener("click", () => captureMoodPadForLoop("from"));
+    moodPadSetTo.addEventListener("click", () => captureMoodPadForLoop("to"));
 
     applyDeviceLayout();
     applyPanelVisibility();
