@@ -2042,9 +2042,11 @@
     }
 
     function eyeScaleMetrics(expression) {
+      const eyeballScale = clamp(expression.eyeballSize ?? 1, 0.55, 1.55);
+      const outlineScale = 1 + (eyeballScale - 1) * 0.36;
       return {
-        eyeScaleY: clamp(expression.eyelidOpen * expression.eyeSquash, 0.14, 1.45),
-        eyeScaleX: 1 + (1 - clamp(expression.eyeSquash, 0.25, 1.25)) * 0.08
+        eyeScaleY: clamp(expression.eyelidOpen * expression.eyeSquash * outlineScale, 0.14, 1.55),
+        eyeScaleX: (1 + (1 - clamp(expression.eyeSquash, 0.25, 1.25)) * 0.08) * outlineScale
       };
     }
 
