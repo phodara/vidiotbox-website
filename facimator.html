@@ -487,9 +487,9 @@
       border-radius: 50%;
       border: 4px solid var(--ink);
       background:
-        radial-gradient(circle closest-side, rgba(0, 212, 106, 0.32) 0 30%, transparent 31%),
-        radial-gradient(circle closest-side, transparent 0 32%, rgba(0, 215, 255, 0.24) 33% 66%, transparent 67%),
-        radial-gradient(circle closest-side, transparent 0 68%, rgba(255, 242, 0, 0.28) 69% 100%),
+        radial-gradient(circle closest-side, rgba(0, 212, 106, 0.32) 0 38%, transparent 39%),
+        radial-gradient(circle closest-side, transparent 0 40%, rgba(0, 215, 255, 0.24) 41% 76%, transparent 77%),
+        radial-gradient(circle closest-side, transparent 0 78%, rgba(255, 242, 0, 0.28) 79% 100%),
         var(--panel);
       box-shadow: var(--shadow);
       touch-action: none;
@@ -1271,9 +1271,9 @@
       const r = Math.pow(rawR, moodPadIntensityGamma);
       if (rawR < 0.08) {
         currentExpression = normalizeDynamicExpressionConstraints(clonePreset(baseExpression));
-      } else if (rawR <= 0.31) {
+      } else if (rawR <= 0.39) {
         currentExpression = applyMoodPadEyeControls(clonePreset(baseExpression), nx, ny, r);
-      } else if (rawR < 0.69) {
+      } else if (rawR < 0.79) {
         currentExpression = applyMoodPadNoseControls(clonePreset(baseExpression), nx, ny, r);
       } else {
         currentExpression = blendMoodPad(nx, ny);
