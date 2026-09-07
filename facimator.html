@@ -628,6 +628,16 @@
       display: none;
     }
 
+    body.smartphone .controls > .control-group:first-child > .control-card,
+    body.smartphone .controls > .control-group:first-child > .row,
+    body.smartphone .controls > .control-group:first-child > .button-row {
+      display: none;
+    }
+
+    body.smartphone .controls > .control-group:first-child > .export-gif-row {
+      display: grid;
+    }
+
     body.smartphone #previewLoopButton {
       display: none;
     }
@@ -732,7 +742,7 @@
           <button id="previewLoopButton" type="button">Preview Loop</button>
           <button id="stopPreviewButton" type="button">Stop</button>
         </div>
-        <div class="button-row">
+        <div class="button-row export-gif-row">
           <button id="downloadGifButton" type="button">Export GIF</button>
         </div>
         <div class="button-row">
