@@ -2856,8 +2856,10 @@
       await new Promise((resolve) => window.setTimeout(resolve, 0));
 
       try {
-        const repeats = clamp(Number(previewRepeats.value) || 1, 1, 20);
         const useMobileSequence = mobileLoopExpressions.length > 1;
+        const repeats = useMobileSequence
+          ? 1
+          : clamp(Number(previewRepeats.value) || 1, 1, 20);
         const sequenceExpressions = useMobileSequence
           ? mobileLoopExpressions.map((item) => clonePreset(item.expression))
           : null;
