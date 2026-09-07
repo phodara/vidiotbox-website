@@ -1263,17 +1263,25 @@
       return applyMoodPadDerivedControls(blended, nx, ny, r);
     }
 
-    function applyMoodPadPosition(nx, ny, baseExpression = currentExpression) {
+    function moodPadModeFromRadius(rawR) {
+      if (rawR < 0.08) return "hold";
+      if (rawR <= 0.39) return "eyes";
+      if (rawR < 0.79) return "nose";
+      return "mood";
+    }
+
+    function applyMoodPadPosition(nx, ny, baseExpression = currentExpression, mode = null) {
       setMoodPadHandlePosition(nx, ny);
       cancelPreviewAnimation();
       currentName = "custom";
       const rawR = clamp(Math.sqrt(nx * nx + ny * ny), 0, 1);
       const r = Math.pow(rawR, moodPadIntensityGamma);
-      if (rawR < 0.08) {
+      const activeMode = mode || moodPadModeFromRadius(rawR);
+      if (activeMode === "hold") {
         currentExpression = normalizeDynamicExpressionConstraints(clonePreset(baseExpression));
-      } else if (rawR <= 0.39) {
+      } else if (activeMode === "eyes") {
         currentExpression = applyMoodPadEyeControls(clonePreset(baseExpression), nx, ny, r);
-      } else if (rawR < 0.79) {
+      } else if (activeMode === "nose") {
         currentExpression = applyMoodPadNoseControls(clonePreset(baseExpression), nx, ny, r);
       } else {
         currentExpression = blendMoodPad(nx, ny);
@@ -3156,20 +3164,29 @@
 
     let moodPadDragging = false;
     let moodPadDragBaseExpression = null;
+    let moodPadDragMode = null;
     moodPad.addEventListener("pointerdown", (event) => {
       moodPadDragging = true;
       moodPadDragBaseExpression = clonePreset(currentExpression);
+      const point = moodPadPointFromEvent(event);
+      const rawR = clamp(Math.sqrt(point[0] * point[0] + point[1] * point[1]), 0, 1);
+      moodPadDragMode = moodPadModeFromRadius(rawR);
       moodPad.setPointerCapture(event.pointerId);
-      applyMoodPadPosition(...moodPadPointFromEvent(event), moodPadDragBaseExpression);
+      applyMoodPadPosition(...point, moodPadDragBaseExpression, moodPadDragMode);
     });
     moodPad.addEventListener("pointermove", (event) => {
       if (!moodPadDragging) return;
-      applyMoodPadPosition(...moodPadPointFromEvent(event), moodPadDragBaseExpression || currentExpression);
+      applyMoodPadPosition(
+        ...moodPadPointFromEvent(event),
+        moodPadDragBaseExpression || currentExpression,
+        moodPadDragMode
+      );
     });
     ["pointerup", "pointercancel", "pointerleave"].forEach((eventName) => {
       moodPad.addEventListener(eventName, () => {
         moodPadDragging = false;
         moodPadDragBaseExpression = null;
+        moodPadDragMode = null;
       });
     });
 
