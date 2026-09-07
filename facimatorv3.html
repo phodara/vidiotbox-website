@@ -1069,20 +1069,32 @@
       moodPadHandle.style.top = `${((1 - ny) / 2) * 100}%`;
     }
 
+    const moodPadCornerOrder = ["happy", "angry", "sad", "loving"];
+    const moodPadIntensityGamma = 0.6;
+
     function blendMoodPad(nx, ny) {
-      const r = clamp(Math.sqrt(nx * nx + ny * ny), 0, 1);
-      const tx = clamp((nx + 1) / 2, 0, 1);
-      const ty = clamp((ny + 1) / 2, 0, 1);
+      const rawR = clamp(Math.sqrt(nx * nx + ny * ny), 0, 1);
       const neutralExp = getExpressionByName("neutral");
-      const happyExp = getExpressionByName("happy");
-      const angryExp = getExpressionByName("angry");
-      const sadExp = getExpressionByName("sad");
-      const lovingExp = getExpressionByName("loving");
+      if (rawR <= 0.0001) {
+        return normalizeDynamicExpressionConstraints({ ...neutralExp });
+      }
+
+      // Gamma-boost the radius so the pose ramps up faster than a linear drag,
+      // reaching full corner intensity well before the physical edge of the pad.
+      const r = Math.pow(rawR, moodPadIntensityGamma);
+
+      // Corners sit exactly on the 4 diagonals (45/135/225/315deg) so dragging
+      // straight at a corner reaches that preset at full, unattenuated intensity.
+      let theta = Math.atan2(ny, nx) - Math.PI / 4;
+      theta = ((theta % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+      const sector = Math.floor(theta / (Math.PI / 2)) % 4;
+      const withinSector = (theta - sector * (Math.PI / 2)) / (Math.PI / 2);
+      const fromExp = getExpressionByName(moodPadCornerOrder[sector]);
+      const toExp = getExpressionByName(moodPadCornerOrder[(sector + 1) % 4]);
+
       const blended = {};
       sliderDefs.forEach(([key]) => {
-        const top = lerp(angryExp[key], happyExp[key], tx);
-        const bottom = lerp(sadExp[key], lovingExp[key], tx);
-        const directional = lerp(bottom, top, ty);
+        const directional = lerp(fromExp[key], toExp[key], withinSector);
         blended[key] = lerp(neutralExp[key], directional, r);
       });
       return normalizeDynamicExpressionConstraints(blended);
