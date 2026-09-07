@@ -238,6 +238,22 @@
       display: block;
     }
 
+    .page-credit {
+      margin: 18px auto 16px;
+      padding: 0 12px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      line-height: 1.45;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .mobile-page-credit {
+      display: none;
+    }
+
     .controls {
       padding: 12px;
       display: grid;
@@ -599,6 +615,7 @@
       padding: 72px 12px 4px;
       width: 100%;
       height: auto;
+      min-height: 0;
       transform: none;
       overflow: visible;
       align-items: stretch;
@@ -643,6 +660,17 @@
 
     body.smartphone .stage-footer {
       display: none;
+    }
+
+    body.smartphone .page-credit:not(.mobile-page-credit) {
+      display: none;
+    }
+
+    body.smartphone .mobile-page-credit {
+      display: block;
+      margin: 6px auto 12px;
+      max-width: calc(100vw - 24px);
+      font-size: 0.62rem;
     }
 
     body.smartphone .controls > .control-group:last-child {
@@ -725,6 +753,19 @@
       }
     }
 
+    @media (max-width: 900px), (pointer: coarse) {
+      .page-credit:not(.mobile-page-credit) {
+        display: none;
+      }
+
+      .mobile-page-credit {
+        display: block;
+        margin: 6px auto 12px;
+        max-width: calc(100vw - 24px);
+        font-size: 0.62rem;
+      }
+    }
+
     @media (max-width: 480px) and (max-height: 900px) {
       :root {
         --phone-stage-height: 47dvh;
@@ -779,6 +820,9 @@
             <button id="moodPadResetLoop" type="button">Reset</button>
           </div>
         </div>
+        <div class="page-credit mobile-page-credit">
+          Another Fine Piece of Useless Digital Art by Paul Hodara Version V10-Basel / Copyright (c) 2026 Paul Hodara / All rights reserved.
+        </div>
       </section>
     </section>
 
@@ -829,6 +873,9 @@
       </section>
     </aside>
   </main>
+  <footer class="page-credit">
+    Another Fine Piece of Useless Digital Art by Paul Hodara Version V10-Basel / Copyright (c) 2026 Paul Hodara / All rights reserved.
+  </footer>
 
   <script>
     const canvas = document.getElementById("faceCanvas");
