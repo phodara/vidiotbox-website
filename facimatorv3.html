@@ -622,8 +622,11 @@
         <span>Copyright 2026 Paul Hodara.</span>
       </p>
       <section class="control-group" id="moodPadPanel">
-        <h2>Quick Pose</h2>
         <div class="control-card">
+          <div class="button-row">
+            <button type="button" id="moodPadSetFrom">Loop From</button>
+            <button type="button" id="moodPadSetTo">Loop To</button>
+          </div>
           <p class="helper-line">Drag inside the circle to blend between moods.</p>
           <div class="mood-pad-wrap">
             <div class="mood-pad" id="moodPad">
@@ -635,8 +638,7 @@
             </div>
           </div>
           <div class="button-row">
-            <button type="button" id="moodPadSetFrom">Loop From</button>
-            <button type="button" id="moodPadSetTo">Loop To</button>
+            <button id="previewLoopButton" type="button">Preview Loop</button>
           </div>
         </div>
       </section>
@@ -644,7 +646,6 @@
 
     <aside class="controls">
       <section class="control-group">
-        <h2>Faceimator V2</h2>
         <div class="control-card">
           <p class="control-card-title">Loop From</p>
           <div class="loop-row">
@@ -668,7 +669,6 @@
           <input id="previewRepeats" type="number" min="1" max="20" step="1" value="3">
         </div>
         <div class="button-row">
-          <button id="previewLoopButton" type="button">Preview Loop</button>
           <button id="stopPreviewButton" type="button">Stop</button>
         </div>
         <div class="button-row">
