@@ -215,6 +215,7 @@
       max-height: 168vh;
       margin-left: auto;
       margin-right: auto;
+      box-shadow: 4px 4px 0 var(--ink);
     }
 
     .stage-footer {
@@ -509,7 +510,7 @@
         radial-gradient(circle closest-side, transparent 0 40%, rgba(0, 215, 255, 0.24) 41% 76%, transparent 77%),
         radial-gradient(circle closest-side, transparent 0 78%, rgba(255, 242, 0, 0.28) 79% 100%),
         var(--panel);
-      box-shadow: var(--shadow);
+      box-shadow: 4px 4px 0 var(--ink);
       touch-action: none;
     }
 
@@ -790,10 +791,6 @@
       </p>
       <section class="control-group" id="moodPadPanel">
         <div class="control-card">
-          <div class="mobile-loop-chain">
-            <button type="button" id="moodPadAddLoop">Add</button>
-            <div class="mobile-loop-dots" id="moodPadLoopDots" aria-label="Loop positions"></div>
-          </div>
           <div class="mood-pad-wrap">
             <div class="mood-pad-mode-buttons" id="moodPadModeButtons" aria-label="Mood pad mode">
               <button class="mood-pad-mode-button" type="button" data-mode="mood">Mood</button>
@@ -814,6 +811,10 @@
               <div class="mood-pad-label mood-pad-label--left" data-mood-pad-label="left"></div>
               <div class="mood-pad-handle" id="moodPadHandle"></div>
             </div>
+          </div>
+          <div class="mobile-loop-chain">
+            <button type="button" id="moodPadAddLoop">Add</button>
+            <div class="mobile-loop-dots" id="moodPadLoopDots" aria-label="Loop positions"></div>
           </div>
           <div class="button-row">
             <button id="moodPadPreviewLoop" type="button">Preview</button>
