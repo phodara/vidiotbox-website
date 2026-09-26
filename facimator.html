@@ -379,6 +379,47 @@
       cursor: pointer;
     }
 
+    .instructions {
+      padding: 10px 12px;
+      border: 3px solid var(--ink);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .instructions-title {
+      margin: 0 0 6px;
+      font-size: 0.76rem;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .instructions ol {
+      margin: 0;
+      padding-left: 1.3em;
+    }
+
+    .instructions li + li {
+      margin-top: 3px;
+    }
+
+    .instructions-tip {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .instructions-link,
+    .instructions-close {
+      display: none;
+    }
+
+    .instructions-overlay {
+      display: contents;
+    }
+
     .button-row button:only-child {
       grid-column: 1 / -1;
     }
@@ -701,6 +742,58 @@
       margin-inline: auto;
     }
 
+    body.smartphone .instructions-link {
+      display: block;
+      width: auto;
+      margin-inline: auto;
+      padding: 4px 8px;
+      border: 0;
+      background: none;
+      box-shadow: none;
+      color: var(--ink);
+      font-size: 0.74rem;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    body.smartphone .instructions-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    body.smartphone.instructions-open .instructions-overlay {
+      display: flex;
+    }
+
+    body.smartphone .instructions {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      padding-right: 44px;
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    body.smartphone .instructions-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      box-shadow: none;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
     body.smartphone #stopPreviewButton {
       grid-column: 1 / -1;
     }
@@ -821,6 +914,21 @@
           </label>
           <button id="downloadGifButton" type="button">Export GIF</button>
         </div>
+        <button class="instructions-link" id="instructionsOpen" type="button">How to Animate</button>
+        <div class="instructions-overlay" id="instructionsOverlay">
+        <div class="instructions" role="dialog" aria-labelledby="instructionsTitle">
+          <button class="instructions-close" id="instructionsClose" type="button" aria-label="Close instructions">&times;</button>
+          <p class="instructions-title" id="instructionsTitle">How to Animate</p>
+          <ol>
+            <li>Shape a face with the mood pad or the Geometry sliders.</li>
+            <li>Click <strong>Add</strong> to save it as the first expression.</li>
+            <li>Repeat steps 1 and 2 for each expression you want to transition to (up to 10).</li>
+            <li>Click <strong>Preview</strong> to watch your animation.</li>
+            <li>Click <strong>Export GIF</strong> to save it, then send it to someone you love.</li>
+          </ol>
+          <p class="instructions-tip">Tip: <strong>Background Color</strong> sets the animation's background.</p>
+        </div>
+        </div>
         <div class="page-credit mobile-page-credit">
           Another Fine Piece of Useless Digital Art by Paul Hodara Copyright (c) 2026 Paul Hodara All rights reserved.
         </div>
@@ -853,6 +961,9 @@
     const stopPreviewButton = document.getElementById("stopPreviewButton");
     const downloadGifButton = document.getElementById("downloadGifButton");
     const gifBackgroundColor = document.getElementById("gifBackgroundColor");
+    const instructionsOpen = document.getElementById("instructionsOpen");
+    const instructionsClose = document.getElementById("instructionsClose");
+    const instructionsOverlay = document.getElementById("instructionsOverlay");
     const previewRepeats = document.getElementById("previewRepeats");
     const moodPadPanel = document.getElementById("moodPadPanel");
     const moodPad = document.getElementById("moodPad");
@@ -3175,6 +3286,18 @@
       render();
     });
     moodPadResetLoop.addEventListener("click", resetMobileLoop);
+
+    function setInstructionsOpen(isOpen) {
+      document.body.classList.toggle("instructions-open", isOpen);
+    }
+    instructionsOpen.addEventListener("click", () => setInstructionsOpen(true));
+    instructionsClose.addEventListener("click", () => setInstructionsOpen(false));
+    instructionsOverlay.addEventListener("click", (event) => {
+      if (event.target === instructionsOverlay) setInstructionsOpen(false);
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") setInstructionsOpen(false);
+    });
 
     applyDeviceLayout();
     applyPanelVisibility();
