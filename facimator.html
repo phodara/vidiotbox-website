@@ -246,6 +246,10 @@
       grid-column: 1 / -1;
     }
 
+    body:not(.smartphone) #sliderPanel {
+      order: -1;
+    }
+
     .control-group {
       display: grid;
       gap: 6px;
@@ -735,6 +739,10 @@
       display: none;
     }
 
+    body.smartphone .preview-controls {
+      display: none;
+    }
+
     body.smartphone .controls > .control-group:first-child > .export-gif-row {
       display: grid;
       width: min(calc(100vw - 24px), calc(var(--phone-stage-height) * 1.04));
@@ -890,28 +898,28 @@
     <aside class="controls">
       <section class="control-group">
         <h2>Faceimator V3</h2>
-        <div class="row">
-          <label for="previewRepeats">Repeats</label>
-          <input id="previewRepeats" type="number" min="1" max="20" step="1" value="3">
-        </div>
-        <div class="button-row">
-          <button id="stopPreviewButton" type="button">Stop</button>
-        </div>
         <div class="loop-builder">
+          <label class="gif-background-picker" for="gifBackgroundColor">
+            Background Color
+            <input id="gifBackgroundColor" type="color" value="#ffffff" aria-label="GIF background color">
+          </label>
           <div class="mobile-loop-chain">
             <button type="button" id="moodPadAddLoop">Add</button>
             <div class="mobile-loop-dots" id="moodPadLoopDots" aria-label="Loop positions"></div>
+          </div>
+          <div class="row preview-controls">
+            <label for="previewRepeats">Repeats</label>
+            <input id="previewRepeats" type="number" min="1" max="20" step="1" value="3">
           </div>
           <div class="button-row">
             <button id="moodPadPreviewLoop" type="button">Preview</button>
             <button id="moodPadResetLoop" type="button">Reset</button>
           </div>
+          <div class="button-row preview-controls">
+            <button id="stopPreviewButton" type="button">Stop Preview</button>
+          </div>
         </div>
         <div class="button-row export-gif-row">
-          <label class="gif-background-picker" for="gifBackgroundColor">
-            Background Color
-            <input id="gifBackgroundColor" type="color" value="#ffffff" aria-label="GIF background color">
-          </label>
           <div class="button-row">
             <button id="downloadGifButton" type="button">Export GIF</button>
             <button id="shareGifButton" type="button">Share GIF</button>
