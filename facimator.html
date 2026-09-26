@@ -64,7 +64,7 @@
 
     .shell {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 300px;
+      grid-template-columns: 348px minmax(0, 1fr);
       gap: 16px;
       padding: 12px;
       width: 100%;
@@ -76,7 +76,7 @@
 
     .controls {
       width: 100%;
-      min-width: 300px;
+      min-width: 0;
       background: transparent;
       border: 0;
       border-radius: var(--radius);
@@ -87,7 +87,7 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      align-items: center;
+      align-items: flex-start;
       padding: 0;
       background: transparent;
       border: 0;
@@ -213,30 +213,8 @@
 
     #faceCanvas {
       max-height: 168vh;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 0;
       box-shadow: 4px 4px 0 var(--ink);
-    }
-
-    .stage-footer {
-      width: 100%;
-      max-width: 720px;
-      margin: 14px auto 0;
-      padding: 10px 12px;
-      background: var(--yellow);
-      border: 3px solid var(--ink);
-      color: var(--ink);
-      font-size: 1.56rem;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      line-height: 1.35;
-      text-align: center;
-      text-transform: uppercase;
-      box-shadow: 5px 5px 0 var(--ink);
-    }
-
-    .stage-footer span {
-      display: block;
     }
 
     .page-credit {
@@ -256,10 +234,16 @@
     }
 
     .controls {
-      padding: 12px;
+      padding: 0;
       display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
+      align-items: start;
       overflow: hidden;
+    }
+
+    #exportPanel {
+      grid-column: 1 / -1;
     }
 
     .control-group {
@@ -273,42 +257,6 @@
       padding: 10px;
       background: var(--paper);
       border: 3px solid var(--ink);
-    }
-
-    .control-card-title {
-      margin: 0;
-      color: var(--ink);
-      font-size: 0.76rem;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      line-height: 1.2;
-      text-transform: uppercase;
-    }
-
-    .status-line {
-      min-height: 1.25em;
-      color: var(--muted);
-      font-size: 0.68rem;
-      font-weight: 900;
-      letter-spacing: 0.04em;
-      line-height: 1.25;
-      text-transform: uppercase;
-    }
-
-    .helper-line {
-      margin: -2px 0 0;
-      color: var(--muted);
-      font-size: 0.64rem;
-      font-weight: 900;
-      letter-spacing: 0.03em;
-      line-height: 1.25;
-      text-transform: uppercase;
-    }
-
-    .loop-row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 6px;
     }
 
     .control-group h2 {
@@ -405,6 +353,32 @@
       gap: 8px;
     }
 
+    .export-gif-row {
+      grid-template-columns: 1fr;
+    }
+
+    .gif-background-picker {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 4px 8px;
+      border: 3px solid var(--ink);
+      border-radius: var(--radius);
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    .gif-background-picker input {
+      width: 32px;
+      height: 26px;
+      padding: 0;
+      border: 2px solid var(--ink);
+      background: none;
+      cursor: pointer;
+    }
+
     .button-row button:only-child {
       grid-column: 1 / -1;
     }
@@ -474,6 +448,11 @@
       grid-template-columns: 72px minmax(0, 1fr);
       gap: 8px;
       align-items: center;
+    }
+
+    .loop-builder {
+      display: grid;
+      gap: 8px;
     }
 
     .mobile-loop-dots {
@@ -628,6 +607,7 @@
       min-width: 0;
       min-height: 0;
       padding: 0 8px;
+      grid-template-columns: 1fr;
       gap: 10px;
       align-content: start;
       overflow-x: hidden;
@@ -657,10 +637,6 @@
       max-height: calc(var(--phone-stage-height) * 0.68 - 2px);
       margin-inline: auto;
       margin-top: 0;
-    }
-
-    body.smartphone .stage-footer {
-      display: none;
     }
 
     body.smartphone .page-credit:not(.mobile-page-credit) {
@@ -725,10 +701,6 @@
       margin-inline: auto;
     }
 
-    body.smartphone #previewLoopButton {
-      display: none;
-    }
-
     body.smartphone #stopPreviewButton {
       grid-column: 1 / -1;
     }
@@ -750,7 +722,17 @@
 
       body:not(.smartphone) #faceCanvas {
         max-height: none;
-        margin-inline: auto;
+        margin: 0;
+      }
+
+      body:not(.smartphone) .controls {
+        padding: 0;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body:not(.smartphone) .controls {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -784,11 +766,7 @@
   <script src="assets/site-menu.js"></script>
   <main class="shell">
     <section class="stage">
-      <canvas id="faceCanvas" width="720" height="1080" aria-label="Face simulator preview"></canvas>
-      <p class="stage-footer">
-        <span>More Faceimator Vidiotbox Nonsense.</span>
-        <span>Copyright 2026 Paul Hodara.</span>
-      </p>
+      <canvas id="faceCanvas" width="340" height="650" aria-label="Face simulator preview"></canvas>
       <section class="control-group" id="moodPadPanel">
         <div class="control-card">
           <div class="mood-pad-wrap">
@@ -812,6 +790,21 @@
               <div class="mood-pad-handle" id="moodPadHandle"></div>
             </div>
           </div>
+        </div>
+      </section>
+    </section>
+
+    <aside class="controls">
+      <section class="control-group">
+        <h2>Faceimator V3</h2>
+        <div class="row">
+          <label for="previewRepeats">Repeats</label>
+          <input id="previewRepeats" type="number" min="1" max="20" step="1" value="3">
+        </div>
+        <div class="button-row">
+          <button id="stopPreviewButton" type="button">Stop</button>
+        </div>
+        <div class="loop-builder">
           <div class="mobile-loop-chain">
             <button type="button" id="moodPadAddLoop">Add</button>
             <div class="mobile-loop-dots" id="moodPadLoopDots" aria-label="Loop positions"></div>
@@ -821,39 +814,11 @@
             <button id="moodPadResetLoop" type="button">Reset</button>
           </div>
         </div>
-      </section>
-    </section>
-
-    <aside class="controls">
-      <section class="control-group">
-        <h2>Faceimator V2</h2>
-        <div class="control-card">
-          <p class="control-card-title">Loop From</p>
-          <div class="loop-row">
-            <label for="expressionSelect">Preset or Capture</label>
-            <select id="expressionSelect"></select>
-          </div>
-          <p class="helper-line">For custom, adjust Geometry sliders and select Custom Capture dropdown.</p>
-          <div class="status-line" id="loopFromStatus">Using preset: Neutral</div>
-        </div>
-        <div class="control-card">
-          <p class="control-card-title">Loop To</p>
-          <div class="loop-row">
-            <label for="previewLoopTarget">Preset or Capture</label>
-            <select id="previewLoopTarget"></select>
-          </div>
-          <p class="helper-line">For custom, adjust Geometry sliders and select Custom Capture dropdown.</p>
-          <div class="status-line" id="loopToStatus">Using preset: Neutral</div>
-        </div>
-        <div class="row">
-          <label for="previewRepeats">Repeats</label>
-          <input id="previewRepeats" type="number" min="1" max="20" step="1" value="3">
-        </div>
-        <div class="button-row">
-          <button id="previewLoopButton" type="button">Preview Loop</button>
-          <button id="stopPreviewButton" type="button">Stop</button>
-        </div>
         <div class="button-row export-gif-row">
+          <label class="gif-background-picker" for="gifBackgroundColor">
+            Background Color
+            <input id="gifBackgroundColor" type="color" value="#ffffff" aria-label="GIF background color">
+          </label>
           <button id="downloadGifButton" type="button">Export GIF</button>
         </div>
         <div class="page-credit mobile-page-credit">
@@ -881,18 +846,14 @@
   <script>
     const canvas = document.getElementById("faceCanvas");
     const ctx = canvas.getContext("2d");
-    const expressionSelect = document.getElementById("expressionSelect");
     const sliderPanel = document.getElementById("sliderPanel");
     const exportPanel = document.getElementById("exportPanel");
     const jsonOutput = document.getElementById("jsonOutput");
     const copyButton = document.getElementById("copyButton");
-    const previewLoopButton = document.getElementById("previewLoopButton");
     const stopPreviewButton = document.getElementById("stopPreviewButton");
     const downloadGifButton = document.getElementById("downloadGifButton");
-    const previewLoopTarget = document.getElementById("previewLoopTarget");
+    const gifBackgroundColor = document.getElementById("gifBackgroundColor");
     const previewRepeats = document.getElementById("previewRepeats");
-    const loopFromStatus = document.getElementById("loopFromStatus");
-    const loopToStatus = document.getElementById("loopToStatus");
     const moodPadPanel = document.getElementById("moodPadPanel");
     const moodPad = document.getElementById("moodPad");
     const moodPadHandle = document.getElementById("moodPadHandle");
@@ -1190,6 +1151,11 @@
     const mouthOffsetX = -15;
     const faceOffsetY = 120;
     const faceLayoutHeight = 960;
+    const faceGraphicScale = 0.5;
+    const faceRenderWidth = 720;
+    const faceRenderHeight = 1080;
+    const faceCropX = 190;
+    const faceCropY = 225;
     const lowMouthOpenTransitionStart = 0.06;
     const lowMouthOpenTransitionEnd = 0.15;
     const highOpenCapsuleWidthRatio = 0.46;
@@ -1197,19 +1163,10 @@
     const highOpenOvalStart = 0.22;
     const highOpenOvalSubdivisionPasses = 1;
 
-    const customLoopValue = "__custom__";
-    const customLoopSetValue = "__custom_set__";
     const mobileLoopLimit = 10;
 
     let currentName = "neutral";
     let currentExpression = { ...expressionDefaults, ...clonePreset(presets[currentName]) };
-    let loopFromName = currentName;
-    let loopToName = "neutral";
-    let loopFromUsesCustom = false;
-    let loopToUsesCustom = false;
-    let loopFromCustomExpression = clonePreset(currentExpression);
-    let loopToCustomExpression = getExpressionByName(loopToName);
-    let hasSliderChanges = false;
     let previewAnimation = null;
     const mobileLoopExpressions = [];
     const sliderEls = new Map();
@@ -1238,16 +1195,11 @@
     }
 
     function setPreviewButtons(isPlaying) {
-      previewLoopButton.textContent = isPlaying ? "Previewing..." : "Preview Loop";
       moodPadPreviewLoop.textContent = isPlaying ? "Previewing..." : "Preview";
       moodPadPreviewLoop.disabled = isPlaying;
       moodPadAddLoop.disabled = isPlaying || mobileLoopExpressions.length >= mobileLoopLimit;
       moodPadResetLoop.disabled = isPlaying || mobileLoopExpressions.length === 0;
       stopPreviewButton.disabled = !isPlaying;
-      expressionSelect.disabled = isPlaying;
-      previewLoopTarget.disabled = isPlaying;
-      if (!isPlaying) syncLoopCaptureButtons();
-      updateControlStatus();
     }
 
     function getExpressionByName(name) {
@@ -1259,10 +1211,8 @@
       const canceledAnimation = previewAnimation;
       previewAnimation = null;
       if (!keepCurrent) {
-        currentExpression = canceledAnimation.sequenceExpressions
-          ? clonePreset(canceledAnimation.sequenceExpressions[0])
-          : resolveLoopFromExpression();
-        currentName = canceledAnimation.sequenceName || loopFromName;
+        currentExpression = clonePreset(canceledAnimation.sequenceExpressions[0]);
+        currentName = canceledAnimation.sequenceName;
       }
       setPreviewButtons(false);
     }
@@ -1273,18 +1223,6 @@
         mixed[key] = lerp(fromExpression[key], toExpression[key], t);
       });
       return mixed;
-    }
-
-    function resolveLoopFromExpression() {
-      return loopFromUsesCustom
-        ? normalizeDynamicExpressionConstraints(clonePreset(loopFromCustomExpression))
-        : getExpressionByName(loopFromName);
-    }
-
-    function resolveLoopToExpression() {
-      return loopToUsesCustom
-        ? normalizeDynamicExpressionConstraints(clonePreset(loopToCustomExpression))
-        : getExpressionByName(loopToName);
     }
 
     function setMoodPadHandlePosition(nx, ny) {
@@ -1478,28 +1416,8 @@
       } else {
         currentExpression = blendMoodPad(nx, ny);
       }
-      hasSliderChanges = true;
       syncSliders();
       render();
-    }
-
-    function updateLoopSelectValues() {
-      expressionSelect.value = loopFromUsesCustom ? customLoopSetValue : loopFromName;
-      previewLoopTarget.value = loopToUsesCustom ? customLoopSetValue : loopToName;
-    }
-
-    function displayExpressionName(name) {
-      return name.charAt(0).toUpperCase() + name.slice(1);
-    }
-
-    function updateControlStatus() {
-      const editNote = hasSliderChanges ? " - current edits not captured" : "";
-      loopFromStatus.textContent = loopFromUsesCustom
-        ? `Custom capture is set from ${displayExpressionName(loopFromName)}${editNote}`
-        : `Using preset: ${displayExpressionName(loopFromName)}`;
-      loopToStatus.textContent = loopToUsesCustom
-        ? `Custom capture is set from ${displayExpressionName(loopToName)}${editNote}`
-        : `Using preset: ${displayExpressionName(loopToName)}`;
     }
 
     function flashButtonLabel(button, label) {
@@ -1508,11 +1426,6 @@
       window.setTimeout(() => {
         button.textContent = originalLabel;
       }, 900);
-    }
-
-    function syncLoopCaptureButtons() {
-      if (previewAnimation) return;
-      updateControlStatus();
     }
 
     function renderMobileLoopDots() {
@@ -1537,7 +1450,6 @@
         name: currentName,
         expression: normalizeDynamicExpressionConstraints(clonePreset(currentExpression))
       });
-      hasSliderChanges = false;
       renderMobileLoopDots();
       flashButtonLabel(moodPadAddLoop, "Added");
     }
@@ -1547,36 +1459,6 @@
       mobileLoopExpressions.length = 0;
       renderMobileLoopDots();
       render();
-    }
-
-    function captureCurrentFaceForLoop(endpoint) {
-      const capturedExpression = normalizeDynamicExpressionConstraints(clonePreset(currentExpression));
-
-      if (endpoint === "from") {
-        loopFromName = currentName;
-        loopFromCustomExpression = capturedExpression;
-        loopFromUsesCustom = true;
-      } else {
-        loopToName = currentName;
-        loopToCustomExpression = capturedExpression;
-        loopToUsesCustom = true;
-      }
-
-      hasSliderChanges = false;
-      updateLoopSelectValues();
-      syncLoopCaptureButtons();
-    }
-
-    function runPreviewLoop(startExpression, endExpression, repeats) {
-      previewAnimation = {
-        startTime: performance.now(),
-        phaseDurationMs: 900,
-        startExpression: clonePreset(startExpression),
-        endExpression: clonePreset(endExpression),
-        repeats: Math.max(1, repeats)
-      };
-      currentName = loopFromName;
-      setPreviewButtons(true);
     }
 
     function runPreviewSequence(sequenceItems, repeats) {
@@ -1736,7 +1618,6 @@
           cancelPreviewAnimation();
           currentExpression[key] = sliderValueToExpressionValue(key, input.value);
           normalizeDynamicExpressionConstraints(currentExpression);
-          hasSliderChanges = true;
           value.textContent = formatValue(currentExpression[key]);
           render();
         });
@@ -1749,7 +1630,6 @@
     }
 
     function syncSliders() {
-      updateLoopSelectValues();
       sliderDefs.forEach(([key]) => {
         const slider = sliderEls.get(key);
         const bounds = getDynamicSliderBounds(key, currentExpression);
@@ -1768,7 +1648,6 @@
         objects: baseFaceObjects,
         expression: currentExpression
       }, null, 2);
-      updateControlStatus();
     }
 
     function drawBezierObject(targetCtx, object, transform) {
@@ -2392,13 +2271,13 @@
 
     function getFaceTransform() {
       const faceBounds = { x: 66, y: 123, w: 462, h: 677 };
-      const layoutHeight = Math.min(canvas.height, faceLayoutHeight);
-      const availableW = canvas.width * 0.624;
+      const layoutHeight = Math.min(faceRenderHeight, faceLayoutHeight);
+      const availableW = faceRenderWidth * 0.624;
       const availableH = layoutHeight * 0.624;
       const scale = Math.min(availableW / faceBounds.w, availableH / faceBounds.h);
       const width = faceBounds.w * scale;
       const height = faceBounds.h * scale;
-      const offsetX = (canvas.width - width) / 2 - faceBounds.x * scale;
+      const offsetX = (faceRenderWidth - width) / 2 - faceBounds.x * scale;
       const offsetY = (layoutHeight - height) / 2 - faceBounds.y * scale + faceOffsetY;
       return { offsetX, offsetY, scaleX: scale, scaleY: scale };
     }
@@ -2441,19 +2320,19 @@
     }
 
     function scaleX(x) {
-      return x / firmware.screenW * canvas.width;
+      return x / firmware.screenW * faceRenderWidth;
     }
 
     function scaleY(y) {
-      return y / firmware.screenH * canvas.height;
+      return y / firmware.screenH * faceRenderHeight;
     }
 
     function scaleW(w) {
-      return w / firmware.screenW * canvas.width;
+      return w / firmware.screenW * faceRenderWidth;
     }
 
     function scaleH(h) {
-      return h / firmware.screenH * canvas.height;
+      return h / firmware.screenH * faceRenderHeight;
     }
 
     function regionCenter(region) {
@@ -2470,13 +2349,13 @@
       for (let x = 0; x <= firmware.screenW; x += 20) {
         ctx.beginPath();
         ctx.moveTo(scaleX(x), 0);
-        ctx.lineTo(scaleX(x), canvas.height);
+        ctx.lineTo(scaleX(x), faceRenderHeight);
         ctx.stroke();
       }
       for (let y = 0; y <= firmware.screenH; y += 20) {
         ctx.beginPath();
         ctx.moveTo(0, scaleY(y));
-        ctx.lineTo(canvas.width, scaleY(y));
+        ctx.lineTo(faceRenderWidth, scaleY(y));
         ctx.stroke();
       }
       ctx.restore();
@@ -2873,18 +2752,36 @@
       if (stroke) context.stroke();
     }
 
+    function drawScaledFaceGraphics() {
+      const centerX = faceRenderWidth / 2;
+      const centerY = faceRenderHeight / 2;
+
+      ctx.save();
+      ctx.translate(-faceCropX, -faceCropY);
+      ctx.translate(centerX, centerY);
+      ctx.scale(faceGraphicScale, faceGraphicScale);
+      ctx.translate(-centerX, -centerY);
+      drawMainBaseFace();
+      drawHair();
+      drawConstructionOverlay();
+      ctx.restore();
+    }
+
     function drawCurrentFaceFrame({ includeBackground = true, includeGrid = true } = {}) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (includeBackground) {
         ctx.save();
-        ctx.fillStyle = "#f6f3ea";
+        ctx.fillStyle = gifBackgroundColor.value;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.restore();
       }
-      if (includeGrid) drawGrid();
-      drawMainBaseFace();
-      drawHair();
-      drawConstructionOverlay();
+      if (includeGrid) {
+        ctx.save();
+        ctx.translate(-faceCropX, -faceCropY);
+        drawGrid();
+        ctx.restore();
+      }
+      drawScaledFaceGraphics();
     }
 
     function writeLittleEndian16(bytes, value) {
@@ -3075,16 +2972,6 @@
       return new Blob([new Uint8Array(bytes)], { type: "image/gif" });
     }
 
-    function loopExpressionAt(startExpression, endExpression, phaseProgress) {
-      const phaseIndex = Math.floor(phaseProgress);
-      const phaseT = easeInOutCubic(phaseProgress - phaseIndex);
-      return mixExpressions(
-        phaseIndex % 2 === 0 ? startExpression : endExpression,
-        phaseIndex % 2 === 0 ? endExpression : startExpression,
-        phaseT
-      );
-    }
-
     function sequenceExpressionAt(sequenceExpressions, phaseProgress) {
       const sequenceLength = sequenceExpressions.length;
       const phaseIndex = Math.floor(phaseProgress);
@@ -3105,16 +2992,8 @@
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
-    function loopFilenamePart(name, usesCustom) {
-      return usesCustom ? "custom" : name;
-    }
-
-    function promptForGifFilename(moodCount = 0) {
-      const fromName = loopFilenamePart(loopFromName, loopFromUsesCustom);
-      const toName = loopFilenamePart(loopToName, loopToUsesCustom);
-      const defaultName = moodCount > 1
-        ? `facimator-${moodCount}-moods.gif`
-        : `facimator - ${fromName} - ${toName}.gif`;
+    function promptForGifFilename(moodCount) {
+      const defaultName = `facimator-${moodCount}-moods.gif`;
       const enteredName = window.prompt("Save GIF as", defaultName);
       if (enteredName === null) return null;
 
@@ -3127,7 +3006,7 @@
     }
 
     async function downloadLoopGif() {
-      if (mobileLoopExpressions.length === 1) {
+      if (mobileLoopExpressions.length < 2) {
         flashButtonLabel(downloadGifButton, "Add 2");
         return;
       }
@@ -3143,18 +3022,10 @@
       await new Promise((resolve) => window.setTimeout(resolve, 0));
 
       try {
-        const useMobileSequence = mobileLoopExpressions.length > 1;
-        const repeats = useMobileSequence
-          ? 1
-          : clamp(Number(previewRepeats.value) || 1, 1, 20);
-        const sequenceExpressions = useMobileSequence
-          ? mobileLoopExpressions.map((item) => clonePreset(item.expression))
-          : null;
-        const startExpression = useMobileSequence ? null : resolveLoopFromExpression();
-        const endExpression = useMobileSequence ? null : resolveLoopToExpression();
+        const sequenceExpressions = mobileLoopExpressions.map((item) => clonePreset(item.expression));
         const phaseDurationMs = 900;
         const fps = 12;
-        const totalPhases = useMobileSequence ? repeats * sequenceExpressions.length : repeats * 2;
+        const totalPhases = sequenceExpressions.length;
         const frameCount = Math.ceil((phaseDurationMs * totalPhases / 1000) * fps);
         const gifWidth = 240;
         const gifHeight = 360;
@@ -3167,12 +3038,11 @@
         previewAnimation = null;
         for (let frameIndex = 0; frameIndex < frameCount; frameIndex += 1) {
           const phaseProgress = (frameIndex / frameCount) * totalPhases;
-          currentExpression = useMobileSequence
-            ? sequenceExpressionAt(sequenceExpressions, phaseProgress)
-            : loopExpressionAt(startExpression, endExpression, phaseProgress);
-          currentName = useMobileSequence ? mobileLoopExpressions[0].name : loopFromName;
+          currentExpression = sequenceExpressionAt(sequenceExpressions, phaseProgress);
+          currentName = mobileLoopExpressions[0].name;
           drawCurrentFaceFrame({ includeBackground: false, includeGrid: false });
-          gifCtx.clearRect(0, 0, gifWidth, gifHeight);
+          gifCtx.fillStyle = gifBackgroundColor.value;
+          gifCtx.fillRect(0, 0, gifWidth, gifHeight);
           gifCtx.drawImage(canvas, 0, 0, gifWidth, gifHeight);
           frames.push(gifCtx.getImageData(0, 0, gifWidth, gifHeight));
         }
@@ -3196,34 +3066,17 @@
       if (previewAnimation) {
         const elapsed = performance.now() - previewAnimation.startTime;
         const phaseDuration = previewAnimation.phaseDurationMs;
-        const sequenceExpressions = previewAnimation.sequenceExpressions || null;
-        const sequenceLength = sequenceExpressions ? sequenceExpressions.length : 0;
-        const totalPhases = sequenceExpressions
-          ? previewAnimation.repeats * sequenceLength
-          : previewAnimation.repeats * 2;
+        const sequenceExpressions = previewAnimation.sequenceExpressions;
+        const totalPhases = previewAnimation.repeats * sequenceExpressions.length;
         const phaseProgress = elapsed / phaseDuration;
         if (phaseProgress >= totalPhases) {
-          currentExpression = sequenceExpressions
-            ? clonePreset(sequenceExpressions[0])
-            : clonePreset(previewAnimation.startExpression);
-          currentName = previewAnimation.sequenceName || loopFromName;
+          currentExpression = clonePreset(sequenceExpressions[0]);
+          currentName = previewAnimation.sequenceName;
           previewAnimation = null;
           setPreviewButtons(false);
-        } else if (sequenceExpressions) {
+        } else {
           currentExpression = sequenceExpressionAt(sequenceExpressions, phaseProgress);
           currentName = previewAnimation.sequenceName;
-        } else {
-          const phaseIndex = Math.floor(phaseProgress);
-          const phaseT = easeInOutCubic(phaseProgress - phaseIndex);
-          const goingToTarget = phaseIndex % 2 === 0;
-          const fromExpression = goingToTarget
-            ? previewAnimation.startExpression
-            : previewAnimation.endExpression;
-          const toExpression = goingToTarget
-            ? previewAnimation.endExpression
-            : previewAnimation.startExpression;
-          currentExpression = mixExpressions(fromExpression, toExpression, phaseT);
-          currentName = loopFromName;
         }
       }
       drawCurrentFaceFrame();
@@ -3233,75 +3086,6 @@
     function frame() {
       render();
       requestAnimationFrame(frame);
-    }
-
-    function populateExpressions() {
-      const fromSetOption = document.createElement("option");
-      fromSetOption.value = customLoopSetValue;
-      fromSetOption.textContent = "Is Set";
-      fromSetOption.hidden = true;
-      expressionSelect.append(fromSetOption);
-      Object.keys(presets).forEach((name) => {
-        const option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
-        expressionSelect.append(option);
-      });
-      const fromCustomOption = document.createElement("option");
-      fromCustomOption.value = customLoopValue;
-      fromCustomOption.textContent = "Custom capture current face";
-      expressionSelect.append(fromCustomOption);
-      const toSetOption = document.createElement("option");
-      toSetOption.value = customLoopSetValue;
-      toSetOption.textContent = "Is Set";
-      toSetOption.hidden = true;
-      previewLoopTarget.append(toSetOption);
-      Object.keys(presets).forEach((name) => {
-        const option = document.createElement("option");
-        option.value = name;
-        option.textContent = name;
-        previewLoopTarget.append(option);
-      });
-      const toCustomOption = document.createElement("option");
-      toCustomOption.value = customLoopValue;
-      toCustomOption.textContent = "Custom capture current face";
-      previewLoopTarget.append(toCustomOption);
-      updateLoopSelectValues();
-      expressionSelect.addEventListener("change", () => {
-        cancelPreviewAnimation();
-        if (expressionSelect.value === customLoopValue) {
-          captureCurrentFaceForLoop("from");
-        } else if (expressionSelect.value === customLoopSetValue) {
-          updateLoopSelectValues();
-        } else {
-          loopFromName = expressionSelect.value;
-          loopFromUsesCustom = false;
-          currentName = loopFromName;
-          currentExpression = getExpressionByName(currentName);
-          hasSliderChanges = false;
-          syncLoopCaptureButtons();
-        }
-        updateControlStatus();
-        render();
-      });
-      previewLoopTarget.addEventListener("change", () => {
-        cancelPreviewAnimation();
-        if (previewLoopTarget.value === customLoopValue) {
-          captureCurrentFaceForLoop("to");
-        } else if (previewLoopTarget.value === customLoopSetValue) {
-          updateLoopSelectValues();
-        } else {
-          loopToName = previewLoopTarget.value;
-          loopToUsesCustom = false;
-          currentName = loopToName;
-          currentExpression = getExpressionByName(currentName);
-          hasSliderChanges = false;
-          syncLoopCaptureButtons();
-        }
-        updateControlStatus();
-        render();
-      });
-      syncLoopCaptureButtons();
     }
 
     copyButton.addEventListener("click", async () => {
@@ -3317,20 +3101,9 @@
       }, 1200);
     });
 
-    previewLoopButton.addEventListener("click", () => {
-      const repeats = clamp(Number(previewRepeats.value) || 1, 1, 20);
-      previewRepeats.value = String(repeats);
-      runPreviewLoop(
-        resolveLoopFromExpression(),
-        resolveLoopToExpression(),
-        repeats
-      );
-      render();
-    });
-
     moodPadPreviewLoop.addEventListener("click", () => {
-      if (mobileLoopExpressions.length === 0) {
-        previewLoopButton.click();
+      if (mobileLoopExpressions.length < 2) {
+        flashButtonLabel(moodPadPreviewLoop, "Add 2");
         return;
       }
       const repeats = clamp(Number(previewRepeats.value) || 1, 1, 20);
@@ -3408,7 +3181,6 @@
     window.addEventListener("resize", applyDeviceLayout);
 
     createSliders();
-    populateExpressions();
     setPreviewButtons(false);
     renderMobileLoopDots();
     syncMoodPadModeButtons();
