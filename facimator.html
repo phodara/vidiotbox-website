@@ -912,7 +912,10 @@
             Background Color
             <input id="gifBackgroundColor" type="color" value="#ffffff" aria-label="GIF background color">
           </label>
-          <button id="downloadGifButton" type="button">Export GIF</button>
+          <div class="button-row">
+            <button id="downloadGifButton" type="button">Export GIF</button>
+            <button id="shareGifButton" type="button">Share GIF</button>
+          </div>
         </div>
         <button class="instructions-link" id="instructionsOpen" type="button">How to Animate</button>
         <div class="instructions-overlay" id="instructionsOverlay">
@@ -924,7 +927,7 @@
             <li>Click <strong>Add</strong> to save it as the first expression.</li>
             <li>Repeat steps 1 and 2 for each expression you want to transition to (up to 10).</li>
             <li>Click <strong>Preview</strong> to watch your animation.</li>
-            <li>Click <strong>Export GIF</strong> to save it, then send it to someone you love.</li>
+            <li>Click <strong>Export GIF</strong> to save it, or <strong>Share GIF</strong> to send it straight to Messages, to someone you love.</li>
           </ol>
           <p class="instructions-tip">Tip: <strong>Background Color</strong> sets the animation's background.</p>
         </div>
@@ -960,6 +963,7 @@
     const copyButton = document.getElementById("copyButton");
     const stopPreviewButton = document.getElementById("stopPreviewButton");
     const downloadGifButton = document.getElementById("downloadGifButton");
+    const shareGifButton = document.getElementById("shareGifButton");
     const gifBackgroundColor = document.getElementById("gifBackgroundColor");
     const instructionsOpen = document.getElementById("instructionsOpen");
     const instructionsClose = document.getElementById("instructionsClose");
@@ -3116,20 +3120,19 @@
       return /\.gif$/i.test(filename) ? filename : `${filename}.gif`;
     }
 
-    async function downloadLoopGif() {
-      if (mobileLoopExpressions.length < 2) {
-        flashButtonLabel(downloadGifButton, "Add 2");
-        return;
-      }
+    let cachedGif = null;
 
-      const filename = promptForGifFilename(mobileLoopExpressions.length);
-      if (!filename) return;
+    function loopGifKey() {
+      return JSON.stringify([mobileLoopExpressions.map((item) => item.expression), gifBackgroundColor.value]);
+    }
+
+    async function buildLoopGifBlob() {
+      const key = loopGifKey();
+      if (cachedGif && cachedGif.key === key) return cachedGif.blob;
 
       const originalExpression = clonePreset(currentExpression);
       const originalName = currentName;
       const originalPreviewAnimation = previewAnimation;
-      downloadGifButton.disabled = true;
-      downloadGifButton.textContent = "Making GIF...";
       await new Promise((resolve) => window.setTimeout(resolve, 0));
 
       try {
@@ -3159,17 +3162,96 @@
         }
 
         const blob = encodeGif(frames, gifWidth, gifHeight, 1000 / fps);
-        downloadBlob(blob, filename);
-      } catch (error) {
-        console.error(error);
-        flashButtonLabel(downloadGifButton, "Failed");
+        cachedGif = { key, blob };
+        return blob;
       } finally {
         currentExpression = originalExpression;
         currentName = originalName;
         previewAnimation = originalPreviewAnimation;
+        render();
+      }
+    }
+
+    async function downloadLoopGif() {
+      if (mobileLoopExpressions.length < 2) {
+        flashButtonLabel(downloadGifButton, "Add 2");
+        return;
+      }
+
+      const filename = promptForGifFilename(mobileLoopExpressions.length);
+      if (!filename) return;
+
+      downloadGifButton.disabled = true;
+      downloadGifButton.textContent = "Making GIF...";
+      try {
+        downloadBlob(await buildLoopGifBlob(), filename);
+      } catch (error) {
+        console.error(error);
+        flashButtonLabel(downloadGifButton, "Failed");
+      } finally {
         downloadGifButton.disabled = false;
         downloadGifButton.textContent = "Export GIF";
-        render();
+      }
+    }
+
+    async function copyGifToClipboard(blob) {
+      if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") return false;
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ "image/gif": blob })]);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    async function shareLoopGif() {
+      if (mobileLoopExpressions.length < 2) {
+        flashButtonLabel(shareGifButton, "Add 2");
+        return;
+      }
+
+      let label = "Share GIF";
+      shareGifButton.disabled = true;
+      shareGifButton.textContent = "Making GIF...";
+      try {
+        const blob = await buildLoopGifBlob();
+        const filename = `facimator-${mobileLoopExpressions.length}-moods.gif`;
+        const file = new File([blob], filename, { type: "image/gif" });
+
+        if (navigator.canShare?.({ files: [file] })) {
+          try {
+            await navigator.share({ files: [file] });
+            return;
+          } catch (error) {
+            if (error.name === "AbortError") return;
+            // Building the GIF can outlast the click's user activation; the GIF is
+            // cached now, so a second tap shares it immediately.
+            if (error.name === "NotAllowedError") {
+              label = "Tap to Share";
+              return;
+            }
+            throw error;
+          }
+        }
+
+        if (await copyGifToClipboard(blob)) {
+          label = "Copied";
+          return;
+        }
+
+        downloadBlob(blob, filename);
+        label = "Saved";
+      } catch (error) {
+        console.error(error);
+        label = "Failed";
+      } finally {
+        shareGifButton.disabled = false;
+        shareGifButton.textContent = label;
+        if (label !== "Share GIF" && label !== "Tap to Share") {
+          window.setTimeout(() => {
+            shareGifButton.textContent = "Share GIF";
+          }, 1200);
+        }
       }
     }
 
@@ -3225,6 +3307,10 @@
 
     downloadGifButton.addEventListener("click", () => {
       downloadLoopGif();
+    });
+
+    shareGifButton.addEventListener("click", () => {
+      shareLoopGif();
     });
 
     stopPreviewButton.addEventListener("click", () => {
