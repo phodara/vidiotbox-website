@@ -543,31 +543,34 @@
       touch-action: none;
     }
 
-    .brow-controls {
+    .feature-controls {
       display: none;
     }
 
-    body.smartphone .mood-pad[data-independent-brows="true"] > .mood-pad-label,
-    body.smartphone .mood-pad[data-independent-brows="true"] > .mood-pad-handle,
-    body.smartphone .mood-pad[data-independent-brows="true"]::before,
-    body.smartphone .mood-pad[data-independent-brows="true"]::after {
+    body.smartphone .mood-pad[data-feature-sliders="true"] > .mood-pad-label,
+    body.smartphone .mood-pad[data-feature-sliders="true"] > .mood-pad-handle,
+    body.smartphone .mood-pad[data-feature-sliders="true"]::before,
+    body.smartphone .mood-pad[data-feature-sliders="true"]::after {
       display: none;
     }
 
-    body.smartphone .mood-pad[data-independent-brows="true"] {
+    body.smartphone .mood-pad[data-feature-sliders="true"] {
       border-radius: 12px;
       background: var(--paper);
     }
 
-    body.smartphone .mood-pad[data-independent-brows="true"] > .brow-controls {
+    body.smartphone .mood-pad[data-feature-sliders="true"] > .feature-controls {
       display: flex;
       flex-direction: column;
-      justify-content: space-evenly;
+      justify-content: flex-start;
       height: 100%;
       padding: 6px 12px;
+      overflow-y: auto;
+      touch-action: pan-y;
     }
 
-    .brow-control {
+    .feature-control {
+      flex: 0 0 auto;
       display: grid;
       gap: 0;
       font-size: 0.6rem;
@@ -575,10 +578,10 @@
       color: var(--ink);
     }
 
-    .brow-control input[type="range"] {
+    .feature-control input[type="range"] {
       height: 32px;
       margin: 0;
-      accent-color: var(--brow-color);
+      accent-color: var(--feature-color);
       touch-action: none;
     }
 
@@ -652,6 +655,14 @@
       line-height: 1;
       text-transform: uppercase;
       box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    .mood-pad-mode-button[data-mode="pupilOffset"] {
+      display: none;
+    }
+
+    body.smartphone .mood-pad-mode-button[data-mode="pupilOffset"] {
+      display: block;
     }
 
     .mood-pad-mode-button[data-active="true"] {
@@ -918,6 +929,7 @@
             <div class="mood-pad-mode-buttons" id="moodPadModeButtons" aria-label="Mood pad mode">
               <button class="mood-pad-mode-button" type="button" data-mode="mood">Mood</button>
               <button class="mood-pad-mode-button" type="button" data-mode="eyes">Eyes</button>
+              <button class="mood-pad-mode-button" type="button" data-mode="pupilOffset">PUPIL OFFSET</button>
               <button class="mood-pad-mode-button" type="button" data-mode="brows">Brows</button>
               <button class="mood-pad-mode-button" type="button" data-mode="hair">Hair</button>
               <button class="mood-pad-mode-button" type="button" data-mode="nose">Nose</button>
@@ -933,20 +945,7 @@
               <div class="mood-pad-label mood-pad-label--bottom-left" data-mood-pad-label="bottomLeft"></div>
               <div class="mood-pad-label mood-pad-label--left" data-mood-pad-label="left"></div>
               <div class="mood-pad-handle" id="moodPadHandle"></div>
-              <div class="brow-controls" aria-label="Independent brow controls">
-                <label class="brow-control" style="--brow-color: var(--blue)">
-                  Turn up / Turn down
-                  <input type="range" data-brow-key="browTilt" aria-label="Brow turn up or down" min="-1.8" max="1.8" step="0.01">
-                </label>
-                <label class="brow-control" style="--brow-color: var(--yellow)">
-                  Curve
-                  <input type="range" data-brow-key="browCurve" aria-label="Brow curve" min="-0.4" max="0.6" step="0.005">
-                </label>
-                <label class="brow-control" style="--brow-color: var(--green)">
-                  Raised
-                  <input type="range" data-brow-key="browLift" aria-label="Brow raised" min="-0.15" max="1" step="0.005">
-                </label>
-              </div>
+              <div class="feature-controls" id="mobileFeatureControls" aria-label="Feature sliders"></div>
             </div>
           </div>
         </div>
@@ -1038,9 +1037,19 @@
     const moodPadPanel = document.getElementById("moodPadPanel");
     const moodPad = document.getElementById("moodPad");
     const moodPadHandle = document.getElementById("moodPadHandle");
-    // Mobile brow experiment: set false to restore the original shared brow pad.
-    const independentMobileBrows = true;
-    const browControls = Array.from(document.querySelectorAll("[data-brow-key]"));
+    // Set false to restore the original mobile disks for all feature modes.
+    const independentMobileFeatures = true;
+    const mobileFeatureControls = document.getElementById("mobileFeatureControls");
+    let mobileFeatureInputs = [];
+    const mobileFeatureDefs = {
+      brows: [["browTilt", "Turn up / Turn down"], ["browCurve", "Curve"], ["browLift", "Raised"]],
+      eyes: [["eyelidOpen", "Open"], ["eyeTilt", "Tilt"], ["pupilSize", "PUPIL SIZE"], ["eyeballSize", "EYEBALL SIZE"]],
+      pupilOffset: [["pupilOffsetX", "X axis"], ["pupilOffsetY", "Y axis"]],
+      hair: [["hairLength", "Length"], ["hairWaviness", "Waviness"]],
+      nose: [["noseDirection", "Left / Right"], ["noseBulb", "Pinch / Bulb"]],
+      mouth: [["mouthOpen", "Open"], ["mouthCurve", "Frown / Smile"], ["mouthDownturn", "Downturn"], ["mouthWidthScale", "Width"], ["mouthLift", "Raised"], ["angryMouth", "Angry"]]
+    };
+
     const moodPadModeButtons = Array.from(document.querySelectorAll(".mood-pad-mode-button"));
     const moodPadLabels = Array.from(document.querySelectorAll("[data-mood-pad-label]"));
     const moodPadAddLoop = document.getElementById("moodPadAddLoop");
@@ -1464,8 +1473,40 @@
       });
     }
 
+    function createMobileFeatureSliders() {
+      const definitions = independentMobileFeatures ? mobileFeatureDefs[activeMoodPadMode] : null;
+      moodPad.dataset.featureSliders = String(Boolean(definitions));
+      mobileFeatureControls.replaceChildren();
+      mobileFeatureControls.scrollTop = 0;
+      mobileFeatureInputs = [];
+      const colors = ["blue", "yellow", "green", "pink", "cyan", "red", "blue"];
+      (definitions || []).forEach(([key, title], index) => {
+        const label = document.createElement("label");
+        label.className = "feature-control";
+        label.style.setProperty("--feature-color", `var(--${colors[index]})`);
+        label.append(document.createTextNode(title));
+        const input = document.createElement("input");
+        const [, min, max, step] = sliderDefs.find(([name]) => name === key);
+        input.type = "range";
+        input.dataset.featureKey = key;
+        input.setAttribute("aria-label", `${activeMoodPadMode}: ${title}`);
+        Object.assign(input, { min, max, step });
+        input.addEventListener("input", () => {
+          cancelPreviewAnimation();
+          currentName = "custom";
+          currentExpression[key] = sliderValueToExpressionValue(key, input.value);
+          normalizeDynamicExpressionConstraints(currentExpression);
+          render();
+        });
+        label.append(input);
+        mobileFeatureControls.append(label);
+        mobileFeatureInputs.push(input);
+      });
+      syncSliders();
+    }
+
     function syncMoodPadModeButtons() {
-      moodPad.dataset.independentBrows = String(independentMobileBrows && activeMoodPadMode === "brows");
+      createMobileFeatureSliders();
       moodPadModeButtons.forEach((button) => {
         button.dataset.active = String(button.dataset.mode === activeMoodPadMode);
       });
@@ -1727,11 +1768,19 @@
       return { width, globeRadius, pupilScale, pupilRadius, pupilOffsetRange };
     }
 
+    function usesIndependentMobileEyes() {
+      return independentMobileFeatures && document.body.classList.contains("smartphone");
+    }
+
     function getDynamicSliderBounds(key, expression = currentExpression) {
       const sliderDef = sliderDefs.find(([sliderKey]) => sliderKey === key);
       if (!sliderDef) return null;
 
       const [, min, max, step] = sliderDef;
+      if (usesIndependentMobileEyes()) {
+        return { min: key.startsWith("pupilOffset") ? -1 : min,
+          max: key.startsWith("pupilOffset") ? 1 : max, step };
+      }
       if (!["pupilSize", "pupilOffsetX", "pupilOffsetY"].includes(key)) {
         return { min, max, step };
       }
@@ -1817,8 +1866,15 @@
     }
 
     function syncSliders() {
-      browControls.forEach((input) => {
-        input.value = currentExpression[input.dataset.browKey];
+      mobileFeatureInputs.forEach((input) => {
+        const key = input.dataset.featureKey;
+        const bounds = getDynamicSliderBounds(key, currentExpression);
+        if (bounds) {
+          input.min = bounds.min;
+          input.max = bounds.max;
+          input.step = bounds.step;
+        }
+        input.value = expressionValueToSliderValue(key, currentExpression[key]);
       });
       sliderDefs.forEach(([key]) => {
         const slider = sliderEls.get(key);
@@ -2167,6 +2223,9 @@
     }
 
     function eyeScaleMetrics(expression) {
+      if (usesIndependentMobileEyes()) {
+        return { eyeScaleY: clamp((expression.eyelidOpen ?? 1) * 1.3, 0.14, 1.72), eyeScaleX: 1 };
+      }
       const eyeSquash = clamp(expression.eyeSquash, 0.25, 1.25);
       const eyeballScale = clamp(expression.eyeballSize ?? 1, 0.55, 1.55);
       const outlineOpen = clamp(expression.eyelidOpen ?? 1, 0.05, 1.25);
@@ -2180,11 +2239,14 @@
 
     function createPupilObject(eyeObject, baseEyeObject, expression) {
       const sharedEyeWidth = firmware.eyeSocket.w * 16;
-      const pupilScale = pupilScaleFromEyeSquash(expression.eyeSquash);
+      const pupilScale = usesIndependentMobileEyes() ? 1 : pupilScaleFromEyeSquash(expression.eyeSquash);
       const globe = createEyeGlobeObject(eyeObject, baseEyeObject, expression);
       const desiredRadius = Math.max(6, sharedEyeWidth * expression.pupilSize * 0.28 * pupilScale);
-      const radius = Math.min(globe.radius * 0.98, desiredRadius);
-      const offsetRange = Math.max(0, globe.radius - radius * 1.15);
+      const radius = usesIndependentMobileEyes() ? desiredRadius : Math.min(globe.radius * 0.98, desiredRadius);
+      const baseBounds = objectBounds(baseEyeObject);
+      const offsetRange = usesIndependentMobileEyes()
+        ? (baseBounds.maxX - baseBounds.minX) * 0.12
+        : Math.max(0, globe.radius - radius * 1.15);
       return {
         center: [
           globe.center[0] + expression.pupilOffsetX * offsetRange,
@@ -2199,7 +2261,7 @@
       const baseBounds = objectBounds(baseEyeObject);
       const { eyeScaleX, eyeScaleY } = eyeScaleMetrics(expression);
       const eyeWidth = (baseBounds.maxX - baseBounds.minX) * eyeScaleX;
-      const eyeHeight = (baseBounds.maxY - baseBounds.minY) * eyeScaleY;
+      const eyeHeight = (baseBounds.maxY - baseBounds.minY) * (usesIndependentMobileEyes() ? 1.3 : eyeScaleY);
       const eyeballScale = clamp(expression.eyeballSize ?? 1, 0.55, 1.55);
       const socketFitRadius = Math.min(eyeWidth * 0.34, eyeHeight * 0.42);
       return {
@@ -3409,16 +3471,8 @@
     let moodPadDragging = false;
     let moodPadDragBaseExpression = null;
     let moodPadDragMode = null;
-    browControls.forEach((input) => {
-      input.addEventListener("input", () => {
-        cancelPreviewAnimation();
-        currentName = "custom";
-        currentExpression[input.dataset.browKey] = Number(input.value);
-        render();
-      });
-    });
     moodPad.addEventListener("pointerdown", (event) => {
-      if (independentMobileBrows && activeMoodPadMode === "brows" && document.body.classList.contains("smartphone")) return;
+      if (independentMobileFeatures && mobileFeatureDefs[activeMoodPadMode] && document.body.classList.contains("smartphone")) return;
       moodPadDragging = true;
       moodPadDragBaseExpression = clonePreset(currentExpression);
       const point = moodPadPointFromEvent(event);
