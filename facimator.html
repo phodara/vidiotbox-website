@@ -438,7 +438,12 @@
     }
 
     #sliderPanel {
-      gap: 4px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 4px 12px;
+    }
+
+    #sliderPanel > h2 {
+      grid-column: 1 / -1;
     }
 
     #sliderPanel .control-group {
@@ -535,6 +540,45 @@
         radial-gradient(circle closest-side, transparent 0 78%, rgba(255, 242, 0, 0.28) 79% 100%),
         var(--panel);
       box-shadow: 4px 4px 0 var(--ink);
+      touch-action: none;
+    }
+
+    .brow-controls {
+      display: none;
+    }
+
+    body.smartphone .mood-pad[data-independent-brows="true"] > .mood-pad-label,
+    body.smartphone .mood-pad[data-independent-brows="true"] > .mood-pad-handle,
+    body.smartphone .mood-pad[data-independent-brows="true"]::before,
+    body.smartphone .mood-pad[data-independent-brows="true"]::after {
+      display: none;
+    }
+
+    body.smartphone .mood-pad[data-independent-brows="true"] {
+      border-radius: 12px;
+      background: var(--paper);
+    }
+
+    body.smartphone .mood-pad[data-independent-brows="true"] > .brow-controls {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      height: 100%;
+      padding: 6px 12px;
+    }
+
+    .brow-control {
+      display: grid;
+      gap: 0;
+      font-size: 0.6rem;
+      letter-spacing: 0.02em;
+      color: var(--ink);
+    }
+
+    .brow-control input[type="range"] {
+      height: 32px;
+      margin: 0;
+      accent-color: var(--brow-color);
       touch-action: none;
     }
 
@@ -889,6 +933,20 @@
               <div class="mood-pad-label mood-pad-label--bottom-left" data-mood-pad-label="bottomLeft"></div>
               <div class="mood-pad-label mood-pad-label--left" data-mood-pad-label="left"></div>
               <div class="mood-pad-handle" id="moodPadHandle"></div>
+              <div class="brow-controls" aria-label="Independent brow controls">
+                <label class="brow-control" style="--brow-color: var(--blue)">
+                  Turn up / Turn down
+                  <input type="range" data-brow-key="browTilt" aria-label="Brow turn up or down" min="-1.8" max="1.8" step="0.01">
+                </label>
+                <label class="brow-control" style="--brow-color: var(--yellow)">
+                  Curve
+                  <input type="range" data-brow-key="browCurve" aria-label="Brow curve" min="-0.4" max="0.6" step="0.005">
+                </label>
+                <label class="brow-control" style="--brow-color: var(--green)">
+                  Raised
+                  <input type="range" data-brow-key="browLift" aria-label="Brow raised" min="-0.15" max="1" step="0.005">
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -980,6 +1038,9 @@
     const moodPadPanel = document.getElementById("moodPadPanel");
     const moodPad = document.getElementById("moodPad");
     const moodPadHandle = document.getElementById("moodPadHandle");
+    // Mobile brow experiment: set false to restore the original shared brow pad.
+    const independentMobileBrows = true;
+    const browControls = Array.from(document.querySelectorAll("[data-brow-key]"));
     const moodPadModeButtons = Array.from(document.querySelectorAll(".mood-pad-mode-button"));
     const moodPadLabels = Array.from(document.querySelectorAll("[data-mood-pad-label]"));
     const moodPadAddLoop = document.getElementById("moodPadAddLoop");
@@ -1238,9 +1299,10 @@
 
     const sliderDefs = [
       ["hairLength", 0, 60, 1],
+      ["hairWaviness", 0, 10, 0.1],
       ["browTilt", -1.8, 1.8, 0.01],
       ["browLift", -0.15, 1.0, 0.005],
-      ["browCurve", -0.4, 0.2, 0.005],
+      ["browCurve", -0.4, 0.6, 0.005],
       ["eyelidOpen", 0.05, 1.25, 0.01],
       ["eyeTilt", -1.4, 1.4, 0.01],
       ["eyeSquash", 0.25, 1.25, 0.01],
@@ -1262,6 +1324,7 @@
       angryMouth: 0,
       eyeballSize: 1.0,
       hairLength: 0,
+      hairWaviness: 1,
       noseDirection: 0,
       noseBulb: 0
     };
@@ -1402,6 +1465,7 @@
     }
 
     function syncMoodPadModeButtons() {
+      moodPad.dataset.independentBrows = String(independentMobileBrows && activeMoodPadMode === "brows");
       moodPadModeButtons.forEach((button) => {
         button.dataset.active = String(button.dataset.mode === activeMoodPadMode);
       });
@@ -1753,6 +1817,9 @@
     }
 
     function syncSliders() {
+      browControls.forEach((input) => {
+        input.value = currentExpression[input.dataset.browKey];
+      });
       sliderDefs.forEach(([key]) => {
         const slider = sliderEls.get(key);
         const bounds = getDynamicSliderBounds(key, currentExpression);
@@ -2541,6 +2608,7 @@
 
       const hairLift = 5;
       const hairLength = Math.max(0, currentExpression.hairLength ?? 0);
+      const hairWaviness = clamp(currentExpression.hairWaviness ?? 1, 0, 10);
       const baseTopY = hairRegion.y - 8 + hairLift;
       const baseBottomY = hairRegion.y + 7 + hairLift;
       const topY = baseTopY - hairLength;
@@ -2551,7 +2619,7 @@
           const y = lerp(topY, baseBottomY, step / 5);
           const taper = step / 5;
           const phase = now * 3.5 + step * 0.55 + strand * 0.7;
-          const x = baseX + Math.sin(phase) * (2.0 + taper * 1.5);
+          const x = baseX + Math.sin(phase) * (2.0 + taper * 1.5) * hairWaviness;
           points.push([x, scaleY(y)]);
         }
         drawOrganicCanvasPolyline(ctx, points, strand + 32, { smudge: 1.25 });
@@ -3341,7 +3409,16 @@
     let moodPadDragging = false;
     let moodPadDragBaseExpression = null;
     let moodPadDragMode = null;
+    browControls.forEach((input) => {
+      input.addEventListener("input", () => {
+        cancelPreviewAnimation();
+        currentName = "custom";
+        currentExpression[input.dataset.browKey] = Number(input.value);
+        render();
+      });
+    });
     moodPad.addEventListener("pointerdown", (event) => {
+      if (independentMobileBrows && activeMoodPadMode === "brows" && document.body.classList.contains("smartphone")) return;
       moodPadDragging = true;
       moodPadDragBaseExpression = clonePreset(currentExpression);
       const point = moodPadPointFromEvent(event);
