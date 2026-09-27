@@ -1329,6 +1329,8 @@
       ["angryMouth", 0, 2, 0.01]
     ];
 
+    const sliderDefinitions = new Map(sliderDefs.map(([key, min, max, step]) => [key, { min, max, step }]));
+
     const expressionDefaults = {
       angryMouth: 0,
       eyeballSize: 1.0,
@@ -1485,19 +1487,8 @@
         label.className = "feature-control";
         label.style.setProperty("--feature-color", `var(--${colors[index]})`);
         label.append(document.createTextNode(title));
-        const input = document.createElement("input");
-        const [, min, max, step] = sliderDefs.find(([name]) => name === key);
-        input.type = "range";
-        input.dataset.featureKey = key;
+        const input = createExpressionSlider(key, true);
         input.setAttribute("aria-label", `${activeMoodPadMode}: ${title}`);
-        Object.assign(input, { min, max, step });
-        input.addEventListener("input", () => {
-          cancelPreviewAnimation();
-          currentName = "custom";
-          currentExpression[key] = sliderValueToExpressionValue(key, input.value);
-          normalizeDynamicExpressionConstraints(currentExpression);
-          render();
-        });
         label.append(input);
         mobileFeatureControls.append(label);
         mobileFeatureInputs.push(input);
@@ -1523,7 +1514,6 @@
       const sleepy = 1 - open;
       const smile = warm * open;
       const frown = sharp * sleepy;
-      const alert = open * r;
 
       return normalizeDynamicExpressionConstraints({
         ...expression,
@@ -1540,7 +1530,6 @@
 
     function applyMoodPadEyeControls(expression, nx, ny, r) {
       const open = clamp((ny + 1) / 2, 0, 1);
-      const sleepy = 1 - open;
       const alert = open * r;
       const eyeGrowth = Math.pow(alert, 1.65);
       const diagonalSize = clamp((nx + ny) / Math.SQRT2, -1, 1) * r;
@@ -1644,7 +1633,6 @@
       } else {
         currentExpression = blendMoodPad(nx, ny);
       }
-      syncSliders();
       render();
     }
 
@@ -1764,8 +1752,7 @@
       const pupilScale = pupilScaleFromEyeSquash(resolvedExpression.eyeSquash ?? 1);
       const desiredPupilRadius = width * (resolvedExpression.pupilSize ?? 0) * pupilScale;
       const pupilRadius = Math.min(globeRadius * 0.98, desiredPupilRadius);
-      const pupilOffsetRange = Math.max(0, globeRadius - pupilRadius * 1.15);
-      return { width, globeRadius, pupilScale, pupilRadius, pupilOffsetRange };
+      return { width, globeRadius, pupilScale, pupilRadius };
     }
 
     function usesIndependentMobileEyes() {
@@ -1773,10 +1760,10 @@
     }
 
     function getDynamicSliderBounds(key, expression = currentExpression) {
-      const sliderDef = sliderDefs.find(([sliderKey]) => sliderKey === key);
+      const sliderDef = sliderDefinitions.get(key);
       if (!sliderDef) return null;
 
-      const [, min, max, step] = sliderDef;
+      const { min, max, step } = sliderDef;
       if (usesIndependentMobileEyes()) {
         return { min: key.startsWith("pupilOffset") ? -1 : min,
           max: key.startsWith("pupilOffset") ? 1 : max, step };
@@ -1813,23 +1800,35 @@
     }
 
     function normalizeDynamicExpressionConstraints(expression) {
-      const pupilBounds = getDynamicSliderBounds("pupilSize", expression);
-      if (pupilBounds) {
-        expression.pupilSize = clamp(expression.pupilSize ?? pupilBounds.min, pupilBounds.min, pupilBounds.max);
-      }
-      const pupilOffsetXBounds = getDynamicSliderBounds("pupilOffsetX", expression);
-      if (pupilOffsetXBounds) {
-        expression.pupilOffsetX = clamp(expression.pupilOffsetX ?? 0, pupilOffsetXBounds.min, pupilOffsetXBounds.max);
-      }
-      const pupilOffsetYBounds = getDynamicSliderBounds("pupilOffsetY", expression);
-      if (pupilOffsetYBounds) {
-        expression.pupilOffsetY = clamp(expression.pupilOffsetY ?? 0, pupilOffsetYBounds.min, pupilOffsetYBounds.max);
+      for (const key of ["pupilSize", "pupilOffsetX", "pupilOffsetY"]) {
+        const bounds = getDynamicSliderBounds(key, expression);
+        expression[key] = clamp(expression[key] ?? (key === "pupilSize" ? bounds.min : 0), bounds.min, bounds.max);
       }
       return expression;
     }
 
+    function syncExpressionSlider(input, key) {
+      Object.assign(input, getDynamicSliderBounds(key, currentExpression));
+      input.value = expressionValueToSliderValue(key, currentExpression[key]);
+    }
+
+    function createExpressionSlider(key, markCustom = false) {
+      const input = document.createElement("input");
+      input.type = "range";
+      input.dataset.featureKey = key;
+      syncExpressionSlider(input, key);
+      input.addEventListener("input", () => {
+        cancelPreviewAnimation();
+        if (markCustom) currentName = "custom";
+        currentExpression[key] = sliderValueToExpressionValue(key, input.value);
+        normalizeDynamicExpressionConstraints(currentExpression);
+        render();
+      });
+      return input;
+    }
+
     function createSliders() {
-      sliderDefs.forEach(([key, min, max, step]) => {
+      sliderDefs.forEach(([key]) => {
         const wrapper = document.createElement("div");
         wrapper.className = "control-group";
 
@@ -1843,20 +1842,8 @@
         const value = document.createElement("span");
         value.className = "value";
 
-        const input = document.createElement("input");
-        input.type = "range";
+        const input = createExpressionSlider(key);
         input.id = key;
-        const bounds = getDynamicSliderBounds(key, currentExpression) ?? { min, max, step };
-        input.min = bounds.min;
-        input.max = bounds.max;
-        input.step = bounds.step;
-        input.addEventListener("input", () => {
-          cancelPreviewAnimation();
-          currentExpression[key] = sliderValueToExpressionValue(key, input.value);
-          normalizeDynamicExpressionConstraints(currentExpression);
-          value.textContent = formatValue(currentExpression[key]);
-          render();
-        });
 
         row.append(label, value);
         wrapper.append(row, input);
@@ -1866,27 +1853,11 @@
     }
 
     function syncSliders() {
-      mobileFeatureInputs.forEach((input) => {
-        const key = input.dataset.featureKey;
-        const bounds = getDynamicSliderBounds(key, currentExpression);
-        if (bounds) {
-          input.min = bounds.min;
-          input.max = bounds.max;
-          input.step = bounds.step;
-        }
-        input.value = expressionValueToSliderValue(key, currentExpression[key]);
-      });
-      sliderDefs.forEach(([key]) => {
-        const slider = sliderEls.get(key);
-        const bounds = getDynamicSliderBounds(key, currentExpression);
-        if (bounds) {
-          slider.input.min = bounds.min;
-          slider.input.max = bounds.max;
-          slider.input.step = bounds.step;
-        }
-        normalizeDynamicExpressionConstraints(currentExpression);
-        slider.input.value = expressionValueToSliderValue(key, currentExpression[key]);
-        slider.value.textContent = formatValue(currentExpression[key]);
+      normalizeDynamicExpressionConstraints(currentExpression);
+      mobileFeatureInputs.forEach((input) => syncExpressionSlider(input, input.dataset.featureKey));
+      sliderEls.forEach(({ input, value }, key) => {
+        syncExpressionSlider(input, key);
+        value.textContent = formatValue(currentExpression[key]);
       });
       jsonOutput.value = JSON.stringify({
         name: currentName,
@@ -1894,24 +1865,6 @@
         objects: baseFaceObjects,
         expression: currentExpression
       }, null, 2);
-    }
-
-    function drawBezierObject(targetCtx, object, transform) {
-      const mapPoint = ([x, y]) => [
-        transform.offsetX + x * transform.scaleX,
-        transform.offsetY + y * transform.scaleY
-      ];
-
-      const [startX, startY] = mapPoint(object.start);
-      targetCtx.beginPath();
-      targetCtx.moveTo(startX, startY);
-      object.segments.forEach((segment) => {
-        const [c1x, c1y] = mapPoint([segment[0], segment[1]]);
-        const [c2x, c2y] = mapPoint([segment[2], segment[3]]);
-        const [x, y] = mapPoint([segment[4], segment[5]]);
-        targetCtx.bezierCurveTo(c1x, c1y, c2x, c2y, x, y);
-      });
-      targetCtx.stroke();
     }
 
     function drawOrganicBezierObject(targetCtx, object, transform, seed = 0, options = {}) {
@@ -1958,25 +1911,6 @@
       targetCtx.restore();
     }
 
-    function fillBezierObject(targetCtx, object, transform) {
-      const mapPoint = ([x, y]) => [
-        transform.offsetX + x * transform.scaleX,
-        transform.offsetY + y * transform.scaleY
-      ];
-
-      const [startX, startY] = mapPoint(object.start);
-      targetCtx.beginPath();
-      targetCtx.moveTo(startX, startY);
-      object.segments.forEach((segment) => {
-        const [c1x, c1y] = mapPoint([segment[0], segment[1]]);
-        const [c2x, c2y] = mapPoint([segment[2], segment[3]]);
-        const [x, y] = mapPoint([segment[4], segment[5]]);
-        targetCtx.bezierCurveTo(c1x, c1y, c2x, c2y, x, y);
-      });
-      targetCtx.closePath();
-      targetCtx.fill();
-    }
-
     function drawEyeGlobe(targetCtx, globe, transform, fillStyle = "#ffffff", strokeStyle = "#c8c1b9") {
       const cx = transform.offsetX + globe.center[0] * transform.scaleX;
       const cy = transform.offsetY + globe.center[1] * transform.scaleY;
@@ -1991,19 +1925,6 @@
       targetCtx.lineWidth = Math.max(2, transform.scaleX * 3);
       targetCtx.stroke();
       targetCtx.restore();
-    }
-
-    function drawPolylineObject(targetCtx, points, transform) {
-      if (!points || points.length < 2) return;
-
-      targetCtx.beginPath();
-      points.forEach(([x, y], index) => {
-        const mappedX = transform.offsetX + x * transform.scaleX;
-        const mappedY = transform.offsetY + y * transform.scaleY;
-        if (index === 0) targetCtx.moveTo(mappedX, mappedY);
-        else targetCtx.lineTo(mappedX, mappedY);
-      });
-      targetCtx.stroke();
     }
 
     function drawOrganicPolylineObject(targetCtx, points, transform, seed = 0) {
@@ -2099,19 +2020,6 @@
       };
     }
 
-    function createEllipseBezierObject(cx, cy, rx, ry) {
-      const k = 0.552284749831;
-      return {
-        start: [cx + rx, cy],
-        segments: [
-          [cx + rx, cy + ry * k, cx + rx * k, cy + ry, cx, cy + ry],
-          [cx - rx * k, cy + ry, cx - rx, cy + ry * k, cx - rx, cy],
-          [cx - rx, cy - ry * k, cx - rx * k, cy - ry, cx, cy - ry],
-          [cx + rx * k, cy - ry, cx + rx, cy - ry * k, cx + rx, cy]
-        ]
-      };
-    }
-
     function projectPointToEllipse(point, cx, cy, rx, ry) {
       const dx = point[0] - cx;
       const dy = point[1] - cy;
@@ -2167,22 +2075,6 @@
       return result;
     }
 
-    function createVerticalCapsuleBezierObject(cx, cy, rx, straightHalf) {
-      const k = 0.552284749831;
-      const topCy = cy - straightHalf;
-      const bottomCy = cy + straightHalf;
-      return {
-        start: [cx + rx, topCy],
-        segments: [
-          [cx + rx, topCy - rx * k, cx + rx * k, topCy - rx, cx, topCy - rx],
-          [cx - rx * k, topCy - rx, cx - rx, topCy - rx * k, cx - rx, topCy],
-          [cx - rx, topCy + straightHalf * 0.66, cx - rx, bottomCy - straightHalf * 0.66, cx - rx, bottomCy],
-          [cx - rx, bottomCy + rx * k, cx - rx * k, bottomCy + rx, cx, bottomCy + rx],
-          [cx + rx * k, bottomCy + rx, cx + rx, bottomCy + rx * k, cx + rx, bottomCy],
-          [cx + rx, bottomCy - straightHalf * 0.66, cx + rx, topCy + straightHalf * 0.66, cx + rx, topCy]
-        ]
-      };
-    }
     // Copyright 2025 Paul Hodara All Rights Reserved
 
     function objectBounds(object) {
@@ -2209,13 +2101,6 @@
 
     function offsetBezierObject(object, dx, dy = 0) {
       return mapBezierObjectPoints(object, (point) => [point[0] + dx, point[1] + dy]);
-    }
-
-    function scaleBezierObject(object, axisX, axisY, scaleX, scaleY) {
-      return mapBezierObjectPoints(object, (point) => [
-        axisX + (point[0] - axisX) * scaleX,
-        axisY + (point[1] - axisY) * scaleY
-      ]);
     }
 
     function pupilScaleFromEyeSquash(eyeSquash) {
@@ -2587,13 +2472,6 @@
       return h / firmware.screenH * faceRenderHeight;
     }
 
-    function regionCenter(region) {
-      return {
-        x: scaleX(region.x + region.w / 2),
-        y: scaleY(region.y + region.h / 2)
-      };
-    }
-
     function drawGrid() {
       ctx.save();
       ctx.strokeStyle = "rgba(25, 21, 18, 0.06)";
@@ -2610,42 +2488,6 @@
         ctx.lineTo(faceRenderWidth, scaleY(y));
         ctx.stroke();
       }
-      ctx.restore();
-    }
-
-    function drawFacePlate() {
-      const { head, nose } = firmware;
-
-      ctx.save();
-      ctx.fillStyle = "#12100e";
-      roundedRect(ctx, scaleX(head.x), scaleY(head.y), scaleW(head.w), scaleH(head.h), scaleW(head.r), true, false);
-
-      ctx.strokeStyle = "#4a433d";
-      ctx.lineWidth = 6;
-      roundedRect(ctx, scaleX(head.x), scaleY(head.y), scaleW(head.w), scaleH(head.h), scaleW(head.r), false, true);
-
-      ctx.fillStyle = "rgba(255,255,255,0.04)";
-      roundedRect(
-        ctx,
-        scaleX(head.x + 8),
-        scaleY(head.y + 10),
-        scaleW(head.w - 16),
-        scaleH(head.h - 30),
-        scaleW(head.r - 8),
-        true,
-        false
-      );
-
-      ctx.fillStyle = "#db5a35";
-      ctx.beginPath();
-      ctx.arc(
-        scaleX(nose.x + nose.w / 2),
-        scaleY(nose.y + nose.h / 2),
-        Math.max(6, scaleH(nose.h)),
-        0,
-        Math.PI * 2
-      );
-      ctx.fill();
       ctx.restore();
     }
 
@@ -2690,35 +2532,6 @@
       ctx.restore();
     }
 
-    function drawEars() {
-      const earRegions = [firmware.leftEarRegion, firmware.rightEarRegion];
-      ctx.save();
-      ctx.strokeStyle = "rgba(244, 240, 232, 0.92)";
-      ctx.lineWidth = 4;
-      ctx.lineCap = "round";
-
-      earRegions.forEach((ear, index) => {
-        const isRight = index === 1;
-        const x = scaleX(ear.x + ear.w / 2);
-        const top = scaleY(ear.y);
-        const mid = scaleY(ear.y + ear.h * 0.45);
-        const bottom = scaleY(ear.y + ear.h);
-        const flare = scaleW(ear.w * 0.45);
-
-        ctx.beginPath();
-        ctx.moveTo(x, top);
-        ctx.quadraticCurveTo(x + (isRight ? flare : -flare), mid, x, bottom);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(x, top + 10);
-        ctx.quadraticCurveTo(x + (isRight ? flare * 0.5 : -flare * 0.5), mid, x, bottom - 12);
-        ctx.stroke();
-      });
-
-      ctx.restore();
-    }
-
     function drawConstructionOverlay() {
       if (!baseFace.showConstruction) return;
 
@@ -2746,263 +2559,6 @@
         ctx.fillText(label, scaleX(region.x) + 6, scaleY(region.y) + 6);
       });
       ctx.restore();
-    }
-
-    function drawEye(side) {
-      const region = side === "left" ? firmware.leftEyeRegion : firmware.rightEyeRegion;
-      const socket = firmware.eyeSocket;
-      const cx = scaleX(region.x + socket.ox + socket.w / 2);
-      const cy = scaleY(region.y + socket.oy + socket.h / 2);
-      const width = scaleW(socket.w);
-      const height = scaleH(socket.h) * currentExpression.eyeSquash;
-      const open = clamp(currentExpression.eyelidOpen, 0.05, 1.25);
-      const eyeHeight = height * open;
-      const eyeballScale = clamp(currentExpression.eyeballSize ?? 1, 0.55, 1.55);
-
-      ctx.save();
-
-      const globeRadius = Math.max(4, Math.min(width, Math.max(8, eyeHeight)) * 0.42 * eyeballScale);
-      const desiredPupilRadius = width * currentExpression.pupilSize * pupilScaleFromEyeSquash(currentExpression.eyeSquash);
-      const pupilRadius = Math.min(globeRadius * 0.98, desiredPupilRadius);
-      const pupilOffsetRange = Math.max(0, globeRadius - pupilRadius * 1.15);
-      const pupilX = cx + currentExpression.pupilOffsetX * pupilOffsetRange;
-      const pupilY = cy + currentExpression.pupilOffsetY * pupilOffsetRange;
-      ctx.fillStyle = "#f4f0e8";
-      ctx.beginPath();
-      ctx.arc(cx, cy, globeRadius, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = "#c8c1b9";
-      ctx.lineWidth = 4;
-      ctx.stroke();
-
-      if (currentName === "loving") {
-        drawHeart(cx, cy, width * 0.26);
-      } else if (open > 0.14) {
-        const blueRadius = pupilRadius;
-        ctx.fillStyle = "#165b8c";
-        ctx.beginPath();
-        ctx.arc(pupilX, pupilY, blueRadius, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "#2d63ff";
-        ctx.beginPath();
-        ctx.arc(pupilX, pupilY, blueRadius * 0.72, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "#0f0d0c";
-        ctx.beginPath();
-        ctx.arc(pupilX, pupilY, blueRadius * 0.3, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = "rgba(255,255,255,0.9)";
-        ctx.beginPath();
-        ctx.arc(pupilX - blueRadius * 0.28, pupilY - blueRadius * 0.28, blueRadius * 0.16, 0, Math.PI * 2);
-        ctx.fill();
-      } else {
-        ctx.strokeStyle = "#f4f0e8";
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.moveTo(cx - width * 0.4, cy);
-        ctx.lineTo(cx + width * 0.4, cy);
-        ctx.stroke();
-      }
-
-      ctx.restore();
-    }
-
-    function drawBrow(side) {
-      const sign = side === "left" ? -1 : 1;
-      const region = side === "left" ? firmware.leftEyeRegion : firmware.rightEyeRegion;
-      const socket = firmware.eyeSocket;
-      const cx = scaleX(region.x + socket.ox + socket.w / 2);
-      const browBaseY = region.y + 5;
-      const cy = scaleY(browBaseY - currentExpression.browLift * firmware.screenH);
-      const width = scaleW(socket.w - 4);
-      const half = width * 0.5;
-      const tilt = currentExpression.browTilt * 30 * sign;
-      const curve = currentExpression.browCurve * 40;
-
-      const x0 = cx - half;
-      const x1 = cx + half;
-      const y0 = cy + tilt;
-      const y1 = cy - tilt;
-
-      ctx.save();
-      ctx.strokeStyle = "#f0c449";
-      ctx.lineCap = "round";
-      ctx.lineWidth = baseFace.browThickness;
-      ctx.beginPath();
-      ctx.moveTo(x0, y0);
-      ctx.quadraticCurveTo(cx, cy - curve, x1, y1);
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawCheeks() {
-      const amount = currentExpression.mouthLift;
-      if (Math.abs(amount) < 0.05) return;
-
-      ctx.save();
-      ctx.fillStyle = amount > 0 ? "rgba(217, 93, 57, 0.18)" : "rgba(70, 112, 150, 0.12)";
-      const y = scaleY(firmware.mouthRegion.y + 20) - amount * 26;
-      const rx = 54;
-      const ry = 26 + Math.abs(amount) * 12;
-      ctx.beginPath();
-      ctx.ellipse(scaleX(78), y, rx, ry, -0.2, 0, Math.PI * 2);
-      ctx.ellipse(scaleX(162), y, rx, ry, 0.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    function drawMouth() {
-      const expression = resolveMouthExpression(currentExpression);
-      const frownAmount = Math.max(0, expression.mouthDownturn);
-      const smileAmount = Math.max(0, -expression.mouthDownturn);
-      const morphValue = clamp(currentExpression.angryMouth ?? 0, 0, angryMouthMorphMax);
-      const angryWaveMorph = clamp((morphValue - angryMouthMorphStart) / (angryMouthMorphMax - angryMouthMorphStart), 0, 1);
-      const mouth = firmware.mouthRegion;
-      const cx = scaleX(mouth.x + mouth.w / 2 + mouthOffsetX);
-      const cy = scaleY(mouth.y + mouth.h / 2);
-      const highOpenRoundness = clamp(
-        (expression.mouthOpen - mouthOpenLegacyMax) / (mouthOpenMax - mouthOpenLegacyMax),
-        0,
-        1
-      );
-      const width = scaleW(52) * (expression.mouthWidthScale + smileAmount * 0.13) * (1 - highOpenRoundness * 0.34);
-      const half = width * 0.5;
-      const open = shapeMouthOpen(expression.mouthOpen) * 82 + highOpenRoundness * 48 + smileAmount * 18;
-      const curveStrength = 1 - highOpenRoundness * 0.85;
-      const curveResponse = Math.sign(expression.mouthCurve) * Math.pow(Math.abs(expression.mouthCurve), 0.9);
-      const curve = curveResponse * 142 * curveStrength;
-      const curveCornerLift = curve * 0.1;
-      const topLift = Math.min(0, curve) * 0.08;
-
-      const x0 = cx - half;
-      const x1 = cx + half;
-
-      ctx.save();
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = "#f4f0e8";
-      ctx.fillStyle = "rgba(255,255,255,0.05)";
-
-      if (highOpenRoundness > highOpenOvalStart && angryWaveMorph === 0) {
-        const capsuleBlend = smoothstep(highOpenOvalStart, 1, highOpenRoundness);
-        const capsuleRx = half * (1 - capsuleBlend * 0.02) * highOpenCapsuleWidthRatio;
-        const capsuleRy = lerp(capsuleRx, capsuleRx * highOpenCapsuleHeightRatio, capsuleBlend);
-        const capsuleHeight = capsuleRy * 2;
-
-        ctx.beginPath();
-        ctx.ellipse(cx, cy + capsuleBlend * 10, capsuleRx, capsuleRy, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "#f4f0e8";
-        ctx.fill();
-
-        ctx.save();
-        ctx.clip();
-        ctx.fillStyle = "#150e13";
-        ctx.fillRect(cx - capsuleRx - 4, cy + capsuleBlend * 10 - capsuleHeight / 2 - 4, capsuleRx * 2 + 8, capsuleHeight + 8);
-        ctx.restore();
-        ctx.stroke();
-        ctx.restore();
-        return;
-      }
-
-      if (angryWaveMorph > 0) {
-        const flattenBlend = clamp(
-          (morphValue - angryMouthMorphStart) / (angryMouthLinePoint - angryMouthMorphStart),
-          0,
-          1
-        );
-        const waveBlend = clamp(
-          (morphValue - angryMouthLinePoint) / (angryMouthMorphMax - angryMouthLinePoint),
-          0,
-          1
-        );
-        const baselineY = cy - expression.mouthLift * 26 - 2;
-
-        ctx.beginPath();
-        for (let i = 0; i <= 96; i++) {
-          const t = i / 96;
-          const x = x0 + (x1 - x0) * t;
-          const xNorm = t * 2 - 1;
-          const tiltOffset = -xNorm * 28 * angryWaveMorph;
-          const waveOffset = Math.sin(t * Math.PI * 2) * 72 * waveBlend;
-          const targetY = baselineY + tiltOffset + waveOffset;
-          const angryY = cy + curve * (1 - Math.pow(xNorm, 2));
-          const y = lerp(angryY, targetY, flattenBlend);
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-        ctx.restore();
-        return;
-      }
-
-      ctx.beginPath();
-      ctx.moveTo(x0, cy - curveCornerLift);
-      ctx.bezierCurveTo(
-        cx - half * 0.32,
-        cy + curve * 0.82,
-        cx + half * 0.32,
-        cy + curve * 0.82,
-        x1,
-        cy - curveCornerLift
-      );
-
-      if (open > 2) {
-        ctx.bezierCurveTo(
-          cx + half * 0.28,
-          cy + curve * 0.58 + open,
-          cx - half * 0.28,
-          cy + curve * 0.58 + open,
-          x0,
-          cy + topLift
-        );
-        ctx.closePath();
-        ctx.fillStyle = "#f4f0e8";
-        ctx.fill();
-
-        ctx.save();
-        ctx.clip();
-        ctx.fillStyle = "#150e13";
-        ctx.fillRect(cx - half, cy - 10, width, open + 40);
-        if (currentName !== "angry" && currentName !== "sleepy") {
-          ctx.fillStyle = "#ca6677";
-          ctx.beginPath();
-          ctx.ellipse(cx, cy + open * 0.78, width * 0.24, open * 0.3, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.restore();
-      }
-
-      ctx.stroke();
-      ctx.restore();
-    }
-
-    function drawHeart(cx, cy, size) {
-      ctx.save();
-      ctx.translate(cx, cy + size * 0.1);
-      ctx.scale(size, size);
-      ctx.fillStyle = "#d64045";
-      ctx.beginPath();
-      ctx.moveTo(0, 0.52);
-      ctx.bezierCurveTo(-0.9, -0.05, -0.9, -1.1, 0, -0.62);
-      ctx.bezierCurveTo(0.9, -1.1, 0.9, -0.05, 0, 0.52);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    function roundedRect(context, x, y, width, height, radius, fill, stroke) {
-      const r = Math.min(radius, width / 2, height / 2);
-      context.beginPath();
-      context.moveTo(x + r, y);
-      context.arcTo(x + width, y, x + width, y + height, r);
-      context.arcTo(x + width, y + height, x, y + height, r);
-      context.arcTo(x, y + height, x, y, r);
-      context.arcTo(x, y, x + width, y, r);
-      context.closePath();
-      if (fill) context.fill();
-      if (stroke) context.stroke();
     }
 
     function drawScaledFaceGraphics() {
