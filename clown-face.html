@@ -10,6 +10,7 @@
     #mouthPoses{grid-template-columns:repeat(3,68px)}#mouthPoses button{font-size:10.5px;padding:6px 2px}html.mobile #mouthPoses{grid-template-columns:repeat(2,68px)}@media(max-width:760px){#mouthPoses{grid-template-columns:repeat(2,68px)}}
     @media(min-width:761px){.controls{grid-template-columns:220px 270px}}.color-settings-grid{display:grid;grid-template-columns:repeat(2,130px);gap:10px;margin-top:14px}.color-settings-grid .color-picker{grid-template-columns:80px 40px;column-gap:10px;max-width:none;margin:0}.color-picker span{text-align:right}html.mobile .color-settings-grid{grid-template-columns:130px}@media(max-width:760px){.color-settings-grid{grid-template-columns:130px}}
     .loop-chain .loop-repeats{gap:5px}.loop-chain .loop-repeats input{width:40px}
+    #shareGif{background:#00d46a;color:#111}#reset{background:#fff200;color:#111}
   </style>
 </head>
 <body>
@@ -108,10 +109,6 @@
             <button id="stopPreview" type="button" disabled>Stop preview</button>
             <button id="export" type="button">Download SVG</button>
             <button id="shareGif" type="button">Share GIF</button>
-          </div>
-        </div>
-        <div class="control-section">
-          <div class="actions" style="margin-top:0">
             <button id="reset" type="button">Reset controls</button>
           </div>
           <p class="status" id="status" aria-live="polite"></p>
