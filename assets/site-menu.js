@@ -122,7 +122,7 @@
     { href: 'vidiotbox-hardware_docs.html', label: 'Vidiotbox-hardware Docs' },
     { href: 'lilygo-t-display-c5.html', label: 'POCKET PROWLER WIFI/BLE ANALYZER' },
     { href: 'pictograms.html', label: 'Pictograms' },
-    { href: 'facimator.html', label: 'Facimator' },
+    { href: 'https://main.vidiotbox.pages.dev/Clownsmall', label: 'Facimator', external: true },
     { href: 'https://www.instagram.com/phodara', label: 'Follow me on Instagram', external: true },
     { href: 'https://www.paulhodara.com', label: 'My Photography', external: true },
     { href: 'https://www.linkedin.com/in/paulhodara/', label: 'Connect with me on LinkedIn', external: true },
