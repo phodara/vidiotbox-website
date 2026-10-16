@@ -348,6 +348,9 @@
  .crawl-stage {position:relative;display:block;overflow:visible;padding:62px 24px 80px;perspective:none;}
  .crawl-stage::before,.crawl-stage::after {display:none;}
  .crawl {position:static;top:auto;width:min(1120px,100%);margin:auto;animation:none;transform:none;text-align:left;}
+ .audio-hint {display:none;}
+ .is-crawl .audio-hint {display:block;font-size:clamp(20px,3vw,34px);letter-spacing:2px;color:var(--cyan);font-weight:800;margin:0 0 48px;visibility:hidden;}
+ .is-crawl .audio-hint.is-shown {visibility:visible;}
  .eyebrow {font-size:12px;letter-spacing:3px;color:var(--green);font-weight:800;margin:0 0 20px;}
  h1 {font-size:clamp(44px,8vw,100px);line-height:1;max-width:950px;}
  .lede {font-size:clamp(17px,2.4vw,23px);font-weight:400;color:var(--muted);max-width:700px;margin:24px 0 28px;}
@@ -400,11 +403,12 @@
  <label>Theme <select id="theme"><option value="all">All 220 poems</option><option value="space">Space · 110</option><option value="awe">Human awe · 110</option></select></label>
  <button id="mode" type="button">Reading view</button>
  <button id="pause" type="button">Pause</button>
- <label id="speedControl">Speed <select id="speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
- <button id="music" type="button" aria-pressed="false">Music: off</button>
+ <label id="speedControl">Speed <select id="speed"><option value="0.5" selected>0.5×</option><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
+ <label>Music <select id="music"><option value="">Off</option><option value="assets/audio/shika-no-toone-shakuhachi.mp3" selected>Shakuhachi</option><option value="assets/audio/verdi-dies-irae.mp3">Verdi requiem</option></select></label>
  <a class="download" href="space-haikus.txt" download>Download text</a>
 </nav>
 <main class="crawl-stage"><div class="crawl">
+<p class="audio-hint" id="audioHint">Click on page to start audio</p>
 <p class="eyebrow">220 HAIKUS / TWO WAYS OF LOOKING UP</p>
 <h1>A sky without edges</h1>
 <div class="jump"><a href="#space">Explore space ↓</a><a href="#awe">Feel the scale ↓</a><a href="#principles">The Vidiotbox principles ↓</a></div>
@@ -443,9 +447,9 @@
   <p>We are attempting to make it <strong>slightly more interesting.</strong></p>
 
   <p class="end">WHAT THE WORLD NEEDS IS MORE NONSENSE!</p>
-  <p class="music-credit">Music: Giuseppe Verdi, <em>Messa da requiem, Dies irae</em>. Recording from ICBSA via <a href="https://commons.wikimedia.org/wiki/File:ICBSA_Verdi_-_Messa_da_requiem_parte_03,_Dies_irae.ogg">Wikimedia Commons</a>, licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
+  <p class="music-credit">Music: Araki Kodō III, <a href="https://commons.wikimedia.org/wiki/File:Shikanotoone.ogg"><em>Shika no Tōne</em></a> (shakuhachi), Victor 13029, via Wikimedia Commons, public domain. Giuseppe Verdi, <a href="https://commons.wikimedia.org/wiki/File:ICBSA_Verdi_-_Messa_da_requiem_parte_03,_Dies_irae.ogg"><em>Messa da requiem, Dies irae</em></a>, recording from ICBSA via Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
   </div></details>
-<section class="collection" id="space" aria-labelledby="space-title"><h2 id="space-title">Space</h2><p class="section-note">Worlds, moons, dust, light, and the long dark between.</p><div class="poem-grid">
+<section class="collection" id="space" aria-labelledby="space-title"><h2 id="space-title">The Universe</h2><p class="section-note">Worlds, moons, dust, light, and the long dark between.</p><div class="poem-grid">
 <article class="poem" id="space-001"><h3><a href="#space-001">001 / Moon</a></h3><p>Footprints fill with night<br>No wind comes to sweep them clean<br>Earth climbs into view</p></article>
 <article class="poem" id="space-002"><h3><a href="#space-002">002 / Nebula</a></h3><p>Deep in clouds of dust<br>A small sun begins to glow<br>Night loosens its hold</p></article>
 <article class="poem" id="space-003"><h3><a href="#space-003">003 / Mars</a></h3><p>Rust beneath the wheels<br>A lone rover climbs the ridge<br>No birds greet the dawn</p></article>
@@ -669,9 +673,9 @@
 <article class="poem" id="awe-109"><h3><a href="#awe-109">219 / Homeward</a></h3><p>I walk home slowly<br>With more sky than I can hold<br>In my mortal chest</p></article>
 <article class="poem" id="awe-110"><h3><a href="#awe-110">220 / Thanks</a></h3><p>I cannot count stars<br>Or all the years in their light<br>But I can say thanks</p></article>
 </div></section>
-<p class="closing">220 original poems, including the twenty from our conversation. Space imagery initially inspired by <a href="https://science.nasa.gov/mission/hubble/science/universe-uncovered/hubble-nebulae/">NASA’s nebula collection</a>.<br>Music: Giuseppe Verdi, <em>Messa da requiem, Dies irae</em>. Recording from ICBSA via <a href="https://commons.wikimedia.org/wiki/File:ICBSA_Verdi_-_Messa_da_requiem_parte_03,_Dies_irae.ogg">Wikimedia Commons</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
+<p class="closing">220 original poems, including the twenty from our conversation. Space imagery initially inspired by <a href="https://science.nasa.gov/mission/hubble/science/universe-uncovered/hubble-nebulae/">NASA’s nebula collection</a>.<br>Music: Araki Kodō III, <a href="https://commons.wikimedia.org/wiki/File:Shikanotoone.ogg"><em>Shika no Tōne</em></a> (shakuhachi), Victor 13029, via Wikimedia Commons, public domain. Giuseppe Verdi, <a href="https://commons.wikimedia.org/wiki/File:ICBSA_Verdi_-_Messa_da_requiem_parte_03,_Dies_irae.ogg"><em>Messa da requiem, Dies irae</em></a>, recording from ICBSA via Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
 </div></main>
-<audio id="crawlMusic" src="assets/audio/verdi-dies-irae.mp3" preload="none" loop></audio>
+<audio id="crawlMusic" preload="none" loop></audio>
 <script>
 const crawl = document.querySelector('.crawl');
 const mode = document.getElementById('mode');
@@ -683,12 +687,25 @@ const music = document.getElementById('music');
 let animation, readingScroll = 0, musicOn = false;
 function setMusic(on) {
   musicOn = on;
-  music.textContent = on ? 'Music: on' : 'Music: off';
-  music.setAttribute('aria-pressed', String(on));
+  if (!on) music.value = '';
 }
 async function playMusic() {
+  const track = new URL(music.value, location.href).href;
+  if (audio.src !== track) audio.src = track;
   try { await audio.play(); setMusic(true); return true; }
-  catch { setMusic(false); return false; }
+  catch { musicOn = false; return false; }
+}
+// Browsers block audio until the visitor interacts, so retry on the first gesture.
+function startMusicOnGesture() {
+  const events = ['pointerdown', 'keydown'];
+  const hint = document.getElementById('audioHint');
+  hint.classList.add('is-shown');
+  const start = () => {
+    events.forEach(e => document.removeEventListener(e, start, true));
+    hint.classList.remove('is-shown');
+    if (music.value && !musicOn && document.body.classList.contains('is-crawl')) playMusic();
+  };
+  events.forEach(e => document.addEventListener(e, start, true));
 }
 function startAnimation(progress = 0, paused = false) {
   if (animation) animation.cancel();
@@ -733,9 +750,9 @@ theme.addEventListener('change', () => {
   document.querySelectorAll('.jump a').forEach(a => { a.hidden = theme.value !== 'all' && a.hash !== '#principles' && a.hash !== '#' + theme.value; });
   if (animation) { const paused = animation.playState === 'paused'; startAnimation(0,paused); }
 });
-music.addEventListener('click', async () => {
-  if (musicOn) { audio.pause(); setMusic(false); return; }
-  if (!(await playMusic())) music.textContent = 'Music unavailable';
+music.addEventListener('change', () => {
+  if (!music.value) { audio.pause(); setMusic(false); return; }
+  playMusic();
 });
 window.addEventListener('resize', () => {
   if (!animation) return;
@@ -744,5 +761,6 @@ window.addEventListener('resize', () => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && animation) showReading(); });
 startAnimation();
+playMusic().then(playing => { if (!playing) startMusicOnGesture(); });
 </script>
 </body></html>
