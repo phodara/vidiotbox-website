@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="philosophy-assets/happy.png">
+<title>Vidiotbox Philosophy · 220 Cosmic Haikus</title>
+<meta name="description" content="220 cosmic haikus: 110 space poems and 110 first-person poems of human awe, alongside the Vidiotbox principles.">
+<meta property="og:title" content="The Vidiotbox Principles">
+<meta property="og:description" content="A modest philosophy of technological nonsense.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="philosophy-assets/happy.png">
+<meta name="twitter:card" content="summary">
+
+<style>
+  :root {
+    --cyan: #7dd3fc;
+    --cyan-strong: #00e5ff;
+    --line: #2a6f78;
+    --green: #00ff66;
+    --ink: #d7dee3;
+    --muted: #aeb4bd;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    background: #111;
+    color: var(--ink);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .site-menu {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 20;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .menu-toggle {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: #101010;
+    border: 1px solid var(--cyan-strong);
+    color: var(--cyan);
+    box-shadow: 0 0 0 1px rgba(0, 229, 255, .2);
+    cursor: pointer;
+  }
+
+  .menu-toggle:hover,
+  .menu-toggle:focus {
+    border-color: var(--green);
+    color: var(--green);
+    outline: none;
+  }
+
+  .menu-toggle span,
+  .menu-toggle::before,
+  .menu-toggle::after {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+
+  .menu-toggle::before { transform: translateY(-6px); }
+  .menu-toggle::after { transform: translateY(6px); }
+  .site-menu[data-open="true"] .menu-toggle span { opacity: 0; }
+  .site-menu[data-open="true"] .menu-toggle::before { transform: translateY(2px) rotate(45deg); }
+  .site-menu[data-open="true"] .menu-toggle::after { transform: translateY(-2px) rotate(-45deg); }
+
+  .menu-panel {
+    position: absolute;
+    top: 54px;
+    left: 0;
+    width: min(260px, calc(100vw - 28px));
+    display: none;
+    padding: 10px;
+    background: #101010;
+    border: 1px solid var(--cyan-strong);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+  }
+
+  .site-menu[data-open="true"] .menu-panel {
+    display: grid;
+    gap: 8px;
+  }
+
+  .menu-panel a {
+    display: block;
+    padding: 12px;
+    color: var(--cyan);
+    border: 1px solid var(--line);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .menu-panel a:hover,
+  .menu-panel a:focus {
+    border-color: var(--green);
+    color: var(--green);
+    outline: none;
+  }
+
+  .crawl-stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0 18px;
+    perspective: 360px;
+    perspective-origin: 50% 16%;
+  }
+
+  .crawl-stage::before,
+  .crawl-stage::after {
+    content: "";
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .crawl-stage::before {
+    top: 0;
+    height: 66vh;
+    background: linear-gradient(#111 0%, #111 28%, rgba(17, 17, 17, .86) 50%, rgba(17, 17, 17, 0) 100%);
+  }
+
+  .crawl-stage::after {
+    bottom: 0;
+    height: 10vh;
+    background: linear-gradient(rgba(17, 17, 17, 0), rgba(17, 17, 17, .72) 80%);
+  }
+
+  .crawl {
+    position: absolute;
+    top: 70vh;
+    width: min(1180px, 98vw);
+    text-align: center;
+    transform-origin: 50% 0;
+    animation: philosophy-crawl 240s linear forwards;
+  }
+
+  h1 {
+    margin: 0;
+    color: var(--cyan);
+    font-size: clamp(76px, 12vw, 150px);
+    line-height: .94;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 14px 0 36px;
+    color: #fff;
+    font-size: clamp(36px, 5.2vw, 64px);
+    line-height: 1.15;
+  }
+
+  p {
+    margin: 0 0 18px;
+    color: var(--ink);
+    font-size: clamp(31px, 4.2vw, 50px);
+    line-height: 1.45;
+    font-weight: 700;
+  }
+
+  .principle {
+    margin: 32px 0 18px;
+    color: var(--green);
+    font-size: clamp(42px, 5.8vw, 72px);
+    line-height: 1.2;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .short-lines p {
+    margin-bottom: 8px;
+    color: #fff;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  strong {
+    color: #fff;
+  }
+
+  .end {
+    margin-top: 34px;
+    color: var(--cyan);
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .music-credit {
+    margin-top: 46px;
+    color: var(--muted);
+    font-size: clamp(18px, 2.4vw, 28px);
+    line-height: 1.35;
+  }
+
+  .music-credit a {
+    color: var(--cyan);
+  }
+
+  .crawl-paused .crawl {
+    animation-play-state: paused;
+  }
+
+  .crawl-start {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    background: rgba(17, 17, 17, .82);
+  }
+
+  .crawl-start[hidden] {
+    display: none;
+  }
+
+  .crawl-start button {
+    padding: 16px 22px;
+    background: #101010;
+    border: 1px solid var(--cyan-strong);
+    color: var(--cyan);
+    box-shadow: 0 0 0 1px rgba(0, 229, 255, .2);
+    cursor: pointer;
+    font: 900 18px/1 Arial, Helvetica, sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .crawl-start button:hover,
+  .crawl-start button:focus {
+    border-color: var(--green);
+    color: var(--green);
+    outline: none;
+  }
+
+  @keyframes philosophy-crawl {
+    from {
+      transform: rotateX(68deg) translateY(0) scale(.92);
+    }
+
+    to {
+      transform: rotateX(68deg) translateY(-5600px) scale(.08);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .crawl-stage {
+      perspective: 330px;
+      perspective-origin: 50% 28%;
+    }
+
+    .crawl {
+      width: min(560px, 82vw);
+      animation-name: philosophy-crawl-mobile;
+      animation-duration: 240s;
+    }
+
+    h1 {
+      font-size: clamp(44px, 13vw, 76px);
+    }
+
+    h2 {
+      font-size: clamp(24px, 7vw, 36px);
+    }
+
+    p {
+      font-size: clamp(20px, 5.7vw, 31px);
+      line-height: 1.38;
+    }
+
+    .principle {
+      font-size: clamp(26px, 7.5vw, 42px);
+    }
+
+    .end {
+      font-size: clamp(36px, 10vw, 48px);
+    }
+
+    @keyframes philosophy-crawl-mobile {
+      from {
+        transform: rotateX(68deg) translateY(0) scale(.66);
+      }
+
+      to {
+        transform: rotateX(68deg) translateY(-4300px) scale(.08);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .crawl-stage {
+      position: relative;
+      min-height: 100vh;
+      overflow: visible;
+      padding: 78px 20px 52px;
+      perspective: none;
+    }
+
+    .crawl-stage::before,
+    .crawl-stage::after {
+      display: none;
+    }
+
+    .crawl {
+      position: static;
+      width: min(820px, 100%);
+      margin: 0 auto;
+      animation: none;
+      transform: none;
+    }
+  }
+</style>
+
+<style>
+ html { scroll-behavior: smooth; }
+ body { background:#111; }
+ .toolbar { position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 22px;background:#111f;border-bottom:1px solid var(--line); }
+ .brand {color:var(--cyan);font-weight:900;font-size:13px;letter-spacing:2px;margin-right:auto;}
+ button,select,.download {font:700 13px Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:10px 12px;border-radius:3px;cursor:pointer;text-decoration:none;}
+ button:hover,.download:hover {border-color:var(--green);color:var(--green);}
+ :focus-visible {outline:2px solid var(--green);outline-offset:4px;}
+ label {font-size:12px;color:var(--muted);display:flex;gap:7px;align-items:center;}
+ [hidden] {display:none !important;}
+ .crawl-stage {position:relative;display:block;overflow:visible;padding:62px 24px 80px;perspective:none;}
+ .crawl-stage::before,.crawl-stage::after {display:none;}
+ .crawl {position:static;top:auto;width:min(1120px,100%);margin:auto;animation:none;transform:none;text-align:left;}
+ .eyebrow {font-size:12px;letter-spacing:3px;color:var(--green);font-weight:800;margin:0 0 20px;}
+ h1 {font-size:clamp(44px,8vw,100px);line-height:1;max-width:950px;}
+ .lede {font-size:clamp(17px,2.4vw,23px);font-weight:400;color:var(--muted);max-width:700px;margin:24px 0 28px;}
+ .jump {display:flex;gap:20px;flex-wrap:wrap;margin:0 0 32px;}
+ a {color:var(--cyan);}
+ .jump a {font-size:14px;text-underline-offset:5px;}
+ details {border-block:1px solid var(--line);padding:18px 0;margin:28px 0 48px;}
+ summary {color:var(--cyan);cursor:pointer;font-size:16px;font-weight:700;}
+ .principles-copy {padding:28px 0;max-width:800px;}
+ .principles-copy h1 {font-size:34px;} .principles-copy h2 {font-size:23px;}
+ .principles-copy p {font-size:18px;} .principles-copy .principle,.principles-copy .end {font-size:24px;}
+ .principles-copy .music-credit {font-size:14px;}
+ .collection {scroll-margin-top:100px;margin:0 0 70px;}
+ .collection h2 {color:var(--cyan);font-size:clamp(28px,4vw,42px);margin:0 0 12px;}
+ .section-note {font-size:15px;font-weight:400;color:var(--muted);margin-bottom:30px;}
+ .poem-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:40px;}
+ .poem {border-top:1px solid #29383d;padding:24px 0 28px;break-inside:avoid;scroll-margin-top:100px;}
+ .poem h3 {font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);font-weight:700;margin:0 0 16px;}
+ .poem p {font-size:clamp(17px,2.1vw,23px);font-weight:400;line-height:1.7;margin:0;}
+ .poem h3 a {color:inherit;text-decoration:none;} .poem h3 a:hover {text-decoration:underline;}
+ .closing {font-size:15px;font-weight:400;color:var(--muted);border-top:1px solid var(--line);padding-top:24px;}
+ body.is-crawl {overflow:hidden;}
+ .is-crawl .crawl-stage {position:fixed;inset:0;display:flex;justify-content:center;overflow:hidden;padding:0 18px;perspective:360px;perspective-origin:50% 16%;}
+ .is-crawl .crawl-stage::before {display:block;top:0;height:66vh;background:linear-gradient(#111 0%,#111 28%,rgba(17,17,17,.86) 50%,rgba(17,17,17,0) 100%);}
+ .is-crawl .crawl-stage::after {display:block;}
+ .is-crawl .crawl {position:absolute;top:70vh;width:min(1180px,98vw);text-align:center;transform-origin:50% 0;transform:rotateX(68deg);margin:0;}
+ .is-crawl .poem-grid {display:block;}
+ .is-crawl .poem {border:0;padding:32px 0 50px;}
+ .is-crawl .poem p {font-size:clamp(25px,4.2vw,50px);font-weight:700;line-height:1.45;}
+ .is-crawl .poem h3 {font-size:24px;}
+ .is-crawl .lede {margin-inline:auto;}
+ .is-crawl .jump,.is-crawl details,.is-crawl .closing {display:none;}
+ .is-crawl h1 {margin-inline:auto;}
+ @media(max-width:640px) {
+  .toolbar {padding:10px;gap:8px;} .brand {width:100%;} button,select,.download {padding:8px;font-size:12px;}
+  .crawl-stage {padding:36px 20px;} .poem-grid {grid-template-columns:1fr;}
+  .poem p {font-size:20px;} .is-crawl .crawl-stage {inset:0;perspective:330px;perspective-origin:50% 28%;}
+  .is-crawl .crawl {width:94vw;} .is-crawl .poem p {font-size:25px;}
+ }
+ @media print {
+  .toolbar,.jump,details,.closing {display:none;} body {background:white;color:black;}
+  .crawl-stage {padding:0;} h1,.collection h2,.poem h3,.poem p,.lede,.section-note,.eyebrow {color:black;}
+  .poem p {font-size:12pt;} .poem {padding:12px 0;} .poem-grid {display:block;columns:2;}
+ }
+</style>
+</head>
+<body class="is-crawl">
+<nav class="toolbar" aria-label="Haiku controls">
+ <span class="brand">VIDIOTBOX / COSMIC HAIKU</span>
+ <label>Theme <select id="theme"><option value="all">All 220 poems</option><option value="space">Space · 110</option><option value="awe">Human awe · 110</option></select></label>
+ <button id="mode" type="button">Reading view</button>
+ <button id="pause" type="button">Pause</button>
+ <label id="speedControl">Speed <select id="speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
+ <button id="music" type="button" aria-pressed="false">Music: off</button>
+ <a class="download" href="space-haikus.txt" download>Download text</a>
+</nav>
+<main class="crawl-stage"><div class="crawl">
+<p class="eyebrow">220 HAIKUS / TWO WAYS OF LOOKING UP</p>
+<h1>A sky without edges</h1>
+<p class="lede">110 poems of space. 110 poems in a human voice, in awe of the scale and seeming boundlessness of the cosmos.</p>
+<div class="jump"><a href="#space">Explore space ↓</a><a href="#awe">Feel the scale ↓</a><a href="#principles">The Vidiotbox principles ↓</a></div>
+<details id="principles"><summary>The original Vidiotbox philosophy</summary><div class="principles-copy">
+  <h1>THE VIDIOTBOX PRINCIPLES</h1>
+  <h2>An Evolving Philosophy of Technological Nonsense</h2>
+
+  <p class="principle">BUILD WHAT NEED NOT BE BUILT!</p>
+
+  <p>Civilization already contains an adequate supply of thermostats, spreadsheets, doorbells, productivity apps and connected devices.</p>
+
+  <p class="principle">VIDIOTBOX EXISTS FOR EVERYTHING ELSE.</p>
+
+  <p>If something is pointless but entertaining,</p>
+
+  <p>If it is useless but makes you wonder,</p>
+
+  <p>Vidiotbox answers the question <strong>&ldquo;Why&rdquo; </strong>with <strong>&ldquo;Why not?&rdquo;</strong></p>
+
+  <p class="principle">COMPLICATE THE TRIVIAL!</p>
+
+  <p>Use microcontrollers where a switch would suffice!</p>
+
+  <p>Add Wi-Fi to things that have nothing to say!</p>
+
+  <p>Display the unnecessary!</p>
+
+  <p>Automate the mundane!</p>
+
+  <p>Over engineering is mandatory.</p>
+
+  <p>A pointless machine beautifully made is always preferable to a practical machine.</p>
+
+  <p>We are not attempting to change the world.</p>
+
+  <p>We are attempting to make it <strong>slightly more interesting.</strong></p>
+
+  <p class="end">WHAT THE WORLD NEEDS IS MORE NONSENSE!</p>
+  <p class="music-credit">Music: Giuseppe Verdi, <em>Messa da requiem, Dies irae</em>. Recording from ICBSA via <a href="https://commons.wikimedia.org/wiki/File:ICBSA_Verdi_-_Messa_da_requiem_parte_03,_Dies_irae.ogg">Wikimedia Commons</a>, licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
+  </div></details>
+<section class="collection" id="space" aria-labelledby="space-title"><h2 id="space-title">Space</h2><p class="section-note">Worlds, moons, dust, light, and the long dark between. 110 haikus; the first ten are the originals.</p><div class="poem-grid">
+<article class="poem" id="space-001"><h3><a href="#space-001">001 / Moon</a></h3><p>Footprints fill with night<br>No wind comes to sweep them clean<br>Earth climbs into view</p></article>
+<article class="poem" id="space-002"><h3><a href="#space-002">002 / Nebula</a></h3><p>Deep in clouds of dust<br>A small sun begins to glow<br>Night loosens its hold</p></article>
+<article class="poem" id="space-003"><h3><a href="#space-003">003 / Mars</a></h3><p>Rust beneath the wheels<br>A lone rover climbs the ridge<br>No birds greet the dawn</p></article>
+<article class="poem" id="space-004"><h3><a href="#space-004">004 / Saturn</a></h3><p>Rings of shattered ice<br>Circle through the silent dark<br>Winter without end</p></article>
+<article class="poem" id="space-005"><h3><a href="#space-005">005 / Comet</a></h3><p>An old ball of ice<br>Lets its silver hair grow long<br>Passing near the sun</p></article>
+<article class="poem" id="space-006"><h3><a href="#space-006">006 / Black Hole</a></h3><p>Light bends toward the dark<br>Stars wheel round an unseen mouth<br>Nothing answers back</p></article>
+<article class="poem" id="space-007"><h3><a href="#space-007">007 / Earthrise</a></h3><p>Blue above the gray<br>All the roads that lead us home<br>Fit behind one thumb</p></article>
+<article class="poem" id="space-008"><h3><a href="#space-008">008 / Meteor</a></h3><p>One bright stitch of light<br>Draws across the sleeping fields<br>Crickets carry on</p></article>
+<article class="poem" id="space-009"><h3><a href="#space-009">009 / Deep Space</a></h3><p>Past the final world<br>Our faint signals cross the dark<br>Still no voice returns</p></article>
+<article class="poem" id="space-010"><h3><a href="#space-010">010 / Starlight</a></h3><p>Cold light finds my hands<br>After all those years of flight<br>I turn out the lamp</p></article>
+<article class="poem" id="space-011"><h3><a href="#space-011">011 / Crescent</a></h3><p>A thin moon hangs low<br>Between two bare apple trees<br>Night keeps both its halves</p></article>
+<article class="poem" id="space-012"><h3><a href="#space-012">012 / Lunar Plain</a></h3><p>Dust rests on the plain<br>Each stone holds a sharpened shade<br>No rain rounds the edge</p></article>
+<article class="poem" id="space-013"><h3><a href="#space-013">013 / Transit</a></h3><p>A black dot drifts past<br>Across the white face of noon<br>Small worlds leave their mark</p></article>
+<article class="poem" id="space-014"><h3><a href="#space-014">014 / Solar Wind</a></h3><p>The sun sheds its breath<br>Past the cold and scattered worlds<br>No leaves turn out there</p></article>
+<article class="poem" id="space-015"><h3><a href="#space-015">015 / Aurora</a></h3><p>Green curtains unfold<br>Above the roofs of the town<br>Snow takes on their light</p></article>
+<article class="poem" id="space-016"><h3><a href="#space-016">016 / Red Spot</a></h3><p>A storm folds its clouds<br>Round and round the giant world<br>No shore breaks its course</p></article>
+<article class="poem" id="space-017"><h3><a href="#space-017">017 / Europa</a></h3><p>White cracks cross the ice<br>A dark sea beneath them waits<br>Far from any sail</p></article>
+<article class="poem" id="space-018"><h3><a href="#space-018">018 / Titan</a></h3><p>Rain falls through the haze<br>And gathers in bitter lakes<br>No green reeds take root</p></article>
+<article class="poem" id="space-019"><h3><a href="#space-019">019 / Enceladus</a></h3><p>Ice sprays from the cracks<br>Bright against the distant sun<br>Snow escapes the moon</p></article>
+<article class="poem" id="space-020"><h3><a href="#space-020">020 / Neptune</a></h3><p>Blue beyond the cold<br>A world turns through years of dark<br>Winds comb unseen clouds</p></article>
+<article class="poem" id="space-021"><h3><a href="#space-021">021 / Pluto</a></h3><p>A pale heart of frost<br>Faces the diminished sun<br>No pulse stirs the ice</p></article>
+<article class="poem" id="space-022"><h3><a href="#space-022">022 / Asteroid</a></h3><p>A stone turns alone<br>Its long shadow turns with it<br>No moss marks the years</p></article>
+<article class="poem" id="space-023"><h3><a href="#space-023">023 / Binary</a></h3><p>Two suns share the dusk<br>Shadows part across the sand<br>Night waits for them both</p></article>
+<article class="poem" id="space-024"><h3><a href="#space-024">024 / Pulsar</a></h3><p>A dead star still beats<br>Its beam sweeps the empty dark<br>Time keeps a small pulse</p></article>
+<article class="poem" id="space-025"><h3><a href="#space-025">025 / White Dwarf</a></h3><p>An ember of light<br>Outlives all its scattered clouds<br>Slowly losing heat</p></article>
+<article class="poem" id="space-026"><h3><a href="#space-026">026 / Star Birth</a></h3><p>Dust gathers in folds<br>Deep within the clouded cold<br>One knot wakes as light</p></article>
+<article class="poem" id="space-027"><h3><a href="#space-027">027 / Star Death</a></h3><p>A star sheds its shell<br>Pale rings widen through the dark<br>Space receives the ash</p></article>
+<article class="poem" id="space-028"><h3><a href="#space-028">028 / Spiral</a></h3><p>Long arms made of stars<br>Curve around a hidden heart<br>No hands touch their ends</p></article>
+<article class="poem" id="space-029"><h3><a href="#space-029">029 / Cluster</a></h3><p>Old suns crowd the dark<br>Like bees with no hive to find<br>Each keeps its own flame</p></article>
+<article class="poem" id="space-030"><h3><a href="#space-030">030 / Eclipse</a></h3><p>Day slips off its crown<br>The moon fits across the sun<br>Birdsong leaves the trees</p></article>
+<article class="poem" id="space-031"><h3><a href="#space-031">031 / Launch</a></h3><p>Flame beneath the hull<br>The launch pad shakes loose its birds<br>Clouds accept the ship</p></article>
+<article class="poem" id="space-032"><h3><a href="#space-032">032 / Orbit</a></h3><p>The cup floats away<br>Earth turns past the window frame<br>Tea beads in the air</p></article>
+<article class="poem" id="space-033"><h3><a href="#space-033">033 / Spacewalk</a></h3><p>One glove grips the rail<br>Blue seas roll beneath the boots<br>No weight in the heel</p></article>
+<article class="poem" id="space-034"><h3><a href="#space-034">034 / Station Dawn</a></h3><p>Light rims the blue world<br>And floods through a narrow pane<br>Night lasts half a dream</p></article>
+<article class="poem" id="space-035"><h3><a href="#space-035">035 / Return</a></h3><p>Heat blooms on the hull<br>The long fall returns its weight<br>Hands reach for the straps</p></article>
+<article class="poem" id="space-036"><h3><a href="#space-036">036 / Moon Garden</a></h3><p>A seed leaves the Earth<br>Dark soil rides inside a box<br>Roots know only down</p></article>
+<article class="poem" id="space-037"><h3><a href="#space-037">037 / Radio</a></h3><p>A dish tilts at dusk<br>Listening through sheets of rain<br>For a thread of sound</p></article>
+<article class="poem" id="space-038"><h3><a href="#space-038">038 / Telescope</a></h3><p>The dome splits the night<br>A glass eye turns to the stars<br>Dew forms on the steps</p></article>
+<article class="poem" id="space-039"><h3><a href="#space-039">039 / Old Light</a></h3><p>A faint smudge of light<br>Crossed the dark before the sun<br>Now it stains a plate</p></article>
+<article class="poem" id="space-040"><h3><a href="#space-040">040 / Dust Lane</a></h3><p>A dark seam divides<br>The glow of a billion stars<br>Dust can hide such flame</p></article>
+<article class="poem" id="space-041"><h3><a href="#space-041">041 / Red Moon</a></h3><p>Earth shades the full moon<br>Rust spreads on its silent face<br>Dogs sleep through the change</p></article>
+<article class="poem" id="space-042"><h3><a href="#space-042">042 / Evening Star</a></h3><p>One bright point holds fast<br>Above the last gold of dusk<br>Porch lights bloom below</p></article>
+<article class="poem" id="space-043"><h3><a href="#space-043">043 / Morning Star</a></h3><p>One world greets the dawn<br>Before the streets fill with feet<br>Bread warms in the shops</p></article>
+<article class="poem" id="space-044"><h3><a href="#space-044">044 / Moonset</a></h3><p>The moon meets the ridge<br>And slips behind the black pines<br>Frost stays on the gate</p></article>
+<article class="poem" id="space-045"><h3><a href="#space-045">045 / Star Trail</a></h3><p>Stars draw rings all night<br>Around a point in the north<br>The tent holds its shape</p></article>
+<article class="poem" id="space-046"><h3><a href="#space-046">046 / Milky Way</a></h3><p>Light spills down the sky<br>A pale road across the field<br>No gate blocks its path</p></article>
+<article class="poem" id="space-047"><h3><a href="#space-047">047 / Perseids</a></h3><p>Bright streaks split the night<br>Above a still August lake<br>Fish rise in the rings</p></article>
+<article class="poem" id="space-048"><h3><a href="#space-048">048 / Crater</a></h3><p>A bowl made by force<br>Holds the dark along its rim<br>No spoon stirs this dust</p></article>
+<article class="poem" id="space-049"><h3><a href="#space-049">049 / Far Side</a></h3><p>Behind the moon&#x27;s curve<br>Earth is hidden from the stones<br>Stars keep their own watch</p></article>
+<article class="poem" id="space-050"><h3><a href="#space-050">050 / Lunar Noon</a></h3><p>Sunlight strikes the plain<br>The black sky gives back no blue<br>Dust shines without warmth</p></article>
+<article class="poem" id="space-051"><h3><a href="#space-051">051 / Ice Giant</a></h3><p>A pale world leans far<br>Its pole turned to face the sun<br>Years pass as one day</p></article>
+<article class="poem" id="space-052"><h3><a href="#space-052">052 / Ring Shadow</a></h3><p>Thin rings shade the clouds<br>Their dark bands cross bands of gold<br>Winter draws straight lines</p></article>
+<article class="poem" id="space-053"><h3><a href="#space-053">053 / Moon Shepherd</a></h3><p>A small moon keeps watch<br>Along the edge of the rings<br>Ice follows its pull</p></article>
+<article class="poem" id="space-054"><h3><a href="#space-054">054 / Rogue World</a></h3><p>No sun claims this world<br>It drifts through the depth of night<br>Its dawn stays unborn</p></article>
+<article class="poem" id="space-055"><h3><a href="#space-055">055 / Hot World</a></h3><p>Stone runs into streams<br>Beneath a sun far too close<br>No foot finds a shore</p></article>
+<article class="poem" id="space-056"><h3><a href="#space-056">056 / Tidal Lock</a></h3><p>One face drinks the light<br>The other keeps endless night<br>Dawn lives on the seam</p></article>
+<article class="poem" id="space-057"><h3><a href="#space-057">057 / Distant Rain</a></h3><p>Clouds veil a strange world<br>What falls beneath them is lost<br>To the watching glass</p></article>
+<article class="poem" id="space-058"><h3><a href="#space-058">058 / Solar Flare</a></h3><p>A red loop springs free<br>Above the bright seething face<br>Space fills with its heat</p></article>
+<article class="poem" id="space-059"><h3><a href="#space-059">059 / Sunspot</a></h3><p>Dark flecks cross the sun<br>Small shadows in seas of flame<br>Each could swallow Earth</p></article>
+<article class="poem" id="space-060"><h3><a href="#space-060">060 / Solar Limb</a></h3><p>Flame climbs into black<br>And bends back to its own source<br>A bridge without feet</p></article>
+<article class="poem" id="space-061"><h3><a href="#space-061">061 / Oort Cloud</a></h3><p>Far past the last world<br>Cold seeds drift in a loose shell<br>Some will bloom as tails</p></article>
+<article class="poem" id="space-062"><h3><a href="#space-062">062 / Voyager</a></h3><p>A gold record sails<br>Beyond the reach of Earth&#x27;s warmth<br>Songs with no one near</p></article>
+<article class="poem" id="space-063"><h3><a href="#space-063">063 / Redshift</a></h3><p>Old light stretches thin<br>Its blue notes fade into red<br>Distance leaves its stain</p></article>
+<article class="poem" id="space-064"><h3><a href="#space-064">064 / Lensing</a></h3><p>A bent arc of light<br>Frames a cluster&#x27;s hidden weight<br>Far stars wear new shapes</p></article>
+<article class="poem" id="space-065"><h3><a href="#space-065">065 / Collision</a></h3><p>Two great swarms of stars<br>Pass through each other&#x27;s long arms<br>New suns stir in gas</p></article>
+<article class="poem" id="space-066"><h3><a href="#space-066">066 / Cosmic Web</a></h3><p>Bright knots linked by threads<br>Stretch across the depths of space<br>Dark fills each wide mesh</p></article>
+<article class="poem" id="space-067"><h3><a href="#space-067">067 / Void</a></h3><p>Between walls of stars<br>The dark opens into dark<br>No lamp marks its floor</p></article>
+<article class="poem" id="space-068"><h3><a href="#space-068">068 / Background</a></h3><p>The first warmth still drifts<br>Too cool now for skin to feel<br>A faint hiss remains</p></article>
+<article class="poem" id="space-069"><h3><a href="#space-069">069 / Expansion</a></h3><p>Far lights slip away<br>The space between them grows wide<br>No fence hems it in</p></article>
+<article class="poem" id="space-070"><h3><a href="#space-070">070 / Night Map</a></h3><p>Dots joined by thin lines<br>A hunter takes shape on charts<br>Stars know no such man</p></article>
+<article class="poem" id="space-071"><h3><a href="#space-071">071 / Orion</a></h3><p>Three stars form a belt<br>Above the bare winter oak<br>No coat keeps them warm</p></article>
+<article class="poem" id="space-072"><h3><a href="#space-072">072 / Pleiades</a></h3><p>A small flock of lights<br>Huddles in the autumn sky<br>Geese call from below</p></article>
+<article class="poem" id="space-073"><h3><a href="#space-073">073 / Pole Star</a></h3><p>One point holds the north<br>While the dark field wheels around<br>A boat finds its course</p></article>
+<article class="poem" id="space-074"><h3><a href="#space-074">074 / Sirius</a></h3><p>A bright winter star<br>Flashes through the restless air<br>Ice gleams on the path</p></article>
+<article class="poem" id="space-075"><h3><a href="#space-075">075 / Betelgeuse</a></h3><p>A red shoulder glows<br>Above the sleeping rooftops<br>Cold smoke climbs to meet</p></article>
+<article class="poem" id="space-076"><h3><a href="#space-076">076 / Southern Cross</a></h3><p>Four lights mark the south<br>Beyond the ship&#x27;s swaying mast<br>Waves erase the wake</p></article>
+<article class="poem" id="space-077"><h3><a href="#space-077">077 / Zodiacal Light</a></h3><p>Dust lifts borrowed light<br>In a cone above the dusk<br>Night reveals the grains</p></article>
+<article class="poem" id="space-078"><h3><a href="#space-078">078 / Earthshine</a></h3><p>The moon&#x27;s dark half glows<br>With sunlight sent back from Earth<br>Night shares what it has</p></article>
+<article class="poem" id="space-079"><h3><a href="#space-079">079 / Apogee</a></h3><p>The moon pulls away<br>A small coin above the trees<br>Still it lifts the sea</p></article>
+<article class="poem" id="space-080"><h3><a href="#space-080">080 / Perigee</a></h3><p>A large moon clears roofs<br>Its old scars plain in the dusk<br>The tide climbs the steps</p></article>
+<article class="poem" id="space-081"><h3><a href="#space-081">081 / Moon Rock</a></h3><p>A gray stone lies still<br>Behind glass beneath white lamps<br>Its long flight is done</p></article>
+<article class="poem" id="space-082"><h3><a href="#space-082">082 / Meteorite</a></h3><p>A black stone in grass<br>Holds a past before the Earth<br>Ants climb its rough crust</p></article>
+<article class="poem" id="space-083"><h3><a href="#space-083">083 / Martian Frost</a></h3><p>White frost rims red stones<br>The thin dawn loosens its grip<br>Bare dust waits below</p></article>
+<article class="poem" id="space-084"><h3><a href="#space-084">084 / Dust Devil</a></h3><p>A red column turns<br>Across the deserted plain<br>No leaves join the dance</p></article>
+<article class="poem" id="space-085"><h3><a href="#space-085">085 / Martian Sunset</a></h3><p>Blue light hugs the sun<br>As it sinks through rust and dust<br>Cold climbs from the ground</p></article>
+<article class="poem" id="space-086"><h3><a href="#space-086">086 / Olympus</a></h3><p>A vast mountain sleeps<br>Above the thin clouds of Mars<br>No snow feeds a stream</p></article>
+<article class="poem" id="space-087"><h3><a href="#space-087">087 / Valles</a></h3><p>A long wound in stone<br>Runs beyond the morning light<br>Dark pools in its floor</p></article>
+<article class="poem" id="space-088"><h3><a href="#space-088">088 / Phobos</a></h3><p>A small moon runs fast<br>Above the red world&#x27;s dry plains<br>Its shade races east</p></article>
+<article class="poem" id="space-089"><h3><a href="#space-089">089 / Io</a></h3><p>Sulfur paints the ground<br>A plume leaps into the black<br>No rain brings it down</p></article>
+<article class="poem" id="space-090"><h3><a href="#space-090">090 / Ganymede</a></h3><p>Old grooves score the ice<br>Above a sea closed from sight<br>No gull knows this coast</p></article>
+<article class="poem" id="space-091"><h3><a href="#space-091">091 / Callisto</a></h3><p>Scars crowd all the plains<br>Each rim holds a night apart<br>No field has been spared</p></article>
+<article class="poem" id="space-092"><h3><a href="#space-092">092 / Triton</a></h3><p>Dark plumes stain the frost<br>A moon moves against the grain<br>Cold keeps its own time</p></article>
+<article class="poem" id="space-093"><h3><a href="#space-093">093 / Kuiper Belt</a></h3><p>Ice beyond Neptune<br>Moves through the long outer dusk<br>Sunlight thins to gold</p></article>
+<article class="poem" id="space-094"><h3><a href="#space-094">094 / Occultation</a></h3><p>A star blinks from sight<br>Behind a passing world&#x27;s rim<br>Dark measures the shape</p></article>
+<article class="poem" id="space-095"><h3><a href="#space-095">095 / Spectrum</a></h3><p>Starlight split in bands<br>Dark lines name what burns so far<br>Glass unfolds the flame</p></article>
+<article class="poem" id="space-096"><h3><a href="#space-096">096 / Exposure</a></h3><p>The shutter stays wide<br>Faint light gathers grain by grain<br>Night becomes a page</p></article>
+<article class="poem" id="space-097"><h3><a href="#space-097">097 / Lunar Cave</a></h3><p>A hole in the moon<br>Keeps a pocket full of night<br>Through the blazing day</p></article>
+<article class="poem" id="space-098"><h3><a href="#space-098">098 / Sea of Quiet</a></h3><p>No wave stirs the plain<br>Though a sea lives in its name<br>Dry shores face the Earth</p></article>
+<article class="poem" id="space-099"><h3><a href="#space-099">099 / Bootprint</a></h3><p>A boot leaves its tread<br>In dust finer than the sand<br>That once filled its seams</p></article>
+<article class="poem" id="space-100"><h3><a href="#space-100">100 / Flag</a></h3><p>A stiff flag stands still<br>Its folds hold a borrowed wind<br>Earth turns in the black</p></article>
+<article class="poem" id="space-101"><h3><a href="#space-101">101 / Lost Bolt</a></h3><p>A small bolt drifts off<br>Flashing once against the Earth<br>Then joins all that dark</p></article>
+<article class="poem" id="space-102"><h3><a href="#space-102">102 / Sleeping Crew</a></h3><p>Soft straps hold the crew<br>While dawn circles back again<br>Dreams keep earthly time</p></article>
+<article class="poem" id="space-103"><h3><a href="#space-103">103 / Window Frost</a></h3><p>Ice rims the small pane<br>Beyond it the whole Earth shines<br>Warm hands clear a view</p></article>
+<article class="poem" id="space-104"><h3><a href="#space-104">104 / Night Side</a></h3><p>Gold veins map the coast<br>Where the turning Earth wears night<br>Roads glow without sound</p></article>
+<article class="poem" id="space-105"><h3><a href="#space-105">105 / Thin Air</a></h3><p>A blue thread of air<br>Holds the clouds against the Earth<br>Black presses so close</p></article>
+<article class="poem" id="space-106"><h3><a href="#space-106">106 / Ocean World</a></h3><p>Blue fills the whole view<br>No continent breaks the waves<br>Rain comes home to rain</p></article>
+<article class="poem" id="space-107"><h3><a href="#space-107">107 / Brown Dwarf</a></h3><p>A dim almost sun<br>Keeps its warmth beneath thick clouds<br>Night surrounds its glow</p></article>
+<article class="poem" id="space-108"><h3><a href="#space-108">108 / Quasar</a></h3><p>A fierce distant core<br>Outshines the stars around it<br>Old light floods the lens</p></article>
+<article class="poem" id="space-109"><h3><a href="#space-109">109 / Last Ember</a></h3><p>When the last stars cool<br>Dark will hold their scattered ash<br>With no eye to see</p></article>
+<article class="poem" id="space-110"><h3><a href="#space-110">110 / Before Dawn</a></h3><p>Stars fade one by one<br>A blackbird tries its first notes<br>Space stays past the blue</p></article>
+</div></section>
+<section class="collection" id="awe" aria-labelledby="awe-title"><h2 id="awe-title">Human awe</h2><p class="section-note">A first-person human voice beneath an immeasurable sky. 110 haikus; the first ten are the originals.</p><div class="poem-grid">
+<article class="poem" id="awe-001"><h3><a href="#awe-001">001 / Breath</a></h3><p>I look up and gasp<br>Each small spark a distant sun<br>My breath clouds the glass</p></article>
+<article class="poem" id="awe-002"><h3><a href="#awe-002">002 / Palm</a></h3><p>I stretch out my hand<br>And hide a billion suns there<br>My palm feels so small</p></article>
+<article class="poem" id="awe-003"><h3><a href="#awe-003">003 / Letting In</a></h3><p>I cannot hold this<br>All that dark beyond the stars<br>Yet I let it in</p></article>
+<article class="poem" id="awe-004"><h3><a href="#awe-004">004 / Counting</a></h3><p>I count what I can<br>Then lose my place in the stars<br>And begin to laugh</p></article>
+<article class="poem" id="awe-005"><h3><a href="#awe-005">005 / Edge</a></h3><p>I search for an edge<br>My thoughts fall beyond their reach<br>Still the dark goes on</p></article>
+<article class="poem" id="awe-006"><h3><a href="#awe-006">006 / Barefoot</a></h3><p>I stand in the yard<br>Light older than Earth meets me<br>Barefoot in the grass</p></article>
+<article class="poem" id="awe-007"><h3><a href="#awe-007">007 / Name</a></h3><p>I whisper my name<br>Under countless distant suns<br>How strange to be here</p></article>
+<article class="poem" id="awe-008"><h3><a href="#awe-008">008 / Arrival</a></h3><p>I feel my heart beat<br>While the light of vanished stars<br>Arrives on my skin</p></article>
+<article class="poem" id="awe-009"><h3><a href="#awe-009">009 / Speechless</a></h3><p>I reach for the words<br>But the sky keeps growing vast<br>My mouth stays open</p></article>
+<article class="poem" id="awe-010"><h3><a href="#awe-010">010 / Tea</a></h3><p>I have this one night<br>To look into all that time<br>I let the tea cool</p></article>
+<article class="poem" id="awe-011"><h3><a href="#awe-011">011 / Doorstep</a></h3><p>I pause at my door<br>The stars have no doors at all<br>My key chills my hand</p></article>
+<article class="poem" id="awe-012"><h3><a href="#awe-012">012 / Ceiling</a></h3><p>I turn off my light<br>And find no ceiling outside<br>My room falls away</p></article>
+<article class="poem" id="awe-013"><h3><a href="#awe-013">013 / Ruler</a></h3><p>I bring out a rule<br>To measure the width of night<br>And smile at my hands</p></article>
+<article class="poem" id="awe-014"><h3><a href="#awe-014">014 / Pulse</a></h3><p>I count my heartbeats<br>Against the age of starlight<br>Then forget to count</p></article>
+<article class="poem" id="awe-015"><h3><a href="#awe-015">015 / Eyepiece</a></h3><p>I bend to the lens<br>A whole world fits in my eye<br>My knees touch the earth</p></article>
+<article class="poem" id="awe-016"><h3><a href="#awe-016">016 / Distance</a></h3><p>I say one light year<br>As if my mouth knew the miles<br>My tongue finds no end</p></article>
+<article class="poem" id="awe-017"><h3><a href="#awe-017">017 / Dust</a></h3><p>I brush off my coat<br>Then think of the dust of stars<br>And leave one bright speck</p></article>
+<article class="poem" id="awe-018"><h3><a href="#awe-018">018 / Yardstick</a></h3><p>I know this small yard<br>Beyond it the stars go on<br>My fence holds so few</p></article>
+<article class="poem" id="awe-019"><h3><a href="#awe-019">019 / Cupped Hands</a></h3><p>I cup both my hands<br>As though I could catch the dark<br>It flows past my wrists</p></article>
+<article class="poem" id="awe-020"><h3><a href="#awe-020">020 / Cold Step</a></h3><p>I sit on cold stone<br>The night has more suns than words<br>My lips form no sound</p></article>
+<article class="poem" id="awe-021"><h3><a href="#awe-021">021 / School Map</a></h3><p>I fold up my map<br>No crease can contain this sky<br>My pocket stays light</p></article>
+<article class="poem" id="awe-022"><h3><a href="#awe-022">022 / Birthday</a></h3><p>I mark one more year<br>Stars spend ages reaching me<br>My candle burns low</p></article>
+<article class="poem" id="awe-023"><h3><a href="#awe-023">023 / Window</a></h3><p>I wipe the glass clean<br>To see farther into time<br>My face looks back first</p></article>
+<article class="poem" id="awe-024"><h3><a href="#awe-024">024 / Small Voice</a></h3><p>I call to the stars<br>My voice barely clears the roof<br>How far light has come</p></article>
+<article class="poem" id="awe-025"><h3><a href="#awe-025">025 / Open Field</a></h3><p>I lie in the grass<br>And let the vast sky face me<br>An ant walks my wrist</p></article>
+<article class="poem" id="awe-026"><h3><a href="#awe-026">026 / Big Dipper</a></h3><p>I trace a known shape<br>Then feel the depth between stars<br>My lines come apart</p></article>
+<article class="poem" id="awe-027"><h3><a href="#awe-027">027 / Long Flight</a></h3><p>I watch one faint star<br>Its light spent ages in flight<br>I blink it away</p></article>
+<article class="poem" id="awe-028"><h3><a href="#awe-028">028 / Late Supper</a></h3><p>I leave bread half cut<br>The sky has filled with cold suns<br>My hunger grows still</p></article>
+<article class="poem" id="awe-029"><h3><a href="#awe-029">029 / One Match</a></h3><p>I strike a small match<br>Below a sky full of flame<br>And shelter its flame</p></article>
+<article class="poem" id="awe-030"><h3><a href="#awe-030">030 / Far Shore</a></h3><p>I stand by the sea<br>And find a much deeper dark<br>Above all the waves</p></article>
+<article class="poem" id="awe-031"><h3><a href="#awe-031">031 / No Rail</a></h3><p>I reach for a rail<br>The sky seems to fall past me<br>My feet grip the path</p></article>
+<article class="poem" id="awe-032"><h3><a href="#awe-032">032 / Child Again</a></h3><p>I ask how far out<br>And feel like a child again<br>No answer feels large</p></article>
+<article class="poem" id="awe-033"><h3><a href="#awe-033">033 / Chalk</a></h3><p>I write out the scale<br>My chalk breaks before the end<br>Dust whitens my shoes</p></article>
+<article class="poem" id="awe-034"><h3><a href="#awe-034">034 / More Zeros</a></h3><p>I add one more naught<br>The number grows past my page<br>Night needs no such marks</p></article>
+<article class="poem" id="awe-035"><h3><a href="#awe-035">035 / Slow Look</a></h3><p>I lift my eyes once<br>And look through ages of light<br>My neck starts to ache</p></article>
+<article class="poem" id="awe-036"><h3><a href="#awe-036">036 / First Snow</a></h3><p>I catch one snowflake<br>Beneath the uncounted stars<br>And watch it grow clear</p></article>
+<article class="poem" id="awe-037"><h3><a href="#awe-037">037 / Shared Dark</a></h3><p>I hold out my hand<br>The dark between stars is here<br>Between my fingers</p></article>
+<article class="poem" id="awe-038"><h3><a href="#awe-038">038 / Quiet Street</a></h3><p>I walk my short street<br>Under light from distant worlds<br>My steps sound too loud</p></article>
+<article class="poem" id="awe-039"><h3><a href="#awe-039">039 / Home Address</a></h3><p>I name where I live<br>Then add the stars beyond it<br>My address runs out</p></article>
+<article class="poem" id="awe-040"><h3><a href="#awe-040">040 / Pocket Watch</a></h3><p>I wind my old watch<br>Below the slow wheel of stars<br>Its tick seems so brave</p></article>
+<article class="poem" id="awe-041"><h3><a href="#awe-041">041 / Ocean of Time</a></h3><p>I look into time<br>As deep as my eyes can reach<br>And stand on one breath</p></article>
+<article class="poem" id="awe-042"><h3><a href="#awe-042">042 / Far Sun</a></h3><p>I warm both my hands<br>And think of a sun so far<br>Its heat looks like frost</p></article>
+<article class="poem" id="awe-043"><h3><a href="#awe-043">043 / Unlit Hill</a></h3><p>I climb past the lamps<br>The stars increase with each step<br>My world shrinks below</p></article>
+<article class="poem" id="awe-044"><h3><a href="#awe-044">044 / No Center</a></h3><p>I turn all around<br>Each way opens into night<br>I find no front door</p></article>
+<article class="poem" id="awe-045"><h3><a href="#awe-045">045 / Falling Up</a></h3><p>I look straight above<br>And feel I could fall that way<br>I clutch roots of grass</p></article>
+<article class="poem" id="awe-046"><h3><a href="#awe-046">046 / Old Stone</a></h3><p>I pick up a stone<br>And wonder which stars made it<br>Its weight fills my palm</p></article>
+<article class="poem" id="awe-047"><h3><a href="#awe-047">047 / Dust of Me</a></h3><p>I touch my own wrist<br>Old stars are warm beneath skin<br>My pulse answers them</p></article>
+<article class="poem" id="awe-048"><h3><a href="#awe-048">048 / Unread Sky</a></h3><p>I learn a star&#x27;s name<br>The rest of the dark stays vast<br>My one word floats there</p></article>
+<article class="poem" id="awe-049"><h3><a href="#awe-049">049 / Waiting Light</a></h3><p>I step out at last<br>Light has crossed the dark for years<br>To find me in socks</p></article>
+<article class="poem" id="awe-050"><h3><a href="#awe-050">050 / Thin Shelter</a></h3><p>I breathe the night air<br>A thin blue veil holds my life<br>Against so much dark</p></article>
+<article class="poem" id="awe-051"><h3><a href="#awe-051">051 / Open Gate</a></h3><p>I swing wide the gate<br>But the stars were never fenced<br>My latch clicks softly</p></article>
+<article class="poem" id="awe-052"><h3><a href="#awe-052">052 / Calendar</a></h3><p>I tear off a month<br>The stars keep their ancient light<br>My scrap joins the bin</p></article>
+<article class="poem" id="awe-053"><h3><a href="#awe-053">053 / Handspan</a></h3><p>I measure with thumbs<br>And cover whole fields of suns<br>My arms ache so soon</p></article>
+<article class="poem" id="awe-054"><h3><a href="#awe-054">054 / Silence</a></h3><p>I wait for a sound<br>From all those bright distant suns<br>My coat rustles once</p></article>
+<article class="poem" id="awe-055"><h3><a href="#awe-055">055 / Scale Model</a></h3><p>I set down a pea<br>And walk out the space to Earth<br>My street is too short</p></article>
+<article class="poem" id="awe-056"><h3><a href="#awe-056">056 / Infinite</a></h3><p>I mouth endlessness<br>My breath ends before the word<br>The stars do not dim</p></article>
+<article class="poem" id="awe-057"><h3><a href="#awe-057">057 / Hilltop</a></h3><p>I reach the hill&#x27;s crest<br>No closer to any star<br>Yet I feel less bound</p></article>
+<article class="poem" id="awe-058"><h3><a href="#awe-058">058 / Empty Cup</a></h3><p>I hold up my cup<br>To toast the unending dark<br>Starlight fills it first</p></article>
+<article class="poem" id="awe-059"><h3><a href="#awe-059">059 / Beyond Sight</a></h3><p>I gaze past one star<br>And try to imagine more<br>My mind sheds its walls</p></article>
+<article class="poem" id="awe-060"><h3><a href="#awe-060">060 / Human Hour</a></h3><p>I give night some time<br>It gives me a billion years<br>My tea has gone cold</p></article>
+<article class="poem" id="awe-061"><h3><a href="#awe-061">061 / Streetlight</a></h3><p>I shade my weak eyes<br>And find stars behind the glare<br>How much more stays hid</p></article>
+<article class="poem" id="awe-062"><h3><a href="#awe-062">062 / Lens Cap</a></h3><p>I lift the black cap<br>A thousand suns enter glass<br>My small room expands</p></article>
+<article class="poem" id="awe-063"><h3><a href="#awe-063">063 / Warm Kitchen</a></h3><p>I glance at my house<br>One warm square beneath the stars<br>It holds all I love</p></article>
+<article class="poem" id="awe-064"><h3><a href="#awe-064">064 / Sleepless</a></h3><p>I leave sleep behind<br>Too much sky waits at the pane<br>My bed seems so small</p></article>
+<article class="poem" id="awe-065"><h3><a href="#awe-065">065 / Pale Smudge</a></h3><p>I find a faint blur<br>And learn it holds countless suns<br>My eyes start to sting</p></article>
+<article class="poem" id="awe-066"><h3><a href="#awe-066">066 / Andromeda</a></h3><p>I barely see it<br>A whole swarm of distant stars<br>Just mist in my eye</p></article>
+<article class="poem" id="awe-067"><h3><a href="#awe-067">067 / Small Boat</a></h3><p>I drift off the coast<br>Stars above and stars below<br>My oars break their light</p></article>
+<article class="poem" id="awe-068"><h3><a href="#awe-068">068 / Winter Breath</a></h3><p>I breathe out a cloud<br>It hides a whole patch of stars<br>Then gives them all back</p></article>
+<article class="poem" id="awe-069"><h3><a href="#awe-069">069 / Warm Blood</a></h3><p>I feel warm blood move<br>Beneath all that depth of cold<br>How brief and how strange</p></article>
+<article class="poem" id="awe-070"><h3><a href="#awe-070">070 / Night Train</a></h3><p>I ride through the dark<br>The stars seem to hold their place<br>My whole town slides past</p></article>
+<article class="poem" id="awe-071"><h3><a href="#awe-071">071 / Glass Bead</a></h3><p>I hold one glass bead<br>And picture the Earth that small<br>My hand shakes a bit</p></article>
+<article class="poem" id="awe-072"><h3><a href="#awe-072">072 / Not Alone</a></h3><p>I stand with my friend<br>We both fall quiet at once<br>The sky fills my words</p></article>
+<article class="poem" id="awe-073"><h3><a href="#awe-073">073 / Small Prayer</a></h3><p>I have no grand prayer<br>Just this breath beneath the stars<br>And the next one drawn</p></article>
+<article class="poem" id="awe-074"><h3><a href="#awe-074">074 / Unfinished</a></h3><p>I start to say vast<br>But the word shuts like a box<br>I open my hands</p></article>
+<article class="poem" id="awe-075"><h3><a href="#awe-075">075 / Night Swim</a></h3><p>I float on my back<br>The stars reach down without end<br>My ears fill with waves</p></article>
+<article class="poem" id="awe-076"><h3><a href="#awe-076">076 / Far Future</a></h3><p>I watch a star fade<br>In the first pale wash of dawn<br>My own day seems new</p></article>
+<article class="poem" id="awe-077"><h3><a href="#awe-077">077 / Old Message</a></h3><p>I catch light tonight<br>That left long before my birth<br>My eyes read it now</p></article>
+<article class="poem" id="awe-078"><h3><a href="#awe-078">078 / Distant Kin</a></h3><p>I trace veins of blue<br>And think of the stars in me<br>My skin feels less closed</p></article>
+<article class="poem" id="awe-079"><h3><a href="#awe-079">079 / One Life</a></h3><p>I get one small life<br>To stand under all these suns<br>I stay out till dawn</p></article>
+<article class="poem" id="awe-080"><h3><a href="#awe-080">080 / Lost Measure</a></h3><p>I try to compare<br>The stars to the grains of sand<br>And drop my handful</p></article>
+<article class="poem" id="awe-081"><h3><a href="#awe-081">081 / Long Silence</a></h3><p>I listen so hard<br>The great dark rings in my ears<br>My dog breaks the spell</p></article>
+<article class="poem" id="awe-082"><h3><a href="#awe-082">082 / Observatory</a></h3><p>I queue in the cold<br>To borrow one glimpse of Mars<br>My turn feels too brief</p></article>
+<article class="poem" id="awe-083"><h3><a href="#awe-083">083 / Saturn&#x27;s Rings</a></h3><p>I see the thin rings<br>And pull back to catch my breath<br>My eye needs one more</p></article>
+<article class="poem" id="awe-084"><h3><a href="#awe-084">084 / Lunar Detail</a></h3><p>I see each sharp rim<br>And feel the moon turn to stone<br>My sky gains a world</p></article>
+<article class="poem" id="awe-085"><h3><a href="#awe-085">085 / Sunbeam</a></h3><p>I stand in warm light<br>Eight short minutes from the sun<br>My shadow stays home</p></article>
+<article class="poem" id="awe-086"><h3><a href="#awe-086">086 / Vast Room</a></h3><p>I sleep beneath beams<br>But beyond them space goes on<br>My roof seems like cloth</p></article>
+<article class="poem" id="awe-087"><h3><a href="#awe-087">087 / Unfenced</a></h3><p>I want one clear edge<br>Some far place to rest my thought<br>Night offers no wall</p></article>
+<article class="poem" id="awe-088"><h3><a href="#awe-088">088 / Tide</a></h3><p>I feel the tide pull<br>And look at the distant moon<br>Space moves at my feet</p></article>
+<article class="poem" id="awe-089"><h3><a href="#awe-089">089 / Small Fire</a></h3><p>I feed the camp flame<br>Under suns I cannot count<br>My wood burns so fast</p></article>
+<article class="poem" id="awe-090"><h3><a href="#awe-090">090 / Open Book</a></h3><p>I close my star book<br>Its last page leaves out so much<br>I look up again</p></article>
+<article class="poem" id="awe-091"><h3><a href="#awe-091">091 / Unseen Worlds</a></h3><p>I seek one faint point<br>And think of its hidden worlds<br>My own tilts beneath</p></article>
+<article class="poem" id="awe-092"><h3><a href="#awe-092">092 / Strange Scale</a></h3><p>I cross town by train<br>While light runs from world to world<br>My stop comes too soon</p></article>
+<article class="poem" id="awe-093"><h3><a href="#awe-093">093 / No Border</a></h3><p>I draw a last line<br>Then think of the space past that<br>My pen leaves the page</p></article>
+<article class="poem" id="awe-094"><h3><a href="#awe-094">094 / Outward</a></h3><p>I send one thought out<br>Past the reach of all my words<br>It comes back as awe</p></article>
+<article class="poem" id="awe-095"><h3><a href="#awe-095">095 / Night Rain</a></h3><p>I wait out the rain<br>The stars wait beyond the clouds<br>My whole sky is near</p></article>
+<article class="poem" id="awe-096"><h3><a href="#awe-096">096 / After Clouds</a></h3><p>I watch clouds pull back<br>Like a roof that comes apart<br>My heart lifts through it</p></article>
+<article class="poem" id="awe-097"><h3><a href="#awe-097">097 / Salt</a></h3><p>I taste salt on lips<br>And think of the ancient seas<br>On this speck of Earth</p></article>
+<article class="poem" id="awe-098"><h3><a href="#awe-098">098 / Almost Nothing</a></h3><p>I feel myself shrink<br>Till I am almost nothing<br>Yet the stars fit here</p></article>
+<article class="poem" id="awe-099"><h3><a href="#awe-099">099 / The Looking</a></h3><p>I am small enough<br>To vanish in all this dark<br>Still I get to look</p></article>
+<article class="poem" id="awe-100"><h3><a href="#awe-100">100 / Whole Earth</a></h3><p>I picture us all<br>On one bright bead in the black<br>My anger grows small</p></article>
+<article class="poem" id="awe-101"><h3><a href="#awe-101">101 / Fingerprint</a></h3><p>I press thumb to glass<br>My print hides a distant world<br>I wipe it off slow</p></article>
+<article class="poem" id="awe-102"><h3><a href="#awe-102">102 / Tender Scale</a></h3><p>I bend to a moth<br>Below the uncounted stars<br>Its wings fill my sight</p></article>
+<article class="poem" id="awe-103"><h3><a href="#awe-103">103 / Still Here</a></h3><p>I almost fear it<br>This depth that will not hold still<br>Then feel my own breath</p></article>
+<article class="poem" id="awe-104"><h3><a href="#awe-104">104 / Farther</a></h3><p>I ask what lies past<br>The farthest light we can see<br>My words drift outward</p></article>
+<article class="poem" id="awe-105"><h3><a href="#awe-105">105 / Light in Hand</a></h3><p>I turn my palm up<br>And let ancient light rest there<br>No weight, yet so much</p></article>
+<article class="poem" id="awe-106"><h3><a href="#awe-106">106 / Small Flame</a></h3><p>I guard my short life<br>As I would a match in wind<br>Under endless night</p></article>
+<article class="poem" id="awe-107"><h3><a href="#awe-107">107 / No End Found</a></h3><p>I reach thought&#x27;s last rung<br>The dark goes on beyond it<br>I hang there and grin</p></article>
+<article class="poem" id="awe-108"><h3><a href="#awe-108">108 / Borrowed Night</a></h3><p>I have borrowed eyes<br>For one brief look at the stars<br>I use them till dawn</p></article>
+<article class="poem" id="awe-109"><h3><a href="#awe-109">109 / Homeward</a></h3><p>I walk home slowly<br>With more sky than I can hold<br>In my mortal chest</p></article>
+<article class="poem" id="awe-110"><h3><a href="#awe-110">110 / Thanks</a></h3><p>I cannot count stars<br>Or all the years in their light<br>But I can say thanks</p></article>
+</div></section>
+<p class="closing">220 original poems, including the twenty from our conversation. Space imagery initially inspired by <a href="https://science.nasa.gov/mission/hubble/science/universe-uncovered/hubble-nebulae/">NASA’s nebula collection</a>.<br>Music: Giuseppe Verdi, <em>Messa da requiem, Dies irae</em>. Recording from ICBSA via <a href="https://commons.wikimedia.org/wiki/File:ICBSA_Verdi_-_Messa_da_requiem_parte_03,_Dies_irae.ogg">Wikimedia Commons</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
+</div></main>
+<audio id="crawlMusic" src="philosophy-assets/verdi-dies-irae.mp3" preload="none" loop></audio>
+<script>
+const crawl = document.querySelector('.crawl');
+const mode = document.getElementById('mode');
+const pause = document.getElementById('pause');
+const speed = document.getElementById('speed');
+const theme = document.getElementById('theme');
+const audio = document.getElementById('crawlMusic');
+const music = document.getElementById('music');
+let animation, readingScroll = 0;
+function startAnimation(progress = 0, paused = false) {
+  if (animation) animation.cancel();
+  const distance = crawl.scrollHeight + window.innerHeight;
+  animation = crawl.animate([
+    {transform:'rotateX(68deg) translateY(0)'},
+    {transform:`rotateX(68deg) translateY(-${distance}px)`}
+  ], {duration:distance / 34 * 1000, fill:'forwards', easing:'linear'});
+  animation.currentTime = progress * animation.effect.getTiming().duration;
+  animation.playbackRate = Number(speed.value);
+  if (paused) animation.pause();
+  animation.onfinish = showReading;
+}
+function showReading() {
+  if (animation) { animation.cancel(); animation = null; }
+  document.body.classList.remove('is-crawl');
+  mode.textContent = 'Play crawl';
+  pause.hidden = true;
+  document.getElementById('speedControl').hidden = true;
+  audio.pause();
+  music.textContent = 'Music: off';
+  music.setAttribute('aria-pressed','false');
+  window.scrollTo(0,readingScroll);
+}
+mode.addEventListener('click', () => {
+  if (document.body.classList.contains('is-crawl')) return showReading();
+  readingScroll = window.scrollY;
+  document.body.classList.add('is-crawl');
+  mode.textContent = 'Reading view';
+  pause.hidden = false;
+  pause.textContent = 'Pause';
+  document.getElementById('speedControl').hidden = false;
+  startAnimation();
+});
+pause.addEventListener('click', () => {
+  if (!animation) return;
+  if (animation.playState === 'paused') { animation.play(); pause.textContent = 'Pause'; }
+  else { animation.pause(); pause.textContent = 'Resume'; }
+});
+speed.addEventListener('change', () => { if (animation) animation.updatePlaybackRate(Number(speed.value)); });
+theme.addEventListener('change', () => {
+  document.querySelectorAll('.collection').forEach(s => { s.hidden = theme.value !== 'all' && theme.value !== s.id; });
+  document.querySelectorAll('.jump a').forEach(a => { a.hidden = theme.value !== 'all' && a.hash !== '#principles' && a.hash !== '#' + theme.value; });
+  if (animation) { const paused = animation.playState === 'paused'; startAnimation(0,paused); }
+});
+music.addEventListener('click', async () => {
+  if (!audio.paused) { audio.pause(); music.textContent = 'Music: off'; music.setAttribute('aria-pressed','false'); return; }
+  try { await audio.play(); music.textContent = 'Music: on'; music.setAttribute('aria-pressed','true'); }
+  catch { music.textContent = 'Music unavailable'; }
+});
+window.addEventListener('resize', () => {
+  if (!animation) return;
+  const progress = animation.currentTime / animation.effect.getTiming().duration;
+  startAnimation(progress,animation.playState === 'paused');
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && animation) showReading(); });
+startAnimation();
+</script>
+</body></html>
