@@ -672,7 +672,10 @@
 </div></section>
 <p class="closing">220 original poems, including the twenty from our conversation. Space imagery initially inspired by <a href="https://science.nasa.gov/mission/hubble/science/universe-uncovered/hubble-nebulae/">NASA’s nebula collection</a>.<br>Music: Giuseppe Verdi, <em>Messa da requiem, Dies irae</em>. Recording from ICBSA via <a href="https://commons.wikimedia.org/wiki/File:ICBSA_Verdi_-_Messa_da_requiem_parte_03,_Dies_irae.ogg">Wikimedia Commons</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
 </div></main>
-<audio id="crawlMusic" src="philosophy-assets/verdi-dies-irae.mp3" preload="none" loop></audio>
+<audio id="crawlMusic" src="assets/audio/verdi-dies-irae.mp3" preload="auto" loop></audio>
+<div class="crawl-start" id="crawlStart" hidden>
+  <button id="crawlStartButton" type="button">Start the Cosmos</button>
+</div>
 <script>
 const crawl = document.querySelector('.crawl');
 const mode = document.getElementById('mode');
@@ -681,7 +684,26 @@ const speed = document.getElementById('speed');
 const theme = document.getElementById('theme');
 const audio = document.getElementById('crawlMusic');
 const music = document.getElementById('music');
-let animation, readingScroll = 0;
+const crawlStart = document.getElementById('crawlStart');
+const crawlStartButton = document.getElementById('crawlStartButton');
+let animation, readingScroll = 0, musicOn = false;
+function setMusic(on) {
+  musicOn = on;
+  music.textContent = on ? 'Music: on' : 'Music: off';
+  music.setAttribute('aria-pressed', String(on));
+}
+async function playMusic() {
+  try { await audio.play(); setMusic(true); return true; }
+  catch { setMusic(false); return false; }
+}
+async function startCrawl() {
+  startAnimation(0, true);
+  audio.currentTime = 0;
+  const playing = await playMusic();
+  if (!playing && crawlStart.hidden) { crawlStart.hidden = false; return; }
+  crawlStart.hidden = true;
+  if (animation) animation.play();
+}
 function startAnimation(progress = 0, paused = false) {
   if (animation) animation.cancel();
   const distance = crawl.scrollHeight + window.innerHeight;
@@ -700,9 +722,9 @@ function showReading() {
   mode.textContent = 'Play crawl';
   pause.hidden = true;
   document.getElementById('speedControl').hidden = true;
+  crawlStart.hidden = true;
   audio.pause();
-  music.textContent = 'Music: off';
-  music.setAttribute('aria-pressed','false');
+  setMusic(false);
   window.scrollTo(0,readingScroll);
 }
 mode.addEventListener('click', () => {
@@ -713,12 +735,12 @@ mode.addEventListener('click', () => {
   pause.hidden = false;
   pause.textContent = 'Pause';
   document.getElementById('speedControl').hidden = false;
-  startAnimation();
+  startCrawl();
 });
 pause.addEventListener('click', () => {
   if (!animation) return;
-  if (animation.playState === 'paused') { animation.play(); pause.textContent = 'Pause'; }
-  else { animation.pause(); pause.textContent = 'Resume'; }
+  if (animation.playState === 'paused') { animation.play(); pause.textContent = 'Pause'; if (musicOn) audio.play().catch(() => {}); }
+  else { animation.pause(); pause.textContent = 'Resume'; audio.pause(); }
 });
 speed.addEventListener('change', () => { if (animation) animation.updatePlaybackRate(Number(speed.value)); });
 theme.addEventListener('change', () => {
@@ -727,9 +749,8 @@ theme.addEventListener('change', () => {
   if (animation) { const paused = animation.playState === 'paused'; startAnimation(0,paused); }
 });
 music.addEventListener('click', async () => {
-  if (!audio.paused) { audio.pause(); music.textContent = 'Music: off'; music.setAttribute('aria-pressed','false'); return; }
-  try { await audio.play(); music.textContent = 'Music: on'; music.setAttribute('aria-pressed','true'); }
-  catch { music.textContent = 'Music unavailable'; }
+  if (musicOn) { audio.pause(); setMusic(false); return; }
+  if (!(await playMusic())) music.textContent = 'Music unavailable';
 });
 window.addEventListener('resize', () => {
   if (!animation) return;
@@ -737,6 +758,7 @@ window.addEventListener('resize', () => {
   startAnimation(progress,animation.playState === 'paused');
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && animation) showReading(); });
-startAnimation();
+crawlStartButton.addEventListener('click', startCrawl);
+startCrawl();
 </script>
 </body></html>
