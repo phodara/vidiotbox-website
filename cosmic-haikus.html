@@ -672,10 +672,7 @@
 </div></section>
 <p class="closing">220 original poems, including the twenty from our conversation. Space imagery initially inspired by <a href="https://science.nasa.gov/mission/hubble/science/universe-uncovered/hubble-nebulae/">NASA’s nebula collection</a>.<br>Music: Giuseppe Verdi, <em>Messa da requiem, Dies irae</em>. Recording from ICBSA via <a href="https://commons.wikimedia.org/wiki/File:ICBSA_Verdi_-_Messa_da_requiem_parte_03,_Dies_irae.ogg">Wikimedia Commons</a>, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</p>
 </div></main>
-<audio id="crawlMusic" src="assets/audio/verdi-dies-irae.mp3" preload="auto" loop></audio>
-<div class="crawl-start" id="crawlStart" hidden>
-  <button id="crawlStartButton" type="button">Start the Cosmos</button>
-</div>
+<audio id="crawlMusic" src="assets/audio/verdi-dies-irae.mp3" preload="none" loop></audio>
 <script>
 const crawl = document.querySelector('.crawl');
 const mode = document.getElementById('mode');
@@ -684,8 +681,6 @@ const speed = document.getElementById('speed');
 const theme = document.getElementById('theme');
 const audio = document.getElementById('crawlMusic');
 const music = document.getElementById('music');
-const crawlStart = document.getElementById('crawlStart');
-const crawlStartButton = document.getElementById('crawlStartButton');
 let animation, readingScroll = 0, musicOn = false;
 function setMusic(on) {
   musicOn = on;
@@ -695,14 +690,6 @@ function setMusic(on) {
 async function playMusic() {
   try { await audio.play(); setMusic(true); return true; }
   catch { setMusic(false); return false; }
-}
-async function startCrawl() {
-  startAnimation(0, true);
-  audio.currentTime = 0;
-  const playing = await playMusic();
-  if (!playing && crawlStart.hidden) { crawlStart.hidden = false; return; }
-  crawlStart.hidden = true;
-  if (animation) animation.play();
 }
 function startAnimation(progress = 0, paused = false) {
   if (animation) animation.cancel();
@@ -722,7 +709,6 @@ function showReading() {
   mode.textContent = 'Play crawl';
   pause.hidden = true;
   document.getElementById('speedControl').hidden = true;
-  crawlStart.hidden = true;
   audio.pause();
   setMusic(false);
   window.scrollTo(0,readingScroll);
@@ -735,7 +721,7 @@ mode.addEventListener('click', () => {
   pause.hidden = false;
   pause.textContent = 'Pause';
   document.getElementById('speedControl').hidden = false;
-  startCrawl();
+  startAnimation();
 });
 pause.addEventListener('click', () => {
   if (!animation) return;
@@ -758,7 +744,6 @@ window.addEventListener('resize', () => {
   startAnimation(progress,animation.playState === 'paused');
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && animation) showReading(); });
-crawlStartButton.addEventListener('click', startCrawl);
-startCrawl();
+startAnimation();
 </script>
 </body></html>
