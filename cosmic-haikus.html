@@ -340,8 +340,8 @@
  body { background:#111; }
  .toolbar { position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 22px;background:#111f;border-bottom:1px solid var(--line); }
  .brand {color:var(--cyan);font-weight:900;font-size:13px;letter-spacing:2px;margin-right:auto;}
- button,select,.download {font:700 13px Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:10px 12px;border-radius:3px;cursor:pointer;text-decoration:none;}
- button:hover,.download:hover {border-color:var(--green);color:var(--green);}
+ button,select {font:700 13px Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:10px 12px;border-radius:3px;cursor:pointer;text-decoration:none;}
+ button:hover {border-color:var(--green);color:var(--green);}
  :focus-visible {outline:2px solid var(--green);outline-offset:4px;}
  label {font-size:12px;color:var(--muted);display:flex;gap:7px;align-items:center;}
  [hidden] {display:none !important;}
@@ -385,7 +385,7 @@
  .is-crawl .jump,.is-crawl details,.is-crawl .closing {display:none;}
  .is-crawl h1 {margin-inline:auto;}
  @media(max-width:640px) {
-  .toolbar {padding:10px;gap:8px;} .brand {width:100%;} button,select,.download {padding:8px;font-size:12px;}
+  .toolbar {padding:10px;gap:8px;} .brand {width:100%;} button,select {padding:8px;font-size:12px;}
   .crawl-stage {padding:36px 20px;} .poem-grid {grid-template-columns:1fr;}
   .poem p {font-size:20px;} .is-crawl .crawl-stage {inset:0;perspective:330px;perspective-origin:50% 28%;}
   .is-crawl .crawl {width:94vw;} .is-crawl .poem p {font-size:25px;}
@@ -405,11 +405,10 @@
  <button id="pause" type="button">Pause</button>
  <label id="speedControl">Speed <select id="speed"><option value="0.5" selected>0.5×</option><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
  <label> Music Shakuhachi <select id="music"><option value="assets/audio/shika-no-toone-shakuhachi.mp3" selected>On</option><option value="">Off</option></select></label>
- <a class="download" href="space-haikus.txt" download>Download text</a>
 </nav>
 <main class="crawl-stage"><div class="crawl">
 <p class="audio-hint" id="audioHint">Click on page to start audio</p>
-<p class="eyebrow">220 HAIKUS / TWO WAYS OF LOOKING UP</p>
+<p class="eyebrow">HAIKUS ABOUTLOOKING UP</p>
 <h1>A sky without edges</h1>
 <div class="jump"><a href="#space">Explore space ↓</a><a href="#awe">Feel the scale ↓</a><a href="#principles">The Vidiotbox principles ↓</a></div>
 <details id="principles"><summary>The original Vidiotbox philosophy</summary><div class="principles-copy">
@@ -449,7 +448,7 @@
   <p class="end">WHAT THE WORLD NEEDS IS MORE NONSENSE!</p>
   <p class="music-credit">Music: Araki Kodō III, <a href="https://commons.wikimedia.org/wiki/File:Shikanotoone.ogg"><em>Shika no Tōne</em></a> (shakuhachi), Victor 13029, via Wikimedia Commons, public domain.</p>
   </div></details>
-<section class="collection" id="space" aria-labelledby="space-title"><h2 id="space-title">The Universe</h2><p class="section-note">Worlds, moons, dust, light, and the long dark between.</p><div class="poem-grid">
+<section class="collection" id="space" aria-label="The Universe"><div class="poem-grid">
 <article class="poem" id="space-001"><h3><a href="#space-001">001 / Moon</a></h3><p>Footprints fill with night<br>No wind comes to sweep them clean<br>Earth climbs into view</p></article>
 <article class="poem" id="space-002"><h3><a href="#space-002">002 / Nebula</a></h3><p>Deep in clouds of dust<br>A small sun begins to glow<br>Night loosens its hold</p></article>
 <article class="poem" id="space-003"><h3><a href="#space-003">003 / Mars</a></h3><p>Rust beneath the wheels<br>A lone rover climbs the ridge<br>No birds greet the dawn</p></article>
