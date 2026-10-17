@@ -73,3 +73,20 @@ Ordinary objects also need a reason to appear. Tea, rice, bread, or a household 
 7. **Check the form after the meaning works.** Read aloud, verify grammar, and count 5–7–5. Notice pronunciation-dependent words such as “toward” and “our.” Revise the line as a whole when a mechanical fix weakens it.
 
 The collection can include both sensory haiku and more explicit philosophical meditations. Revision should make each poem’s approach deliberate, while keeping the language clear enough for a reader to enter it.
+
+There are established haiku terms, but “philosophical” and “discovery through a scene” are descriptive approaches—not a standard pair of classifications. My earlier wording made that distinction sound more formal than it is.
+Some established distinctions are:
+Term	What it describes
+Shasei—“sketch from life”	An approach associated with Masaoka Shiki, grounded in observation. It is related to the scene-based approach we discussed, though not identical to it. Source
+Juxtaposition / cut	A technique that places images, perceptions, or ideas in a meaningful relationship. It can work in both observational and philosophical poems. Source
+Seasonal / nonseasonal haiku	A distinction concerning seasonal references. Nonseasonal haiku are commonly called muki. This is separate from whether a poem is philosophical. Source
+
+
+For your document, we could use two clearly identified working descriptions:
+- Observational: meaning emerges through a concrete experience—“Moonset.”
+- Reflective: the poem expresses a thought or realization more directly—“Humility.”
+These approaches overlap. “Hollow Bell” presents a sensory experience that can also carry philosophical or spiritual meaning.
+“Philosophical” describes what a poem explores; “discovery through a scene” describes how it conveys that meaning. A haiku can do both.
+
+
+2:05 PM
