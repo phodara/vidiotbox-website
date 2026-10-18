@@ -45,6 +45,22 @@ class AssetVersions(unittest.TestCase):
             for url in ('https://example.com/sign.png', 'missing.png', 'data:image/png;base64,abc'):
                 self.assertEqual(f'"{url}"', build_site.version_urls(f'"{url}"', page, root))
 
+    def test_haiku_generator_assets_are_published(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder).resolve()
+            generator = root / 'haiku-generator'
+            generator.mkdir()
+            for name in ('index.html', 'worker.js', 'decoder.mjs', 'decoder.wasm', 'model.bin', 'model-info.json'):
+                (generator / name).write_bytes(b'fixture')
+            source = root / 'scripts/haiku-src'
+            source.mkdir(parents=True)
+            (source / 'host.cpp').write_text('not a web asset')
+            output = root / '_site'
+            build_site.build(root, output)
+            for asset in generator.iterdir():
+                self.assertTrue((output / 'haiku-generator' / asset.name).is_file())
+            self.assertFalse((output / 'scripts').exists())
+
     def test_build_excludes_private_and_backup_files(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder).resolve()

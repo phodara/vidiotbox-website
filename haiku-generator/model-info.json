@@ -1,0 +1,15 @@
+{
+  "model": "haiku-cosmic-v7",
+  "sha256": "4dada930c42fbe5b7ac3b338a1e7468603e638e7dcf546b2c4c46f116cbfcf81",
+  "model_bytes": 14912348,
+  "themes": [
+    "spring",
+    "summer",
+    "autumn",
+    "winter",
+    "space"
+  ],
+  "runtime": "INT4 weights / INT8 activations",
+  "decoder": "C5 controlled grammar",
+  "wasm_sha256": "1289e1e66781375e8dc052b0c7aa094ac49da251c1372f93bc8cdb9316c9f63c"
+}

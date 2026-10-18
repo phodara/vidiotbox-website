@@ -1,0 +1,332 @@
+{
+  "spring": [
+    {
+      "case": 0,
+      "seed": 6001,
+      "mode": "grammar",
+      "prompt": "Spring rain falls",
+      "person_voice": false,
+      "person_end": false,
+      "generated_first_line": false,
+      "lines": [
+        "Spring rain falls on fields...",
+        "The wind is cold there by waves",
+        "still branches shine here."
+      ],
+      "syllables": [
+        5,
+        7,
+        5
+      ],
+      "complete": true,
+      "attempts": 15,
+      "rejected_attempts": 0,
+      "forwards": 86,
+      "grammar_filtered": 11778,
+      "palette_fallbacks": 0,
+      "host_seconds": 0.152077,
+      "scratch_bytes": 1294380,
+      "saved_logits_bytes": 101412,
+      "used_bits_bytes": 3180,
+      "grammar_workspace_bytes": 12288,
+      "grammar_table_bytes": 7504,
+      "grammar_state_bytes": 20
+    },
+    {
+      "case": 1,
+      "seed": 6002,
+      "mode": "grammar",
+      "prompt": "The spring wind blows",
+      "person_voice": false,
+      "person_end": false,
+      "generated_first_line": false,
+      "lines": [
+        "The spring wind blows there...",
+        "air is still here in a tree",
+        "now branches are dark."
+      ],
+      "syllables": [
+        5,
+        7,
+        5
+      ],
+      "complete": true,
+      "attempts": 15,
+      "rejected_attempts": 2,
+      "forwards": 76,
+      "grammar_filtered": 10545,
+      "palette_fallbacks": 0,
+      "host_seconds": 0.133158,
+      "scratch_bytes": 1294380,
+      "saved_logits_bytes": 101412,
+      "used_bits_bytes": 3180,
+      "grammar_workspace_bytes": 12288,
+      "grammar_table_bytes": 7504,
+      "grammar_state_bytes": 20
+    }
+  ],
+  "summer": [
+    {
+      "case": 0,
+      "seed": 6001,
+      "mode": "grammar",
+      "prompt": "The hot sun burns",
+      "person_voice": false,
+      "person_end": false,
+      "generated_first_line": false,
+      "lines": [
+        "The hot sun burns there...",
+        "fields are cold here in soft waves",
+        "birds float by a tree."
+      ],
+      "syllables": [
+        5,
+        7,
+        5
+      ],
+      "complete": true,
+      "attempts": 15,
+      "rejected_attempts": 0,
+      "forwards": 79,
+      "grammar_filtered": 10654,
+      "palette_fallbacks": 0,
+      "host_seconds": 0.139359,
+      "scratch_bytes": 1294380,
+      "saved_logits_bytes": 101412,
+      "used_bits_bytes": 3180,
+      "grammar_workspace_bytes": 12288,
+      "grammar_table_bytes": 7504,
+      "grammar_state_bytes": 20
+    },
+    {
+      "case": 1,
+      "seed": 6002,
+      "mode": "grammar",
+      "prompt": "Summer grass sways",
+      "person_voice": false,
+      "person_end": false,
+      "generated_first_line": false,
+      "lines": [
+        "Summer grass sways there...",
+        "The bird is still in fields here",
+        "a wave falls on trees."
+      ],
+      "syllables": [
+        5,
+        7,
+        5
+      ],
+      "complete": true,
+      "attempts": 15,
+      "rejected_attempts": 2,
+      "forwards": 77,
+      "grammar_filtered": 10287,
+      "palette_fallbacks": 0,
+      "host_seconds": 0.134747,
+      "scratch_bytes": 1294380,
+      "saved_logits_bytes": 101412,
+      "used_bits_bytes": 3180,
+      "grammar_workspace_bytes": 12288,
+      "grammar_table_bytes": 7504,
+      "grammar_state_bytes": 20
+    }
+  ],
+  "autumn": [
+    {
+      "case": 0,
+      "seed": 6001,
+      "mode": "grammar",
+      "prompt": "Autumn leaves fall",
+      "person_voice": false,
+      "person_end": false,
+      "generated_first_line": false,
+      "lines": [
+        "Autumn leaves fall here...",
+        "The moon is pale there by waves",
+        "still bees are quiet."
+      ],
+      "syllables": [
+        5,
+        7,
+        5
+      ],
+      "complete": true,
+      "attempts": 15,
+      "rejected_attempts": 2,
+      "forwards": 78,
+      "grammar_filtered": 10552,
+      "palette_fallbacks": 0,
+      "host_seconds": 0.1363,
+      "scratch_bytes": 1294380,
+      "saved_logits_bytes": 101412,
+      "used_bits_bytes": 3180,
+      "grammar_workspace_bytes": 12288,
+      "grammar_table_bytes": 7504,
+      "grammar_state_bytes": 20
+    },
+    {
+      "case": 1,
+      "seed": 6002,
+      "mode": "grammar",
+      "prompt": "The full moon glows",
+      "person_voice": false,
+      "person_end": false,
+      "generated_first_line": false,
+      "lines": [
+        "The full moon glows there...",
+        "Now sunlight is bright in waves",
+        "a star burns nearby."
+      ],
+      "syllables": [
+        5,
+        7,
+        5
+      ],
+      "complete": true,
+      "attempts": 15,
+      "rejected_attempts": 0,
+      "forwards": 75,
+      "grammar_filtered": 10407,
+      "palette_fallbacks": 0,
+      "host_seconds": 0.131233,
+      "scratch_bytes": 1294380,
+      "saved_logits_bytes": 101412,
+      "used_bits_bytes": 3180,
+      "grammar_workspace_bytes": 12288,
+      "grammar_table_bytes": 7504,
+      "grammar_state_bytes": 20
+    }
+  ],
+  "winter": [
+    {
+      "case": 0,
+      "seed": 6001,
+      "mode": "grammar",
+      "prompt": "Winter snow falls",
+      "person_voice": false,
+      "person_end": false,
+      "generated_first_line": false,
+      "lines": [
+        "Winter snow falls there...",
+        "Now the sun is bright in fields",
+        "still birds float by waves."
+      ],
+      "syllables": [
+        5,
+        7,
+        5
+      ],
+      "complete": true,
+      "attempts": 15,
+      "rejected_attempts": 0,
+      "forwards": 82,
+      "grammar_filtered": 11317,
+      "palette_fallbacks": 0,
+      "host_seconds": 0.144043,
+      "scratch_bytes": 1294380,
+      "saved_logits_bytes": 101412,
+      "used_bits_bytes": 3180,
+      "grammar_workspace_bytes": 12288,
+      "grammar_table_bytes": 7504,
+      "grammar_state_bytes": 20
+    },
+    {
+      "case": 1,
+      "seed": 6002,
+      "mode": "grammar",
+      "prompt": "The cold wind howls",
+      "person_voice": false,
+      "person_end": false,
+      "generated_first_line": false,
+      "lines": [
+        "The cold wind howls here...",
+        "stones are still there in dark fields",
+        "stars glow by a wave."
+      ],
+      "syllables": [
+        5,
+        7,
+        5
+      ],
+      "complete": true,
+      "attempts": 15,
+      "rejected_attempts": 2,
+      "forwards": 78,
+      "grammar_filtered": 10969,
+      "palette_fallbacks": 0,
+      "host_seconds": 0.136295,
+      "scratch_bytes": 1294380,
+      "saved_logits_bytes": 101412,
+      "used_bits_bytes": 3180,
+      "grammar_workspace_bytes": 12288,
+      "grammar_table_bytes": 7504,
+      "grammar_state_bytes": 20
+    }
+  ],
+  "space": [
+    {
+      "case": 0,
+      "seed": 6001,
+      "mode": "grammar",
+      "prompt": "",
+      "person_voice": true,
+      "person_end": false,
+      "generated_first_line": true,
+      "lines": [
+        "I wait by the star...",
+        "sunlight and light glow in clouds",
+        "dusty matter burns."
+      ],
+      "syllables": [
+        5,
+        7,
+        5
+      ],
+      "complete": true,
+      "attempts": 15,
+      "rejected_attempts": 0,
+      "forwards": 90,
+      "grammar_filtered": 12771,
+      "palette_fallbacks": 0,
+      "host_seconds": 0.162351,
+      "scratch_bytes": 1294380,
+      "saved_logits_bytes": 101412,
+      "used_bits_bytes": 3180,
+      "grammar_workspace_bytes": 12288,
+      "grammar_table_bytes": 7504,
+      "grammar_state_bytes": 20
+    },
+    {
+      "case": 1,
+      "seed": 6002,
+      "mode": "grammar",
+      "prompt": "",
+      "person_voice": true,
+      "person_end": true,
+      "generated_first_line": true,
+      "lines": [
+        "I breathe quietly...",
+        "The giant planet turns here",
+        "now my hand opens."
+      ],
+      "syllables": [
+        5,
+        7,
+        5
+      ],
+      "complete": true,
+      "attempts": 15,
+      "rejected_attempts": 0,
+      "forwards": 90,
+      "grammar_filtered": 14803,
+      "palette_fallbacks": 0,
+      "host_seconds": 0.162569,
+      "scratch_bytes": 1294380,
+      "saved_logits_bytes": 101412,
+      "used_bits_bytes": 3180,
+      "grammar_workspace_bytes": 12288,
+      "grammar_table_bytes": 7504,
+      "grammar_state_bytes": 20
+    }
+  ]
+}
