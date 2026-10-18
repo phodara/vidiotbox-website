@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="philosophy-assets/happy.png">
+<title>Vidiotbox · Generated Haikus</title>
+<meta name="description" content="An endless crawl of 5–7–5 haiku written live in your browser by the tiny language model and controlled grammar from the Vidiotbox C5 device.">
+<link rel="canonical" href="https://vidiotbox.net/generated-haikus.html">
+<meta property="og:title" content="Generated Haikus - Paul Hodara">
+<meta property="og:description" content="Haiku written live by a tiny on-device language model.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="philosophy-assets/happy.png">
+<meta name="twitter:card" content="summary">
+<style>
+ :root {--cyan:#7dd3fc;--cyan-strong:#00e5ff;--line:#2a6f78;--green:#00ff66;--ink:#d7dee3;--muted:#aeb4bd;}
+ * {box-sizing:border-box;}
+ html {scroll-behavior:smooth;}
+ body {min-height:100vh;margin:0;background:#111;color:var(--ink);font-family:Arial,Helvetica,sans-serif;}
+ .toolbar {position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 22px;background:#111f;border-bottom:1px solid var(--line);}
+ .brand {color:var(--cyan);font-weight:900;font-size:13px;letter-spacing:2px;margin-right:auto;text-decoration:none;}
+ button,select {font:700 13px Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:10px 12px;border-radius:3px;cursor:pointer;text-decoration:none;}
+ button:hover {border-color:var(--green);color:var(--green);}
+ button:disabled {opacity:.5;cursor:wait;}
+ :focus-visible {outline:2px solid var(--green);outline-offset:4px;}
+ label {font-size:12px;color:var(--muted);display:flex;gap:7px;align-items:center;}
+ [hidden] {display:none !important;}
+ #status {flex-basis:100%;font-size:12px;color:var(--muted);min-height:15px;}
+ a {color:var(--cyan);}
+ p {margin:0 0 18px;}
+ h1 {margin:0;color:var(--cyan);font-size:clamp(44px,8vw,100px);line-height:1;font-weight:900;text-transform:uppercase;max-width:950px;}
+ .eyebrow {font-size:12px;letter-spacing:3px;color:var(--green);font-weight:800;margin:0 0 20px;}
+ .lede {font-size:clamp(17px,2.4vw,23px);color:var(--muted);max-width:700px;margin:24px 0 28px;}
+ .crawl-stage {position:relative;display:block;padding:62px 24px 80px;}
+ .crawl {width:min(1120px,100%);margin:auto;text-align:left;}
+ .poem-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:40px;}
+ .poem {border-top:1px solid #29383d;padding:24px 0 28px;break-inside:avoid;}
+ .poem h3 {font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);font-weight:700;margin:0 0 16px;}
+ .poem p {font-size:clamp(17px,2.1vw,23px);line-height:1.7;margin:0;}
+ .writing {color:var(--muted);font-size:15px;}
+ .audio-hint {display:none;}
+ .is-crawl .audio-hint {display:block;font-size:clamp(20px,3vw,34px);letter-spacing:2px;color:var(--cyan);font-weight:800;margin:0 0 48px;visibility:hidden;}
+ .is-crawl .audio-hint.is-shown {visibility:visible;}
+ body.is-crawl {overflow:hidden;}
+ .is-crawl .crawl-stage {position:fixed;inset:0;display:flex;justify-content:center;overflow:hidden;padding:0 18px;perspective:360px;perspective-origin:50% 16%;}
+ .is-crawl .crawl-stage::before,.is-crawl .crawl-stage::after {content:"";position:fixed;left:0;right:0;z-index:1;pointer-events:none;}
+ .is-crawl .crawl-stage::before {top:0;height:66vh;background:linear-gradient(#111 0%,#111 28%,rgba(17,17,17,.86) 50%,rgba(17,17,17,0) 100%);}
+ .is-crawl .crawl-stage::after {bottom:0;height:10vh;background:linear-gradient(rgba(17,17,17,0),rgba(17,17,17,.72) 80%);}
+ .is-crawl .crawl {position:absolute;top:70vh;width:min(1180px,98vw);text-align:center;transform-origin:50% 0;transform:rotateX(68deg);margin:0;}
+ .is-crawl .poem-grid {display:block;}
+ .is-crawl .poem {border:0;padding:32px 0 50px;}
+ .is-crawl .poem p {font-size:clamp(25px,4.2vw,50px);font-weight:700;line-height:1.45;}
+ .is-crawl .poem h3 {font-size:24px;}
+ .is-crawl .writing {font-size:clamp(20px,3vw,34px);}
+ .is-crawl .lede,.is-crawl h1 {margin-inline:auto;}
+ .is-crawl .reading-only {display:none;}
+ dialog {max-width:min(440px,calc(100vw - 32px));background:#101010;color:var(--ink);border:1px solid var(--cyan-strong);box-shadow:0 16px 40px rgba(0,0,0,.6);padding:26px 28px;}
+ dialog::backdrop {background:rgba(17,17,17,.8);}
+ dialog h2 {color:var(--cyan);font-size:13px;letter-spacing:2px;margin:0 0 20px;}
+ .facts {display:grid;gap:14px;margin:0 0 22px;}
+ .facts span {display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+ .facts strong {color:#fff;font-size:18px;font-weight:700;}
+ .copyright {font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;}
+ @media(max-width:640px) {
+  .toolbar {padding:10px;gap:8px;} .brand {width:100%;} button,select {padding:8px;font-size:12px;}
+  .crawl-stage {padding:36px 16px;} .poem-grid {grid-template-columns:1fr;} .poem p {font-size:20px;}
+  .is-crawl .crawl-stage {perspective:330px;perspective-origin:50% 28%;}
+  .is-crawl .crawl {width:78vw;} .is-crawl .poem p {font-size:21px;} .is-crawl .poem h3 {font-size:18px;}
+ }
+ @media(prefers-reduced-motion:reduce) {html {scroll-behavior:auto;}}
+</style>
+</head>
+<body class="is-crawl">
+<nav class="toolbar" aria-label="Haiku controls">
+ <a class="brand" href="/">VIDIOTBOX / GENERATED HAIKU</a>
+ <label>Theme <select id="theme"><option value="all">All themes</option><option value="space" selected>Space</option><option value="spring">Spring</option><option value="summer">Summer</option><option value="autumn">Autumn</option><option value="winter">Winter</option></select></label>
+ <button id="mode" type="button">Reading view</button>
+ <button id="pause" type="button">Pause</button>
+ <button id="more" type="button" hidden disabled>Write another</button>
+ <label id="speedControl">Speed <select id="speed"><option value="0.5" selected>0.5×</option><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
+ <label> Music Shakuhachi <select id="music"><option value="assets/audio/shika-no-toone-shakuhachi.mp3" selected>On</option><option value="">Off</option></select></label>
+ <button id="about" type="button">About</button>
+ <span id="status" role="status">Loading the haiku model…</span>
+</nav>
+<main class="crawl-stage"><div class="crawl">
+<p class="audio-hint" id="audioHint">Click on page to start audio</p>
+<p class="eyebrow">HAIKUS FROM A SMALL MACHINE</p>
+<h1>Written as you watch</h1>
+<p class="lede">Each poem is composed live in your browser by the tiny language model and controlled grammar from the Vidiotbox C5 device. Nothing is sent to a server.</p>
+<div class="poem-grid" id="poems"></div>
+<p class="writing" id="writing">Writing the next haiku…</p>
+<p class="lede reading-only">Want more? Press <strong>Write another</strong>, or return to the crawl with <strong>Play crawl</strong>.</p>
+</div></main>
+<dialog id="aboutDialog" aria-labelledby="aboutTitle">
+ <h2 id="aboutTitle">ABOUT THESE HAIKU</h2>
+ <div class="facts">
+  <div><span>Model</span><strong>PLE / TinyStories</strong></div>
+  <div><span>Inference</span><strong>INT4 + INT8</strong></div>
+  <div><span>Rules</span><strong>Controlled grammar</strong></div>
+ </div>
+ <p class="copyright">Copyright (c) 2026 Paul Hodara</p>
+ <form method="dialog"><button type="submit">Close</button></form>
+</dialog>
+<audio id="crawlMusic" preload="none" loop></audio>
+<script>
+const $ = id => document.getElementById(id);
+const crawl = document.querySelector('.crawl'), poems = $('poems'), writing = $('writing');
+const mode = $('mode'), pause = $('pause'), more = $('more'), speed = $('speed'), theme = $('theme');
+const audio = $('crawlMusic'), music = $('music'), statusLine = $('status');
+const THEMES = ['spring', 'summer', 'autumn', 'winter', 'space'];
+const PX_PER_SECOND = 34, BUFFER_PX = 2400, MAX_POEMS = 300;
+const title = s => s[0].toUpperCase() + s.slice(1);
+let offset = 0, lastFrame = null, paused = false, readingScroll = 0, musicOn = false;
+let worker, ready = false, busy = false, failed = false, requestId = 0, pending = null, nextTheme = 0;
+
+// ---- Generator (same worker as /haiku-generator/, runs entirely on this device) ----
+function fail(message) {
+  ready = false; failed = true; statusLine.textContent = message;
+  writing.textContent = 'The haiku model could not run here.';
+  more.disabled = true;
+  if (pending) { clearTimeout(pending.timeout); pending.reject(Error(message)); pending = null; }
+  worker?.terminate();
+}
+function requestPoem(themeName) {
+  return new Promise((resolve, reject) => {
+    const id = ++requestId, random = new Uint32Array(1);
+    crypto.getRandomValues(random);
+    const timeout = setTimeout(() => fail('Generation took too long. Reload the page to try again.'), 180000);
+    pending = {id, resolve, reject, timeout};
+    worker.postMessage({type: 'generate', id, theme: themeName, case: random[0] % 1000000000});
+  });
+}
+function pickTheme() {
+  if (theme.value !== 'all') return theme.value;
+  return THEMES[nextTheme++ % THEMES.length];
+}
+function addPoem(result) {
+  const article = document.createElement('article'), h3 = document.createElement('h3'), p = document.createElement('p');
+  article.className = 'poem';
+  h3.textContent = `${title(result.theme)} · No. ${result.case}`;
+  result.lines.forEach((line, i) => { if (i) p.append(document.createElement('br')); p.append(line); });
+  article.append(h3, p);
+  poems.append(article);
+  // Keep the page bounded on long visits; shift the crawl so nothing visible jumps.
+  while (poems.children.length > MAX_POEMS) {
+    const first = poems.firstElementChild, height = first.offsetHeight;
+    first.remove();
+    if (document.body.classList.contains('is-crawl')) offset = Math.max(0, offset - height);
+  }
+}
+async function writeOne() {
+  if (busy || !ready) return;
+  busy = true; more.disabled = true;
+  try {
+    const result = await requestPoem(pickTheme());
+    if (!result.complete) throw Error('incomplete');
+    addPoem(result);
+    statusLine.textContent = `${poems.children.length} haiku written on this device · last took ${result.browser_seconds.toFixed(1)}s`;
+  } catch (error) {
+    if (!failed) statusLine.textContent = 'One poem did not finish; trying another.';
+  } finally {
+    busy = false; more.disabled = !ready;
+    fillBuffer();
+  }
+}
+// In the crawl, keep a couple of screens of poems ready below the visible text.
+function fillBuffer() {
+  if (!ready || busy || paused || !document.body.classList.contains('is-crawl')) return;
+  if (crawl.offsetHeight - offset < BUFFER_PX) writeOne();
+}
+
+// ---- Crawl ----
+function frame(now) {
+  if (lastFrame !== null && !paused && document.body.classList.contains('is-crawl')) {
+    const limit = Math.max(0, crawl.offsetHeight - 160); // wait at the last poem if the model falls behind
+    offset = Math.min(limit, offset + (now - lastFrame) / 1000 * PX_PER_SECOND * Number(speed.value));
+    crawl.style.transform = `rotateX(68deg) translateY(-${offset}px)`;
+    fillBuffer();
+  }
+  lastFrame = now;
+  requestAnimationFrame(frame);
+}
+function showReading() {
+  document.body.classList.remove('is-crawl');
+  crawl.style.transform = '';
+  mode.textContent = 'Play crawl';
+  pause.hidden = true; $('speedControl').hidden = true; more.hidden = false;
+  writing.hidden = true;
+  audio.pause(); setMusic(false);
+  window.scrollTo(0, readingScroll);
+}
+function showCrawl() {
+  readingScroll = window.scrollY;
+  document.body.classList.add('is-crawl');
+  mode.textContent = 'Reading view';
+  paused = false; pause.textContent = 'Pause';
+  pause.hidden = false; $('speedControl').hidden = false; more.hidden = true;
+  writing.hidden = false;
+  offset = 0; lastFrame = null;
+  fillBuffer();
+}
+mode.addEventListener('click', () => document.body.classList.contains('is-crawl') ? showReading() : showCrawl());
+pause.addEventListener('click', () => {
+  paused = !paused;
+  pause.textContent = paused ? 'Resume' : 'Pause';
+  if (paused) audio.pause();
+  else { if (musicOn) audio.play().catch(() => {}); fillBuffer(); }
+});
+more.addEventListener('click', writeOne);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('is-crawl') && !$('aboutDialog').open) showReading(); });
+$('about').addEventListener('click', () => $('aboutDialog').showModal());
+
+// ---- Music (browsers block audio until the visitor interacts) ----
+function setMusic(on) { musicOn = on; if (!on) music.value = ''; }
+async function playMusic() {
+  const track = new URL(music.value, location.href).href;
+  if (audio.src !== track) audio.src = track;
+  try { await audio.play(); setMusic(true); return true; }
+  catch { musicOn = false; return false; }
+}
+function startMusicOnGesture() {
+  const events = ['pointerdown', 'keydown'], hint = $('audioHint');
+  hint.classList.add('is-shown');
+  const start = () => {
+    events.forEach(e => document.removeEventListener(e, start, true));
+    hint.classList.remove('is-shown');
+    if (music.value && !musicOn && document.body.classList.contains('is-crawl')) playMusic();
+  };
+  events.forEach(e => document.addEventListener(e, start, true));
+}
+music.addEventListener('change', () => { if (!music.value) { audio.pause(); setMusic(false); return; } playMusic(); });
+
+// ---- Start ----
+try {
+  if (!globalThis.Worker || !globalThis.WebAssembly || !crypto.subtle) throw Error('The haiku generator needs a modern browser and HTTPS.');
+  worker = new Worker('haiku-generator/worker.js', {type: 'module'});
+  worker.onmessage = ({data}) => {
+    if (data.type === 'progress') { statusLine.textContent = data.text; return; }
+    if (data.type === 'fatal') { fail(data.error); return; }
+    if (data.type === 'ready') { ready = true; more.disabled = false; statusLine.textContent = 'Model verified. Writing haiku on your device…'; fillBuffer(); return; }
+    if (pending && data.id === pending.id) {
+      const request = pending; pending = null; clearTimeout(request.timeout);
+      data.type === 'result' ? request.resolve(data.result) : request.reject(Error(data.error));
+    }
+  };
+  worker.onerror = () => fail('The haiku generator could not start. Reload the page to retry.');
+  worker.postMessage({type: 'init'});
+} catch (error) { fail(error.message); }
+requestAnimationFrame(frame);
+playMusic().then(playing => { if (!playing) startMusicOnGesture(); });
+</script>
+</body></html>
