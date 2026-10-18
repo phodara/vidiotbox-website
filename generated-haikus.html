@@ -110,7 +110,7 @@ const THEMES = ['spring', 'summer', 'autumn', 'winter', 'space'];
 const PX_PER_SECOND = 34, BUFFER_PX = 2400, MAX_POEMS = 300;
 const title = s => s[0].toUpperCase() + s.slice(1);
 let offset = 0, lastFrame = null, paused = false, readingScroll = 0, musicOn = false;
-let worker, ready = false, busy = false, failed = false, requestId = 0, pending = null, nextTheme = 0;
+let worker, ready = false, busy = false, failed = false, requestId = 0, pending = null, nextTheme = 0, themeEpoch = 0;
 
 // ---- Generator (same worker as /haiku-generator/, runs entirely on this device) ----
 function fail(message) {
@@ -150,9 +150,11 @@ function addPoem(result) {
 async function writeOne() {
   if (busy || !ready) return;
   busy = true; more.disabled = true;
+  const started = themeEpoch;
   try {
     const result = await requestPoem(pickTheme());
     if (!result.complete) throw Error('incomplete');
+    if (started !== themeEpoch) return; // theme changed while this poem was being written
     addPoem(result);
     statusLine.textContent = `${poems.children.length} haiku written on this device · last took ${result.browser_seconds.toFixed(1)}s`;
   } catch (error) {
@@ -206,6 +208,14 @@ pause.addEventListener('click', () => {
   else { if (musicOn) audio.play().catch(() => {}); fillBuffer(); }
 });
 more.addEventListener('click', writeOne);
+// Poems are written well ahead of the crawl, so restart it to show the new theme right away.
+theme.addEventListener('change', () => {
+  themeEpoch++; nextTheme = 0;
+  if (!document.body.classList.contains('is-crawl')) return;
+  poems.replaceChildren();
+  offset = 0; lastFrame = null;
+  fillBuffer();
+});
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('is-crawl') && !$('aboutDialog').open) showReading(); });
 $('about').addEventListener('click', () => $('aboutDialog').showModal());
 
