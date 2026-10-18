@@ -10,6 +10,9 @@ const wasm = readFileSync(new URL('decoder.wasm', dir));
 const hash = value => createHash('sha256').update(value).digest('hex');
 assert.equal(hash(model), info.sha256);
 assert.equal(hash(wasm), info.wasm_sha256);
+assert.equal(hash(readFileSync(new URL('decoder.mjs', dir))), info.module_sha256);
+// Ensure the module executes supplied, verified bytes rather than fetching another copy.
+await assert.rejects(createDecoder({wasmBinary: new Uint8Array([0]), printErr: () => {}}));
 let line;
 const module = await createDecoder({wasmBinary: wasm, print: text => {line = text;}});
 module.FS.writeFile('/model.bin', model);

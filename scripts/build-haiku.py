@@ -14,8 +14,9 @@ subprocess.run(['em++', str(source / 'browser.cpp'), '-std=c++17', '-O3', '-DLLM
                 '-I', str(source), '-I', str(source / 'include'), '--no-entry',
                 '-sMODULARIZE=1', '-sEXPORT_ES6=1', '-sENVIRONMENT=web,worker,node',
                 '-sALLOW_MEMORY_GROWTH=1', '-sINITIAL_MEMORY=67108864', '-sMAXIMUM_MEMORY=268435456',
-                '-sSTACK_SIZE=2097152', '-sFILESYSTEM=1', '-sEXPORTED_RUNTIME_METHODS=["FS"]',
+                '-sSTACK_SIZE=2097152', '-sFILESYSTEM=1', '-sINCOMING_MODULE_JS_API=["wasmBinary","print","printErr"]', '-sEXPORTED_RUNTIME_METHODS=["FS"]',
                 '-sEXPORTED_FUNCTIONS=["_haiku_generate"]', '-o', str(output / 'decoder.mjs')], check=True)
 metadata['wasm_sha256'] = hashlib.sha256((output / 'decoder.wasm').read_bytes()).hexdigest()
+metadata['module_sha256'] = hashlib.sha256((output / 'decoder.mjs').read_bytes()).hexdigest()
 (output / 'model-info.json').write_text(json.dumps(metadata, indent=2) + '\n')
 print('Built', output / 'decoder.wasm')

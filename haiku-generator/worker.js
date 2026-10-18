@@ -4,7 +4,7 @@ const themes = ['spring', 'summer', 'autumn', 'winter', 'space'];
 const progress = text => postMessage({type: 'progress', text});
 const sha256 = async bytes => [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(n => n.toString(16).padStart(2, '0')).join('');
 async function checkedFetch(url) {
-  const response = await fetch(url);
+  const response = await fetch(url, url === './model-info.json' ? {cache: 'no-cache'} : {});
   if (!response.ok) throw Error(`Could not download ${url} (${response.status}). Please reload to retry.`);
   return response;
 }
@@ -26,7 +26,7 @@ async function initialize() {
   if (total !== info.model_bytes || await sha256(bytes) !== info.sha256) throw Error('Model verification failed. Please reload to retry.');
   const wasm = new Uint8Array(await (await checkedFetch(`./decoder.wasm?v=${info.wasm_sha256.slice(0,12)}`)).arrayBuffer());
   if (await sha256(wasm) !== info.wasm_sha256) throw Error('Decoder verification failed. Please reload to retry.');
-  const {default: createDecoder} = await import(`./decoder.mjs?v=${info.wasm_sha256.slice(0,12)}`);
+  const {default: createDecoder} = await import(`./decoder.mjs?v=${info.module_sha256.slice(0,12)}`);
   runtime = await createDecoder({wasmBinary: wasm, print: line => {output = line;}, printErr: line => console.error(line)});
   runtime.FS.writeFile('/model.bin', bytes);
   postMessage({type: 'ready', info});
