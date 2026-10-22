@@ -9,7 +9,7 @@ This snapshot comes from the sibling `haiku-training` project:
 - `artifacts/haiku-cosmic-v8/model.bin` → `../../haiku-generator/model.bin` (V8, 21 Oct 2026; V7 was `haiku-cosmic-v7`)
 
 `browser.cpp` is the browser adapter. It invokes the unchanged host decoder,
-retains recent-word history per theme, resets theme-specific sampling defaults,
+retains recent-word history and the Space exact-line repeat history per theme, resets theme-specific sampling defaults,
 and frees each generation's scratch memory. The model and grammar are not
 reimplemented in JavaScript. Source checksums are in `source-hashes.json`;
 model identity and binary hashes are in `haiku-generator/model-info.json`.
@@ -30,7 +30,7 @@ compiler. `model.bin` is a normal Git file (about 15 MB), not a Git LFS pointer.
 The model is hash-checked before build and in the browser before inference.
 
 `parity.json` contains two consecutive native INT8-activation host results for
-each theme; tests compare the shipped WASM poems to those native results with
+each theme, plus a 20-poem Space sequence that exercises the exact-line repeat guard; tests compare the shipped WASM poems to those native results with
 interleaved themes. If updating source/model, regenerate these fixtures using
 the matching native host binary, compiled with `-ffp-contract=off` (Apple Silicon
 fuses multiply-adds and WebAssembly does not, which can flip a near-tie between two words),

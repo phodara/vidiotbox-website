@@ -16,3 +16,6 @@
 #define HAIKU_SPACE_FRESHNESS 5.0f     // logit penalty per recent use of a word (0 = off)
 #define HAIKU_SPACE_PLACE_PERCENT 45   // share of place nouns a space poem may use
 #define HAIKU_SPACE_VERB_PERCENT 55    // share of intransitive verbs a space poem may use
+// Host and V8 firmware reject an exact line already used in recent space poems.
+// The fixed-size hash ring keeps this decoder-only diversity guard small on-device.
+#define HAIKU_SPACE_LINE_HISTORY 96

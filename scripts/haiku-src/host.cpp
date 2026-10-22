@@ -4,6 +4,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <deque>
+#include <string>
 #include <vector>
 #include "llm.h"
 #include "generated/vocab.h"
@@ -43,6 +45,11 @@ static int pron_class;
 static long forwards, rejected, attempts, grammar_filtered;
 static char lines[3][LINE_BYTES];
 static int line_syl[3];
+static int line_history_limit=HAIKU_SPACE_LINE_HISTORY;
+static int line_repeat_mode=1;          // 0=off, 1=reject when an alternative exists, 2=penalty.
+static float line_repeat_penalty=5.f;
+static std::deque<std::string> recent_lines;
+static long line_repeat_attempts, line_repeat_fallbacks;
 
 static bool is_used(int t) { return used[t>>5] & (1u<<(t&31)); }
 static void mark_used(int t) {
@@ -78,6 +85,25 @@ static void append(char *line, const char *text, int length) {
 }
 static void append_tok(char *line,int token) {
   int length; const char *text=tok_text(token,&length); append(line,text,length);
+}
+static std::string line_key(const char *line) {
+  std::string key(line);
+  while (!key.empty() && (key.back()==' ' || key.back()=='.' || key.back()==',')) key.pop_back();
+  for (char &ch:key) if (ch>='A' && ch<='Z') ch=(char)(ch-'A'+'a');
+  return key;
+}
+static bool line_was_recent(const char *line) {
+  if (season != HAIKU_SEASON_SPACE || !line_history_limit || !line_repeat_mode) return false;
+  const std::string key=line_key(line);
+  for (const std::string &old:recent_lines) if (old==key) return true;
+  return false;
+}
+static void remember_poem_lines() {
+  if (!line_history_limit) return;
+  for (int i=0;i<3;i++) {
+    recent_lines.push_back(line_key(lines[i]));
+    while ((int)recent_lines.size()>line_history_limit) recent_lines.pop_front();
+  }
 }
 static void select_theme(int index) {
   season=index; themed_count=0;
@@ -274,12 +300,21 @@ static int write_line(int line,const char *prefix,int pos) {
   }
   if (line==0 && free_line_one && season==HAIKU_SEASON_SPACE) grammar=haiku_voice_start(person_voice);
   if (line==2 && person_end) grammar=haiku_voice_start_as(haiku_voice_of(lines[0]));   // same voice as line one
-  Attempt best={},cur; best.score=-1e30f;
+  Attempt best={},best_repeat={},cur; best.score=best_repeat.score=-1e30f;
   auto tries=[&]() {
     for (int t=0;t<TRIES;t++) {
       memcpy(used,used_before,sizeof used); memcpy(s.logits,logits_before.data(),model.out_vocab*sizeof(float));
       attempts++;
       if (!attempt_line(line,line_syl[line],pos,grammar,&cur)) { rejected++; continue; }
+      char candidate[LINE_BYTES]; snprintf(candidate,sizeof candidate,"%s",prefix);
+      for (int i=0;i<cur.n;i++) append_tok(candidate,cur.ids[i]);
+      const bool repeated=line_was_recent(candidate);
+      if (repeated) {
+        line_repeat_attempts++;
+        if (line_repeat_mode==2) cur.score-=line_repeat_penalty;
+        if (cur.score>best_repeat.score) best_repeat=cur;
+        if (line_repeat_mode==1) continue;
+      }
       if (cur.score>best.score) best=cur;
     }
   };
@@ -296,6 +331,7 @@ static int write_line(int line,const char *prefix,int pos) {
     select_theme(season);
     memset(&workspace,0,sizeof workspace);
   }
+  if (!best.n && best_repeat.n) { best=best_repeat; line_repeat_fallbacks++; }
   memcpy(used,used_before,sizeof used); memcpy(s.logits,logits_before.data(),model.out_vocab*sizeof(float));
   snprintf(lines[line],LINE_BYTES,"%s",prefix);
   for (int i=0;i<best.n;i++) {
@@ -416,6 +452,19 @@ int main(int argc,char **argv) {
     read_tuning("SPACE_FRESH_DECAY",&fresh_decay);
     if (!(fresh_decay>=0.f && fresh_decay<1.f)) { fprintf(stderr,"invalid SPACE_FRESH_DECAY\n"); return 2; }
     free_percent=getenv("SPACE_FREE_PERCENT") ? percent_setting("SPACE_FREE_PERCENT",0) : 100-canned_percent;
+    if (const char *value=getenv("SPACE_LINE_HISTORY")) {
+      char *end=nullptr; long number=strtol(value,&end,10);
+      if (!*value || *end || number<0 || number>100000) { fprintf(stderr,"invalid SPACE_LINE_HISTORY\n"); return 2; }
+      line_history_limit=(int)number;
+    }
+    if (const char *value=getenv("SPACE_LINE_REPEAT_MODE")) {
+      if (!strcmp(value,"reject")) line_repeat_mode=1;
+      else if (!strcmp(value,"penalty")) line_repeat_mode=2;
+      else if (!strcmp(value,"off")) line_repeat_mode=0;
+      else { fprintf(stderr,"invalid SPACE_LINE_REPEAT_MODE\n"); return 2; }
+    }
+    read_tuning("SPACE_LINE_REPEAT_PENALTY",&line_repeat_penalty);
+    if (!(line_repeat_penalty>=0.f) || !std::isfinite(line_repeat_penalty)) { fprintf(stderr,"invalid SPACE_LINE_REPEAT_PENALTY\n"); return 2; }
   }
   select_theme(chosen);
 #ifdef HAIKU_SCENE_RESEARCH
@@ -470,6 +519,7 @@ int main(int argc,char **argv) {
     memset(lines,0,sizeof lines); memset(line_syl,0,sizeof line_syl); memset(used,0,sizeof used);
     haiku_decay_recent(fresh_decay);   // freshness carries across poems in one run
     memset(&workspace,0,sizeof workspace); forwards=rejected=attempts=grammar_filtered=palette_fallbacks=0;
+    line_repeat_attempts=line_repeat_fallbacks=0;
     auto started=std::chrono::steady_clock::now(); int pos=0;
     // Experiment: HAIKU_FREE_LINE_ONE=<start token id> lets the model write line one itself,
     // starting from that token (the end-of-text token that precedes each training poem).
@@ -498,13 +548,14 @@ int main(int argc,char **argv) {
       if (line==1) forward(HAIKU_TOK_COMMA,pos++);
       if (line==2) append(lines[2],".",1);
     }
+    remember_poem_lines();
     double seconds=std::chrono::duration<double>(std::chrono::steady_clock::now()-started).count();
     printf("{\"case\":%d,\"seed\":%u,\"mode\":\"%s\",\"prompt\":",c,initial_seed,argv[2]); json_string(first_prefix);
     printf(",\"person_voice\":%s,\"person_end\":%s,\"generated_first_line\":%s,\"lines\":[",person_voice?"true":"false",person_end?"true":"false",free_line_one?"true":"false");
     for (int i=0;i<3;i++) { if (i) putchar(','); json_string(lines[i]); }
-    printf("],\"syllables\":[%d,%d,%d],\"complete\":%s,\"attempts\":%ld,\"rejected_attempts\":%ld,\"forwards\":%ld,\"grammar_filtered\":%ld,\"palette_fallbacks\":%ld,\"host_seconds\":%.6f,\"scratch_bytes\":%zu,\"saved_logits_bytes\":%zu,\"used_bits_bytes\":%zu,\"grammar_workspace_bytes\":%zu,\"grammar_table_bytes\":%zu,\"grammar_state_bytes\":%zu}\n",
+    printf("],\"syllables\":[%d,%d,%d],\"complete\":%s,\"attempts\":%ld,\"rejected_attempts\":%ld,\"forwards\":%ld,\"grammar_filtered\":%ld,\"palette_fallbacks\":%ld,\"line_repeat_attempts\":%ld,\"line_repeat_fallbacks\":%ld,\"host_seconds\":%.6f,\"scratch_bytes\":%zu,\"saved_logits_bytes\":%zu,\"used_bits_bytes\":%zu,\"grammar_workspace_bytes\":%zu,\"grammar_table_bytes\":%zu,\"grammar_state_bytes\":%zu}\n",
            line_syl[0],line_syl[1],line_syl[2],line_syl[0]==5 && line_syl[1]==7 && line_syl[2]==5?"true":"false",
-           attempts,rejected,forwards,grammar_filtered,palette_fallbacks,seconds,scratch_count*sizeof(float),V*sizeof(float),sizeof used,
+           attempts,rejected,forwards,grammar_filtered,palette_fallbacks,line_repeat_attempts,line_repeat_fallbacks,seconds,scratch_count*sizeof(float),V*sizeof(float),sizeof used,
            constrained?sizeof workspace:0,constrained?sizeof G_ENTRIES:0,constrained?sizeof(GState):0);
     fflush(stdout);
   }

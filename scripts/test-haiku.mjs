@@ -31,4 +31,23 @@ for (const caseNumber of [0,1]) {
     console.log(`${info.themes[theme]} case ${caseNumber}: native / WASM poem parity`);
   }
 }
-console.log('Model hashes, invalid inputs, all themes, history, and theme switching passed.');
+// Exact-line repeat guard: a fresh decoder writing 20 Space poems in a row must match the
+// native host, reject at least one recent line, and never reuse a line from recent poems.
+const fresh = await createDecoder({wasmBinary: wasm, print: text => {line = text;}});
+fresh.FS.writeFile('/model.bin', model);
+const recent = []; let guarded = 0;
+for (const [caseNumber, expected] of fixture.space_sequence.entries()) {
+  line = null;
+  assert.equal(fresh._haiku_generate(4, caseNumber), 0);
+  const poem = JSON.parse(line);
+  assert.deepEqual(poem.lines, expected.lines);
+  guarded += poem.line_repeat_attempts;
+  for (const text of poem.lines) {
+    const key = text.toLowerCase().replace(/[ .,]+$/, '');
+    assert.ok(!recent.includes(key), `repeated line: ${text}`);
+    recent.push(key);
+  }
+}
+assert.ok(guarded > 0, 'the repeat guard never fired');
+console.log(`space sequence: ${fixture.space_sequence.length} poems, ${guarded} repeated lines rejected`);
+console.log('Model hashes, invalid inputs, all themes, history, theme switching, and the line repeat guard passed.');
