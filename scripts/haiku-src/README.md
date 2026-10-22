@@ -6,7 +6,7 @@ This snapshot comes from the sibling `haiku-training` project:
 - `runtime/llm.h` → `llm.h`
 - `c5/include/haiku*.h` → `include/`
 - simulator-generated vocabulary, haiku and grammar headers → `generated/`
-- `artifacts/haiku-cosmic-v7/model.bin` → `../../haiku-generator/model.bin`
+- `artifacts/haiku-cosmic-v8/model.bin` → `../../haiku-generator/model.bin` (V8, 21 Oct 2026; V7 was `haiku-cosmic-v7`)
 
 `browser.cpp` is the browser adapter. It invokes the unchanged host decoder,
 retains recent-word history per theme, resets theme-specific sampling defaults,
@@ -32,7 +32,9 @@ The model is hash-checked before build and in the browser before inference.
 `parity.json` contains two consecutive native INT8-activation host results for
 each theme; tests compare the shipped WASM poems to those native results with
 interleaved themes. If updating source/model, regenerate these fixtures using
-the matching native host binary and review changes before accepting them.
+the matching native host binary, compiled with `-ffp-contract=off` (Apple Silicon
+fuses multiply-adds and WebAssembly does not, which can flip a near-tie between two words),
+and review changes before accepting them.
 
 ## Local preview
 

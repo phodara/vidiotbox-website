@@ -319,8 +319,8 @@ static bool grammar_test(const char *text,int expected) {
 }
 static int self_test() {
   bool ok=true;
-  for (const char *text : {"I breathe quietly", "We gasp", "I blink", "My palms open", "My hand opens"}) ok &= grammar_test(text,1);
-  for (const char *text : {"Stars breathe", "My mind breathes", "My palms opens", "My heart opens", "I breathe past moons", "I blink past moons", "I open", "Palms open"}) ok &= grammar_test(text,0);
+  for (const char *text : {"I breathe quietly", "We gasp", "I blink", "My palms open", "My hand opens", "I blink at stars", "We blink at the moon", "Now I blink at stars", "Stars blink by moons"}) ok &= grammar_test(text,1);
+  for (const char *text : {"Stars breathe", "My mind breathes", "My palms opens", "My heart opens", "I breathe past moons", "I blink past moons", "I open", "Palms open", "I blink by stars", "I blink around stars", "I now blink at stars", "We now wait", "Stars blink at moons", "I wait at stars", "I tremble at moons"}) ok &= grammar_test(text,0);
   for (const char *text : {"Rain falls softly", "Birds sing in the trees", "I tremble by moons", "We watch the comet", "I wait by asteroids here", "Comets glow by moons there", "I wander past the moons", "I wonder softly", "We watch the cosmos", "The sun pulls light", "The wind stirs leaves",
                           "A cold pond freezes", "An old tree sways", "Snow is cold", "Mass bends light", "Now time and space shift apart", "Now stars drift", "Light now burns in space", "Time and space now shift apart", "Stars now drift softly", "Space and time are one", "Planets orbit stars",
                           "Signals fade", "The plasma flows", "A pulsar spins", "A nebula glows", "Stars are like music", "Light is like a song", "Hydrogen glows", "The wavelength grows", "Neutrinos drift", "Stellar light fades"}) ok &= grammar_test(text,1);

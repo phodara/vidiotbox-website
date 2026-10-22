@@ -6,7 +6,8 @@
 enum { G_NOUN=1, G_ADJ, G_VERB, G_TRANSITIVE, G_COPULA, G_DET, G_PREP, G_ADV, G_CONJ, G_LIKE };
 enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPACE=64, G_ABSTRACT=128, G_BODY=256, G_CELESTIAL=512, G_CRAFT=1024, G_SIGNAL=2048, G_OBSERVER=4096, G_TERRAIN=8192, G_CLOCK=16384, G_MUSIC=32768, G_HUMAN=65536, G_INNER=131072, G_HAND=262144, G_ME=524288, G_WE=1048576, G_ALL=2097151,
        G_NO_PLACE=2097152,     // outside G_ALL: set only on a verb that takes no place phrase
-       G_STILL=4194304 };      // outside G_ALL: a person verb without motion takes no path (past...)
+       G_STILL=4194304,        // outside G_ALL: a person verb without motion takes no path (past...)
+       G_GAZE=8388608 };       // outside G_ALL: a person verb whose place phrase is "at" ("I blink at stars")
 enum { G_SUBJECT, G_SUBJECT_NOUN, G_FINITE, G_DONE, G_OBJECT, G_OBJECT_NOUN,
        G_PREDICATE, G_PP, G_PP_NOUN };
 typedef struct {
@@ -82,7 +83,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     // "now" goes before the verb: "Light now burns in space". It is once per clause and
     // does not use the clause's adverb slot. article 3 marks it until the verb.
     if (e->tag == G_ADV && e->bare == 3) {
-      if (s.article == 3) return 0;
+      // Not after I or we: "I now blink" reads as stilted; "Now I blink" still opens a clause.
+      if (s.article == 3 || (s.subject & G_HUMAN)) return 0;
       s.article = 3;
       *out = s;
       return 1;
@@ -117,7 +119,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         (e->semantic & s.subject) && (e->object & s.object) && !(s.tail & 1) &&
         !(e->number && (s.tail & 4))) s.tail |= 1;
     else if (e->tag == G_PREP && !(s.tail & 2) && !(s.object & G_NO_PLACE) &&
-             !(e->number == 1 && (s.object & G_STILL))) {
+             !(e->number == 1 && (s.object & G_STILL)) &&
+             // "at" (number 2) only, and only, after a person's gaze verb: "I blink at stars".
+             (e->number == 2) == ((s.object & G_GAZE) && (s.subject & (G_HUMAN | G_INNER | G_HAND)))) {
       s.tail |= 2;
       s.phase = G_PP;
       s.object = G_PLANT | G_GROUND | G_WATER |
