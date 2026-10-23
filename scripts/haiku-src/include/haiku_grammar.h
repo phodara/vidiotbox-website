@@ -31,6 +31,8 @@ enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPA
 #define G_POOL_NOUN 2097152u   // pond, lake, puddle, stream, brook: they stay put
 #define G_ORB_NOUN 4194304u    // sun, moon, star in the earth seasons: placed over or through things
 #define G_ROOTED_NOUN 8388608u // tree, branch, grass: they do not fall or drift (tail 32)
+#define G_SINGLE_FOREST 1073741824u // singular tree/pine/vine/branch is rejected after "through"
+#define G_BEE_NOUN 536870912u // bees are placed over a pond, not on it
 #define G_SPACE_ONLY_NOUN 16777216u   // wave, waves: space only, not the earth seasons
 // PP state bit 31 (outside the enum): the sky's bodies go "through" only weather or
 // foliage, not "through mud" or "through streams" (season review round 5).
@@ -109,6 +111,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.object & G_NOT_WATER) && (e->semantic & G_WATER) && !(e->semantic & G_AIRY)) return 0;
       if ((s.object & G_ONLY_POOL) && !(e->object & G_POOL_NOUN)) return 0;  // not "float on ice"
       if ((s.object & G_NO_POOL_NOUN) && (e->object & G_POOL_NOUN)) return 0; // not "bees hum in the lake"
+      if ((s.object & G_SKY_THROUGH) && (e->object & G_SINGLE_FOREST)) return 0; // use "through the trees/pines/vines/branches"
+      if ((s.tail & 64) && (s.object & G_ONLY_POOL) && (e->object & G_POOL_NOUN)) return 0; // bees float over ponds
       if ((s.object & G_SKY_THROUGH) && !(((e->semantic & G_AIRY) && !(e->semantic & G_GROUND)) ||
                                           (e->semantic & G_PLANT))) return 0;   // not "a sun fades through mud"
       if (subject) {
@@ -119,6 +123,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         if (e->object & G_POOL_NOUN) s.tail |= 8;    // season review 2026-10-22
         if (e->object & G_ORB_NOUN) s.tail |= 16;
         if (e->object & G_ROOTED_NOUN) s.tail |= 32;
+        if (e->object & G_BEE_NOUN) s.tail |= 64;
       }
       else {
         // An object ends the verb phrase: no "down". After a simile object no
@@ -201,9 +206,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((verb_object & G_ALOFT) && (e->object & G_NOT_SURFACE)) s.object |= G_ONLY_AIRY;
       // Round 5: "tall grass sways on leaves". Rooted plants are not on other plants.
       if ((s.tail & 32) && (e->object & G_NOT_AIRY)) s.object |= G_NOT_PLANT;   // on/upon
-      // Season review 2026-10-22: "sunlight shines through a dark lake" should be "on".
-      if ((s.subject & G_LIGHT) && (e->object & G_NOT_SOLID) && !(e->object & G_NOT_SURFACE))
-        s.object |= G_LIT_POOL;   // "through" after light
+      // Season review 2026-10-22: sunlight shines on a lake, not in or through it.
+      if ((s.subject & G_LIGHT) && (e->object & (G_NOT_SOLID | G_NOT_SURFACE)))
+        s.object |= G_LIT_POOL;   // "in"/"through" after light
       // Season review 2026-10-22: "cold rain falls in leaves" should be "on leaves".
       if ((verb_object & G_DOWNWARD) && (e->object & G_NOT_SURFACE)) s.object |= G_NOT_PLANT;   // "in"
       // Season review round 3: "tall grass sways in leaves", "wind rises through waves",

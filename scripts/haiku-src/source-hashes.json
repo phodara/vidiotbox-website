@@ -3,7 +3,7 @@
   "parity.json": "cc209bce51403d030a8ff63b57664947f9d7b1376353f13ced82024981c3f905",
   "llm.h": "866756e03a06e03862930c74e148791f645acac70c00108fff449901dfa291cf",
   "host.cpp": "88f2439cc6fae0edcb83a5455e8bbd9e585734a80f80b3b4df06f3c868ca37c7",
-  "generated/grammar_tables.h": "0cee5efddb343f15da760ca0c8c028226f83fcc8eeb08b65ed7921778e90f03e",
+  "generated/grammar_tables.h": "26ca62c21285d888a214e6645bee5d2e23f1961ab5e777f3004fc0ce7ad88e90",
   "generated/haiku_tables.h": "98f24dc5b7111a0b9300c67b7a5edd7a0f6e7b65cf33a65fbade7ba0eeab0d96",
   "generated/vocab.h": "7df25a38e19731381c7b7d0a4da89a838852f4f5bba805de06ea7f6c64b2cc73",
   "include/haiku_grammar_decode.h": "03445c5fcd1fd4a9f986bf753db7edca75c1fa227adc3d1b7be2c3dbef0e09f2",
@@ -11,5 +11,5 @@
   "include/haiku_voice.h": "db2625097624872cd95d19cc9e751b89f43209711f170b8b95edca2a325ae6fe",
   "include/haiku_controls.h": "17f605dabf764140c7c976766a8f9ac29312bd81e169a3ac1d32745e5ee173b7",
   "include/haiku_seasons.h": "7d3238841d08404080b5530777244492888c6dac067d4d4cc73d2562881fe880",
-  "include/haiku_grammar.h": "ba682d8f9d8c7ddcd05d230dcc8dd9d93096cebe3eed5ea423e08364f4ad5c91"
+  "include/haiku_grammar.h": "266ce3d6bcf768828950c1ba2225ac6470325fa57bbd0cde8a1cf79112985496"
 }
