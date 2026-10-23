@@ -33,6 +33,7 @@ enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPA
 #define G_ROOTED_NOUN 8388608u // tree, branch, grass: they do not fall or drift (tail 32)
 #define G_SINGLE_FOREST 1073741824u // singular tree/pine/vine/branch is rejected after "through"
 #define G_BEE_NOUN 536870912u // bees are placed over a pond, not on it
+#define G_SINGLE_MOON 268435456u // singular moon similes are rejected
 #define G_SPACE_ONLY_NOUN 16777216u   // wave, waves: space only, not the earth seasons
 // PP state bit 31 (outside the enum): the sky's bodies go "through" only weather or
 // foliage, not "through mud" or "through streams" (season review round 5).
@@ -124,6 +125,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         if (e->object & G_ORB_NOUN) s.tail |= 16;
         if (e->object & G_ROOTED_NOUN) s.tail |= 32;
         if (e->object & G_BEE_NOUN) s.tail |= 64;
+        if (e->object & G_SINGLE_MOON) s.tail |= 128;
       }
       else {
         // An object ends the verb phrase: no "down". After a simile object no
@@ -161,6 +163,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     else return 0;
   } else if (s.phase == G_PREDICATE) {
     if (e->tag == G_LIKE && (e->semantic & s.subject)) {
+      if (s.tail & 128) return 0; // use "the moons are like songs"
       s.phase = G_OBJECT; s.object = G_MUSIC;
       *out = s; return 1;
     }
