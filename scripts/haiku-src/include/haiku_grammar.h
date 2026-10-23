@@ -7,7 +7,40 @@ enum { G_NOUN=1, G_ADJ, G_VERB, G_TRANSITIVE, G_COPULA, G_DET, G_PREP, G_ADV, G_
 enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPACE=64, G_ABSTRACT=128, G_BODY=256, G_CELESTIAL=512, G_CRAFT=1024, G_SIGNAL=2048, G_OBSERVER=4096, G_TERRAIN=8192, G_CLOCK=16384, G_MUSIC=32768, G_HUMAN=65536, G_INNER=131072, G_HAND=262144, G_ME=524288, G_WE=1048576, G_ALL=2097151,
        G_NO_PLACE=2097152,     // outside G_ALL: set only on a verb that takes no place phrase
        G_STILL=4194304,        // outside G_ALL: a person verb without motion takes no path (past...)
-       G_GAZE=8388608 };       // outside G_ALL: a person verb whose place phrase is "at" ("I blink at stars")
+       G_GAZE=8388608,         // outside G_ALL: a person verb whose place phrase is "at" ("I blink at stars")
+       G_WET=16777216,         // outside G_ALL: a verb whose place is water ("ducks swim in the pond")
+       G_NOT_SOLID=33554432,   // preposition object bit: "in" and "through" take no solid noun
+       G_NOT_AIRY=67108864,    // preposition object bit: "on" and "upon" take no airy noun
+       G_NOT_SURFACE=134217728, // preposition object bit: "in" takes no surface noun ("the path")
+       G_ALOFT=268435456,      // verb object bit: flying takes no "on" ("crows fly over the lake")
+       G_NO_POOL=536870912,    // PP flag: flying "in"/"through" takes no water but rain, fog, mist
+       G_LOOSE=1073741824,     // verb object bit: falls/drifts/floats, which a pond or lake cannot
+       G_SKYWARD=1073741824,   // preposition object bit: over/across/through, where the sky's bodies go
+       G_ONLY_AIRY=1073741824, // PP state bit: the sky's bodies are "in" only fog, mist, rain, air, light
+       G_LIT_POOL=268435456,   // PP state bit: light goes "on" a lake, not "through" it
+       G_DOWNWARD=33554432,    // verb object bit: falling lands "on" plants, not "in" them
+       G_NOT_PLANT=8388608,    // PP state bit: after "falls in", or a plant "in", no plant
+       G_BELOW=16777216,       // preposition object bit: under, beneath
+       G_ADRIFT=67108864,      // verb object bit: floating is "on" water only
+       G_NOT_WATER=2097152,    // PP state bit: wind goes "over" water, not in, through or under it
+       G_ONLY_POOL=4194304,    // PP state bit: "floats on" a pond, lake, stream or water
+       G_GROUNDED=134217728,   // verb object bit: crawling is not in or through water
+       G_NO_POOL_NOUN=16777216 }; // PP state bit: no pond, lake, puddle, stream, brook or water
+// Noun object-field marks (a noun's object field is otherwise unused). Kept in GState.tail
+// (8, 16) while the clause runs; the lookahead memo compares tail in full.
+#define G_POOL_NOUN 2097152u   // pond, lake, puddle, stream, brook: they stay put
+#define G_ORB_NOUN 4194304u    // sun, moon, star in the earth seasons: placed over or through things
+#define G_ROOTED_NOUN 8388608u // tree, branch, grass: they do not fall or drift (tail 32)
+#define G_SPACE_ONLY_NOUN 16777216u   // wave, waves: space only, not the earth seasons
+// PP state bit 31 (outside the enum): the sky's bodies go "through" only weather or
+// foliage, not "through mud" or "through streams" (season review round 5).
+#define G_SKY_THROUGH 0x80000000u
+// Semantic bits outside G_ALL (the object field uses these values for G_NO_PLACE and
+// G_STILL): a solid thing ("stone", "fence") nothing goes into, and a thing with no
+// surface to be on: airy ("fog", "wind", "light") or an area one is in ("field").
+#define G_SOLID 2097152u
+#define G_AIRY 4194304u
+#define G_SURFACE 8388608u   // a surface one goes along or through, not "in": path, shore
 enum { G_SUBJECT, G_SUBJECT_NOUN, G_FINITE, G_DONE, G_OBJECT, G_OBJECT_NOUN,
        G_PREDICATE, G_PP, G_PP_NOUN };
 typedef struct {
@@ -63,12 +96,29 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if (!s.determiner && !e->bare) return 0;
       if ((s.determiner == 2 || s.determiner == 3) && (e->number != 1 || e->bare)) return 0;
       if (s.determiner == 4 && !e->bare) return 0;
-      if (!subject && !(s.object & e->semantic)) return 0;
+      // Classes only: rule bits above G_ALL (G_NOT_SOLID...) must not match animal-action bits.
+      if (!subject && !(s.object & e->semantic & G_ALL)) return 0;
+      if ((s.object & G_NOT_SOLID) && (e->semantic & G_SOLID)) return 0;   // not "through a stone"
+      if ((s.object & G_NOT_AIRY) && (e->semantic & G_AIRY)) return 0;     // not "fades on fog"
+      if ((s.object & G_NOT_SURFACE) && (e->semantic & G_SURFACE)) return 0; // not "shines in the path"
+      if ((s.object & G_NO_POOL) && (e->semantic & G_WATER) && !(e->semantic & G_AIRY)) return 0; // not "fly in the pond"
+      // Weather only, not "in waves" or "in a field" (fields are G_AIRY for "not on").
+      if ((s.object & G_ONLY_AIRY) && (!(e->semantic & G_AIRY) || (e->semantic & G_GROUND))) return 0;
+      if ((s.object & G_LIT_POOL) && (e->object & G_POOL_NOUN)) return 0;   // not "light through a lake"
+      if ((s.object & G_NOT_PLANT) && (e->semantic & G_PLANT)) return 0;     // not "falls in leaves"
+      if ((s.object & G_NOT_WATER) && (e->semantic & G_WATER) && !(e->semantic & G_AIRY)) return 0;
+      if ((s.object & G_ONLY_POOL) && !(e->object & G_POOL_NOUN)) return 0;  // not "float on ice"
+      if ((s.object & G_NO_POOL_NOUN) && (e->object & G_POOL_NOUN)) return 0; // not "bees hum in the lake"
+      if ((s.object & G_SKY_THROUGH) && !(((e->semantic & G_AIRY) && !(e->semantic & G_GROUND)) ||
+                                          (e->semantic & G_PLANT))) return 0;   // not "a sun fades through mud"
       if (subject) {
         // "Space and time bend": a second subject noun makes the clause plural.
         s.number = s.conj ? 2 : e->number;
         s.subject = s.conj ? (s.subject | e->semantic) : e->semantic;
         s.phase = G_FINITE;
+        if (e->object & G_POOL_NOUN) s.tail |= 8;    // season review 2026-10-22
+        if (e->object & G_ORB_NOUN) s.tail |= 16;
+        if (e->object & G_ROOTED_NOUN) s.tail |= 32;
       }
       else {
         // An object ends the verb phrase: no "down". After a simile object no
@@ -97,8 +147,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       return 1;
     }
     if (e->number != ((s.number==3 && e->tag!=G_COPULA) ? 2 : s.number) || !(e->semantic & s.subject) ||
-        (s.conj && (s.subject & (uint32_t)~e->semantic))) return 0;
+        (s.conj && (s.subject & G_ALL & (uint32_t)~e->semantic))) return 0;
     s.article = 0;
+    if ((s.tail & (8 | 32)) && e->tag == G_VERB && (e->object & G_LOOSE)) return 0;   // not "a lake falls", "a tree falls"
     if (e->tag == G_VERB) { s.phase = G_DONE; s.object = e->object; } // adverbs it accepts
     else if (e->tag == G_TRANSITIVE) { s.phase = G_OBJECT; s.object = e->object; }
     else if (e->tag == G_COPULA) s.phase = G_PREDICATE;
@@ -108,34 +159,69 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       s.phase = G_OBJECT; s.object = G_MUSIC;
       *out = s; return 1;
     }
-    if (e->tag != G_ADJ || !(e->semantic & s.subject)) return 0;
+    // bare 6: attributive only ("winter wind", never "leaves are winter").
+    if (e->tag != G_ADJ || e->bare == 6 || !(e->semantic & s.subject)) return 0;
     s.phase = G_DONE;
     s.tail |= 4; // after a predicate adjective, no directional adverb
   } else if (s.phase == G_DONE) {
     // Adverb number 1 is directional ("down") and 2 manner/distance ("far"); both
     // only follow an intransitive verb, never "is dark far" or "pulls light down".
     // "far" and "fast" also need a verb of motion or change: no "the quasar glows far".
-    if (e->tag == G_ADV && e->bare != 3 && !(e->bare == 4 && !(s.tail & 2)) &&
+    if (e->tag == G_ADV && e->bare != 3 && !(e->bare == 4 && !(s.tail & 2)) && !(e->bare == 5 && (s.tail & 2)) &&
         (e->semantic & s.subject) && (e->object & s.object) && !(s.tail & 1) &&
         !(e->number && (s.tail & 4))) s.tail |= 1;
     else if (e->tag == G_PREP && !(s.tail & 2) && !(s.object & G_NO_PLACE) &&
              !(e->number == 1 && (s.object & G_STILL)) &&
              // "at" (number 2) only, and only, after a person's gaze verb: "I blink at stars".
-             (e->number == 2) == ((s.object & G_GAZE) && (s.subject & (G_HUMAN | G_INNER | G_HAND)))) {
+             (e->number == 2) == ((s.object & G_GAZE) && (s.subject & (G_HUMAN | G_INNER | G_HAND))) &&
+             !((s.object & G_ALOFT) && (e->object & G_NOT_AIRY)) &&   // on/upon carry G_NOT_AIRY
+             !((s.object & G_ADRIFT) && (e->object & G_BELOW)) &&   // nothing floats under a field
+             // Round 5: floating is "on" water, or over or across things; not through or by.
+             !((s.object & G_ADRIFT) && !(e->object & G_NOT_AIRY) &&
+               !((e->object & G_SKYWARD) && !(e->object & G_NOT_SOLID))) &&
+             // A pond or lake goes nowhere "through"; the sun, moon and stars go over or through.
+             !((s.tail & 8) && (e->object & G_NOT_SOLID) && !(e->object & G_NOT_SURFACE)) &&
+             // ...or "in" weather: "a star fades in fog" (G_NOT_SURFACE marks "in").
+             !((s.tail & 16) && !(e->object & (G_SKYWARD | G_NOT_SURFACE)))) {
+      uint32_t verb_object = s.object;
       s.tail |= 2;
       s.phase = G_PP;
       s.object = G_PLANT | G_GROUND | G_WATER |
         (e->object & (G_SPACE | G_CELESTIAL | G_BODY | G_TERRAIN));
+      if (verb_object & G_WET) s.object &= G_WATER;   // not "ducks swim in the fence"
       // A person is placed by bodies, not in substances: "I tremble by moons",
       // never "we wait in dust" or "I wait in soft waves".
       if (s.subject & (G_HUMAN | G_INNER | G_HAND)) s.object &= e->object & (G_CELESTIAL | G_BODY);
+      // The preposition's own limits ride in the object mask, which the lookahead memo compares.
+      s.object |= e->object & (G_NOT_SOLID | G_NOT_AIRY | G_NOT_SURFACE);
+      if ((verb_object & (G_ALOFT | G_GROUNDED)) && (e->object & G_NOT_SOLID)) s.object |= G_NO_POOL;   // in/through
+      if ((s.tail & 16) && !(e->object & G_SKYWARD)) s.object |= G_ONLY_AIRY;   // a star "in" fog only
+      if ((s.tail & 16) && (e->object & G_NOT_SOLID) && !(e->object & G_NOT_SURFACE)) s.object |= G_SKY_THROUGH;
+      // Round 5: flying "in" is weather ("crows fly in the rain", not "in the dry garden").
+      if ((verb_object & G_ALOFT) && (e->object & G_NOT_SURFACE)) s.object |= G_ONLY_AIRY;
+      // Round 5: "tall grass sways on leaves". Rooted plants are not on other plants.
+      if ((s.tail & 32) && (e->object & G_NOT_AIRY)) s.object |= G_NOT_PLANT;   // on/upon
+      // Season review 2026-10-22: "sunlight shines through a dark lake" should be "on".
+      if ((s.subject & G_LIGHT) && (e->object & G_NOT_SOLID) && !(e->object & G_NOT_SURFACE))
+        s.object |= G_LIT_POOL;   // "through" after light
+      // Season review 2026-10-22: "cold rain falls in leaves" should be "on leaves".
+      if ((verb_object & G_DOWNWARD) && (e->object & G_NOT_SURFACE)) s.object |= G_NOT_PLANT;   // "in"
+      // Season review round 3: "tall grass sways in leaves", "wind rises through waves",
+      // "leaves float on cold stones".
+      // Light rests "on" a branch, not "in" it (season review 2026-10-22).
+      if ((s.subject & (G_PLANT | G_LIGHT)) && (e->object & G_NOT_SURFACE)) s.object |= G_NOT_PLANT;
+      if ((s.subject & G_AIR) && (e->object & (G_NOT_SOLID | G_BELOW))) s.object |= G_NOT_WATER;
+      if ((verb_object & G_ADRIFT) && (e->object & G_NOT_AIRY)) s.object |= G_ONLY_POOL;   // on/upon
+      // Round 4: "bees hum in the lake". Bit 27 is the "swim" action (ducks, frogs, gulls).
+      if ((s.subject & G_ANIMAL) && !(s.subject & (1u << 27)) && (e->object & G_NOT_SURFACE))
+        s.object |= G_NO_POOL_NOUN;   // "in"
     } else return 0;
   } else return 0;
   *out = s;
   return 1;
 }
 
-typedef struct { uint64_t key; uint32_t subject, object, adjectives; uint8_t occupied, possible, remaining; } GMemo;
+typedef struct { uint64_t key; uint32_t subject, object, adjectives; uint8_t occupied, possible, remaining, tail; } GMemo;
 #define G_MEMO_SIZE 512
 typedef struct { GMemo cells[G_MEMO_SIZE]; } GWorkspace;
 
@@ -163,7 +249,7 @@ static inline int g_can_finish(GWorkspace *w, GState s, int remaining,
     if (!w->cells[j].occupied) { free_slot = j; break; }
     if (w->cells[j].key == key && w->cells[j].remaining == remaining &&
         w->cells[j].subject == s.subject && w->cells[j].object == s.object &&
-        w->cells[j].adjectives == s.adjectives) return w->cells[j].possible;
+        w->cells[j].adjectives == s.adjectives && w->cells[j].tail == s.tail) return w->cells[j].possible;
   }
   int possible = 0;
   for (int i = 0; i < count && !possible; i++) {
@@ -177,6 +263,7 @@ static inline int g_can_finish(GWorkspace *w, GState s, int remaining,
     w->cells[free_slot].subject = s.subject;
     w->cells[free_slot].object = s.object;
     w->cells[free_slot].adjectives = s.adjectives;
+    w->cells[free_slot].tail = s.tail;
     w->cells[free_slot].remaining = (uint8_t)remaining;
     w->cells[free_slot].possible = (uint8_t)possible;
     w->cells[free_slot].occupied = 1;

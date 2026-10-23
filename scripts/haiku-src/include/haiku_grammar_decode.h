@@ -64,9 +64,19 @@ static inline void haiku_decay_recent(float decay = HAIKU_FRESH_DECAY) {
 static inline bool haiku_theme_entry(const GEntry &in, bool space_theme, GEntry *out) {
   const uint32_t space_bits = G_SPACE | G_ABSTRACT | G_BODY | G_CELESTIAL | G_CRAFT | G_SIGNAL | G_OBSERVER | G_TERRAIN | G_CLOCK | G_MUSIC | G_HUMAN | G_INNER | G_HAND | G_ME | G_WE;
   *out = in;
-  if (space_theme) return in.semantic & space_bits;
-  if (out->tag == G_ADV && out->bare == 4) out->bare = 0;   // here/there need no place phrase on earth
+  // "Not on fog" is an earth-season rule (2026-10-22); space keeps "shines on light".
+  if (space_theme) {
+    out->semantic &= ~G_AIRY;
+    // Space places its stars and moons freely. Nouns only: verbs use this bit as G_STILL.
+    if (out->tag == G_NOUN) out->object &= ~G_ORB_NOUN;
+    if (out->tag == G_VERB) out->object &= ~G_ADRIFT;   // halos float on anything in space
+    return in.semantic & space_bits;
+  }
+  // On earth here/there/nearby need no place phrase, and may not follow one: not
+  // "through a tree there" (season review 2026-10-22).
+  if (out->tag == G_ADV && out->number == 0 && (out->bare == 4 || out->bare == 0)) out->bare = 5;
   if (!(in.semantic & (uint32_t)~space_bits)) return false;
+  if (in.tag == G_NOUN && (in.object & G_SPACE_ONLY_NOUN)) return false;   // no "cold wave" on earth
   out->semantic &= (uint32_t)~space_bits;
   return true;
 }
@@ -129,6 +139,30 @@ static inline int haiku_thin_places(GEntry *entries, int count, uint32_t seed,
     if (e.tag == G_NOUN && (e.semantic & G_SPACE) && !(e.semantic & (G_BODY | G_ABSTRACT)) &&
         e.token != protect) percent = noun_percent;
     else if (e.tag == G_VERB && (e.semantic & (G_SPACE | G_BODY))) percent = verb_percent;
+    if (percent < 100) {
+      x ^= x << 13; x ^= x >> 17; x ^= x << 5;
+      if ((int)(x % 100) >= percent) continue;
+    }
+    entries[kept++] = e;
+  }
+  return kept;
+}
+
+// The earth seasons' version: each poem keeps a random share of the nature nouns
+// (water, plants, animals, ground, air, light and the sky's bodies) and of the
+// intransitive verbs, so "birds float by waves" cannot fill most poems.
+// A zero seed keeps everything. Returns the new entry count.
+static inline int haiku_thin_season(GEntry *entries, int count, uint32_t seed,
+                                    int noun_percent, int verb_percent) {
+  if (!seed) return count;
+  // Bits 24-31 are animal actions (sing, chirp, swim...): those verbs carry no G_ANIMAL.
+  const uint32_t nature = G_AIR | G_LIGHT | G_WATER | G_PLANT | G_ANIMAL | G_GROUND | G_BODY | 0xff000000u;
+  uint32_t x = seed;
+  int kept = 0;
+  for (int i = 0; i < count; i++) {
+    const GEntry &e = entries[i];
+    int percent = e.tag == G_NOUN && (e.semantic & nature) ? noun_percent :
+                  e.tag == G_VERB && (e.semantic & nature) ? verb_percent : 100;
     if (percent < 100) {
       x ^= x << 13; x ^= x >> 17; x ^= x << 5;
       if ((int)(x % 100) >= percent) continue;

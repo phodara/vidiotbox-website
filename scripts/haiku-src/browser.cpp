@@ -5,8 +5,8 @@
 #include <emscripten.h>
 
 static float theme_history[HAIKU_N_SEASONS][G_ENTRY_COUNT];
-// Recent complete lines, kept per theme so a seasonal poem never pushes a Space line out
-// of the exact-line repeat guard (the device only remembers Space lines).
+// Recent complete lines, kept per theme so each theme's exact-line repeat guard matches
+// the native host parity fixtures (the device keeps one ring for all themes).
 static std::deque<std::string> theme_lines[HAIKU_N_SEASONS];
 
 extern "C" EMSCRIPTEN_KEEPALIVE int haiku_generate(int theme, int case_number) {
@@ -15,7 +15,7 @@ extern "C" EMSCRIPTEN_KEEPALIVE int haiku_generate(int theme, int case_number) {
   // The CLI normally initializes these once per process. Each browser call is a
   // new CLI invocation, while each theme retains its own recent-word history.
   TEMPERATURE=HAIKU_TEMPERATURE; NATURE_BOOST=HAIKU_NATURE_BOOST;
-  NATURE_SCORE=HAIKU_NATURE_SCORE; FRESHNESS=0.f; free_percent=0;
+  NATURE_SCORE=HAIKU_NATURE_SCORE; FRESHNESS=0.f; free_percent=0; season_features=false;
   memcpy(haiku_recent, theme_history[theme], sizeof haiku_recent);
   recent_lines.swap(theme_lines[theme]);
   char case_text[16]; snprintf(case_text, sizeof case_text, "%d", case_number);

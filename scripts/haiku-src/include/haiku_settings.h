@@ -19,3 +19,15 @@
 // Host and V8 firmware reject an exact line already used in recent space poems.
 // The fixed-size hash ring keeps this decoder-only diversity guard small on-device.
 #define HAIKU_SPACE_LINE_HISTORY 96
+// Earth seasons (spring to winter) with the same variety features as space: word
+// freshness, a per-poem palette, recent-line memory and model-written first lines.
+// HAIKU_SEASON_FEATURES 0 restores the original seasonal decoder.
+#define HAIKU_SEASON_FEATURES 1
+#define HAIKU_SEASON_FRESHNESS 5.0f     // logit penalty per recent use of a word
+#define HAIKU_SEASON_NOUN_PERCENT 50    // share of nature nouns a seasonal poem may use
+#define HAIKU_SEASON_VERB_PERCENT 55    // share of intransitive verbs a seasonal poem may use
+#define HAIKU_SEASON_ADJ_PERCENT 70
+#define HAIKU_SEASON_ADV_PERCENT 70
+// Model-written first lines lost the season ("Starlight burns through grass" opened spring,
+// summer and autumn), so seasonal poems keep their openers; the other features gave the gain.
+#define HAIKU_SEASON_FREE_PERCENT 0     // share of seasonal poems whose line one the model writes

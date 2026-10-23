@@ -50,6 +50,10 @@ static int line_repeat_mode=1;          // 0=off, 1=reject when an alternative e
 static float line_repeat_penalty=5.f;
 static std::deque<std::string> recent_lines;
 static long line_repeat_attempts, line_repeat_fallbacks;
+// Earth seasons with the space decoder's variety features (HAIKU_SEASON_FEATURES; SEASON_FEATURES=0 turns off).
+static bool season_features=false;
+static int season_noun_percent=HAIKU_SEASON_NOUN_PERCENT, season_verb_percent=HAIKU_SEASON_VERB_PERCENT;
+static bool featured() { return season==HAIKU_SEASON_SPACE || (season>=0 && season_features); }
 
 static bool is_used(int t) { return used[t>>5] & (1u<<(t&31)); }
 static void mark_used(int t) {
@@ -93,7 +97,7 @@ static std::string line_key(const char *line) {
   return key;
 }
 static bool line_was_recent(const char *line) {
-  if (season != HAIKU_SEASON_SPACE || !line_history_limit || !line_repeat_mode) return false;
+  if (!featured() || !line_history_limit || !line_repeat_mode) return false;
   const std::string key=line_key(line);
   for (const std::string &old:recent_lines) if (old==key) return true;
   return false;
@@ -122,6 +126,11 @@ static void select_theme(int index) {
     themed_count=haiku_thin_places(themed,themed_count,place_seed,place_percent,verb_percent,haiku_word_token("space"));
     themed_count=haiku_thin_palette(themed,themed_count,place_seed && palette_on ? (place_seed^0x9e3779b9u)|1 : 0,
                                     adj_percent,adv_percent,person_verb_percent);
+  } else if (index>=0 && season_features) {
+    themed_count=haiku_thin_season(themed,themed_count,place_seed && palette_on ? place_seed : 0,
+                                   season_noun_percent,season_verb_percent);
+    themed_count=haiku_thin_palette(themed,themed_count,place_seed && palette_on ? (place_seed^0x9e3779b9u)|1 : 0,
+                                    adj_percent,adv_percent,100);
   }
 }
 static const GEntry *grammar_entry(int token) {
@@ -292,13 +301,13 @@ static int write_line(int line,const char *prefix,int pos) {
     std::fprintf(stderr,"unsupported seed: %s\n",prefix); std::exit(1);
   }
   // Same rule as the firmware: space keeps is/are out of line two, allows it in line three.
-  if (constrained && season==HAIKU_SEASON_SPACE && (line==1 || line==2 || (line==0 && free_line_one))) {
+  if (constrained && featured() && (line==1 || line==2 || (line==0 && free_line_one))) {
     select_theme(season);
     // A framed line three is a person doing something: no "my eyes are cold".
     if (line==1 || line==0 || (line==2 && person_end)) themed_count=haiku_drop_copulas(themed,themed_count);
     memset(&workspace,0,sizeof workspace);
   }
-  if (line==0 && free_line_one && season==HAIKU_SEASON_SPACE) grammar=haiku_voice_start(person_voice);
+  if (line==0 && free_line_one && featured()) grammar=haiku_voice_start(person_voice);
   if (line==2 && person_end) grammar=haiku_voice_start_as(haiku_voice_of(lines[0]));   // same voice as line one
   Attempt best={},best_repeat={},cur; best.score=best_repeat.score=-1e30f;
   auto tries=[&]() {
@@ -320,7 +329,7 @@ static int write_line(int line,const char *prefix,int pos) {
   };
   tries();
   // The poem's palette can leave a line no way to finish; retry it with every word.
-  if (!best.n && constrained && season==HAIKU_SEASON_SPACE) {
+  if (!best.n && constrained && featured()) {
     palette_on=false; palette_fallbacks++;
     if (line==2 && person_end) grammar=haiku_voice_start(false);   // drop the framing voice: no person at all
     select_theme(season);
@@ -355,8 +364,8 @@ static bool grammar_test(const char *text,int expected) {
 }
 static int self_test() {
   bool ok=true;
-  for (const char *text : {"I breathe quietly", "We gasp", "I blink", "My palms open", "My hand opens", "I blink at stars", "We blink at the moon", "Now I blink at stars", "Stars blink by moons"}) ok &= grammar_test(text,1);
-  for (const char *text : {"Stars breathe", "My mind breathes", "My palms opens", "My heart opens", "I breathe past moons", "I blink past moons", "I open", "Palms open", "I blink by stars", "I blink around stars", "I now blink at stars", "We now wait", "Stars blink at moons", "I wait at stars", "I tremble at moons"}) ok &= grammar_test(text,0);
+  for (const char *text : {"Birds chirp", "A duck swims", "Ducks swim in the pond", "Frogs swim in a lake", "Sunlight shines through the trees", "Frogs sing by a rock", "Light fades under a stone", "Wet leaves glisten", "Crows fly in the rain", "Petals float on the pond", "Leaves float over the field", "A star fades through the leaves", "Mist rises", "A full moon glows", "Twigs float over the old field", "Frogs sing in the pond", "Bees hum in the field", "Light glows on a soft branch", "Light glows through the leaves", "A worm crawls through the grass", "A beetle crawls on the stone", "Wind blows over the waves", "Wind blows through the rain", "Petals float on the pond", "Leaves fall on the grass", "Birds sing in the trees", "Rain falls in the field", "A star fades in fog", "Sunlight shines through the path", "Birds sing on the shore", "Frogs sing in the field", "Crows fly over the lake", "A moon shines over the lake", "Sunlight shines on a dark lake", "Cold rain falls on leaves", "Rain falls in the pond", "Sunlight shines through the trees", "The moon glows through the fog", "The stream flows by the pines", "The pond sparkles", "Spring rain falls", "Winter wind blows", "Crows fly through the rain", "Birds fly in the fog", "Birds perch on the fence", "Petals fall on the grass", "Snow falls on the pond", "Light shines on the lake", "Bees hum", "Crickets jump", "Gulls perch", "Frogs sing", "I breathe quietly", "We gasp", "I blink", "My palms open", "My hand opens", "I blink at stars", "We blink at the moon", "Now I blink at stars", "Stars blink over moons"}) ok &= grammar_test(text,1);
+  for (const char *text : {"Stars breathe", "My mind breathes", "My palms opens", "My heart opens", "I breathe past moons", "I blink past moons", "I open", "Palms open", "I blink by stars", "I blink around stars", "I now blink at stars", "We now wait", "Stars blink at moons", "I wait at stars", "I tremble at moons", "Ducks chirp", "A duck chirps", "Bees sing", "Worms fly", "Worms dart", "Frogs fly", "Crows swim", "Bees chirp", "Ducks swim in the fence", "Ducks swim on the path", "Frogs swim in a pine", "The sun rises in a rock", "Light shines through a stone", "Crows fly in the fence", "Leaves drift through sand", "Stones shine", "Water is dry", "A star fades on fog", "Leaves fall on the mist", "Snow falls upon the wind", "Sunlight shines in the path", "Frogs sing in the shore", "Petals fall on bees", "Rain falls on birds", "Frogs sing on the field", "Bees hum upon a meadow", "Crows fly on the lake", "A bird flies upon the pond", "Crows fly in the pond", "Bees fly through the water", "The water flows through a leaf", "A lake falls", "Puddles drift through the garden", "A moon shines in waves", "The sun rises in a field", "Sunlight shines through a dark lake", "The moon glows through a puddle", "Cold rain falls in leaves", "Snow falls in the pines", "Wet stones glisten", "Ducks fly in the dry garden", "Birds float through rain", "Crows float by a stone", "A sun fades through mud", "A star fades through streams", "Tall grass sways on leaves", "A pond rises", "Light is full by rocks", "Twigs float under the old field", "Leaves float beneath the pond", "Bees hum in the lake", "Crickets sing in a puddle", "Light glows in a soft branch", "The moon shines in the trees", "A worm crawls through the pond", "Beetles crawl in the water", "The old shore sparkles", "Wind rises through waves", "Wind blows in a puddle", "A tree falls", "Branches drift", "Tall grass sways in leaves", "Leaves float on cold stones", "Birds float on ice", "An old sand is wet", "A star fades on leaves", "Green leaves are winter"}) ok &= grammar_test(text,0);
   for (const char *text : {"Rain falls softly", "Birds sing in the trees", "I tremble by moons", "We watch the comet", "I wait by asteroids here", "Comets glow by moons there", "I wander past the moons", "I wonder softly", "We watch the cosmos", "The sun pulls light", "The wind stirs leaves",
                           "A cold pond freezes", "An old tree sways", "Snow is cold", "Mass bends light", "Now time and space shift apart", "Now stars drift", "Light now burns in space", "Time and space now shift apart", "Stars now drift softly", "Space and time are one", "Planets orbit stars",
                           "Signals fade", "The plasma flows", "A pulsar spins", "A nebula glows", "Stars are like music", "Light is like a song", "Hydrogen glows", "The wavelength grows", "Neutrinos drift", "Stellar light fades"}) ok &= grammar_test(text,1);
@@ -466,6 +475,23 @@ int main(int argc,char **argv) {
     read_tuning("SPACE_LINE_REPEAT_PENALTY",&line_repeat_penalty);
     if (!(line_repeat_penalty>=0.f) || !std::isfinite(line_repeat_penalty)) { fprintf(stderr,"invalid SPACE_LINE_REPEAT_PENALTY\n"); return 2; }
   }
+  const char *season_switch=getenv("SEASON_FEATURES");   // default: the firmware's HAIKU_SEASON_FEATURES
+  if (chosen>=0 && chosen!=HAIKU_SEASON_SPACE && (season_switch ? strcmp(season_switch,"0")!=0 : HAIKU_SEASON_FEATURES)) {
+    // Same as the firmware's HAIKU_SEASON_* values; keep them in step.
+    season_features=true;
+    FRESHNESS=HAIKU_SEASON_FRESHNESS; read_tuning("SEASON_FRESHNESS",&FRESHNESS);
+    auto percent_setting=[](const char *name,int fallback) {
+      const char *value=getenv(name); if (!value) return fallback;
+      char *end=nullptr; long number=strtol(value,&end,10);
+      if (!*value || *end || number<0 || number>100) { fprintf(stderr,"invalid %s\n",name); exit(2); }
+      return (int)number;
+    };
+    season_noun_percent=percent_setting("SEASON_NOUN_PERCENT",season_noun_percent);
+    season_verb_percent=percent_setting("SEASON_VERB_PERCENT",season_verb_percent);
+    adj_percent=percent_setting("SEASON_ADJ_PERCENT",HAIKU_SEASON_ADJ_PERCENT);
+    adv_percent=percent_setting("SEASON_ADV_PERCENT",HAIKU_SEASON_ADV_PERCENT);
+    free_percent=percent_setting("SEASON_FREE_PERCENT",HAIKU_SEASON_FREE_PERCENT);
+  }
   select_theme(chosen);
 #ifdef HAIKU_SCENE_RESEARCH
   if (chosen==HAIKU_SEASON_SPACE) {
@@ -511,7 +537,7 @@ int main(int argc,char **argv) {
 #endif
     const HaikuSeed *pool[HAIKU_N_SEEDS]; int pool_n=0;
     for (const HaikuSeed &candidate:HAIKU_SEEDS)
-      if ((chosen<0 || candidate.season==chosen) && (free_percent==0 || candidate.syl==5)) pool[pool_n++]=&candidate;
+      if ((chosen<0 || candidate.season==chosen) && (chosen!=HAIKU_SEASON_SPACE || free_percent==0 || candidate.syl==5)) pool[pool_n++]=&candidate;
     const HaikuSeed &seed=*pool[c%pool_n];
     place_seed=((uint32_t)(6001+c)*2654435761u)|1;
     select_theme(chosen);
@@ -524,7 +550,7 @@ int main(int argc,char **argv) {
     // Experiment: HAIKU_FREE_LINE_ONE=<start token id> lets the model write line one itself,
     // starting from that token (the end-of-text token that precedes each training poem).
     const char *free_start=getenv("HAIKU_FREE_LINE_ONE");
-    if (!free_start && chosen==HAIKU_SEASON_SPACE && free_percent>0 &&
+    if (!free_start && (chosen==HAIKU_SEASON_SPACE || season_features) && free_percent>0 &&
         (int)(((uint32_t)(c+1)*2246822519u)>>16)%100<free_percent) free_start="0";
     free_line_one=free_start!=nullptr;
     // Independent deterministic draws keep voice separate from opener count.
