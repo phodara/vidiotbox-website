@@ -31,7 +31,7 @@ for (const caseNumber of [0,1]) {
     console.log(`${info.themes[theme]} case ${caseNumber}: native / WASM poem parity`);
   }
 }
-// Exact-line repeat guard: a fresh decoder writing 20 Space poems in a row must match the
+// Exact-line repeat guard: a fresh decoder writing 24 Space poems in a row must match the
 // native host, reject at least one recent line, and never reuse a line from recent poems.
 const fresh = await createDecoder({wasmBinary: wasm, print: text => {line = text;}});
 fresh.FS.writeFile('/model.bin', model);

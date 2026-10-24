@@ -30,7 +30,7 @@ compiler. `model.bin` is a normal Git file (about 15 MB), not a Git LFS pointer.
 The model is hash-checked before build and in the browser before inference.
 
 `parity.json` contains two consecutive native INT8-activation host results for
-each theme, plus a 20-poem Space sequence that exercises the exact-line repeat guard; tests compare the shipped WASM poems to those native results with
+each theme, plus a 24-poem Space sequence that exercises the exact-line repeat guard; tests compare the shipped WASM poems to those native results with
 interleaved themes. If updating source/model, regenerate these fixtures with the native
 host built by `scripts/build-native-reference.sh OUT`, and review changes before accepting
 them. That build matches the WebAssembly float math bit for bit: no fused multiply-adds
