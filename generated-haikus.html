@@ -18,6 +18,8 @@
  html {scroll-behavior:smooth;}
  body {min-height:100vh;margin:0;background:#111;color:var(--ink);font-family:Arial,Helvetica,sans-serif;}
  .toolbar {position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 22px;background:#111f;border-bottom:1px solid var(--line);}
+ .toolbar {transition:transform .4s ease,opacity .4s ease;}
+ .toolbar.is-idle:not(:hover):not(:focus-within) {transform:translateY(-100%);opacity:0;pointer-events:none;}
  .brand {color:var(--cyan);font-weight:900;font-size:13px;letter-spacing:2px;margin-right:auto;text-decoration:none;}
  button,select {font:700 13px Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:10px 12px;border-radius:3px;cursor:pointer;text-decoration:none;}
  button:hover {border-color:var(--green);color:var(--green);}
@@ -60,14 +62,22 @@
  .facts {display:grid;gap:14px;margin:0 0 22px;}
  .facts span {display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
  .facts strong {color:#fff;font-size:18px;font-weight:700;}
- .copyright {font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;}
+ dialog {max-height:calc(100vh - 32px);overflow-y:auto;}
+ .work {text-align:center;border-bottom:1px solid var(--line);padding-bottom:18px;margin:0 0 22px;}
+ .work p {margin:0;}
+ .work-title {color:var(--cyan);font-size:24px;font-weight:900;letter-spacing:1px;}
+ .work-author {color:var(--ink);font-size:15px;font-style:italic;margin-top:6px !important;}
+ .work-notice {color:var(--muted);font-size:12px;margin-top:12px !important;}
+ .credits {border-top:1px solid var(--line);padding-top:18px;margin:0 0 22px;}
+ .credits p {font-size:12px;line-height:1.55;color:var(--muted);margin:0 0 10px;}
+ .credits strong {color:var(--ink);}
  @media(max-width:640px) {
   .toolbar {padding:10px;gap:8px;} .brand {width:100%;} button,select {padding:8px;font-size:12px;}
   .crawl-stage {padding:36px 16px;} .poem-grid {grid-template-columns:1fr;} .poem p {font-size:20px;}
   .is-crawl .crawl-stage {perspective:330px;perspective-origin:50% 28%;}
   .is-crawl .crawl {width:78vw;} .is-crawl .poem p {font-size:21px;} .is-crawl .poem h3 {font-size:18px;}
  }
- @media(prefers-reduced-motion:reduce) {html {scroll-behavior:auto;}}
+ @media(prefers-reduced-motion:reduce) {html {scroll-behavior:auto;} .toolbar {transition:none;}}
  #stars{position:fixed;inset:0;z-index:30;pointer-events:none;mix-blend-mode:lighten;background-repeat:repeat;image-rendering:pixelated}#stars canvas{position:absolute;inset:0;width:100%;height:100%}
 </style>
 </head>
@@ -94,14 +104,25 @@
 <p class="lede reading-only">Want more? Press <strong>Write another</strong>, or return to the crawl with <strong>Play crawl</strong>.</p>
 </div></main>
 <dialog id="aboutDialog" aria-labelledby="aboutTitle">
- <h2 id="aboutTitle">ABOUT THESE HAIKU</h2>
+ <header class="work">
+  <p class="work-title" id="aboutTitle">One Billion hAIkus</p>
+  <p class="work-author">by Paul Hodara</p>
+  <p class="work-notice">Copyright &copy; 2026 Paul Hodara. All rights reserved.</p>
+ </header>
+ <h2>ABOUT THESE HAIKU</h2>
  <div class="facts">
   <div><span>Model</span><strong>V8.9 · PLE / TinyStories</strong></div>
   <div><span>Inference</span><strong>INT4 + INT8</strong></div>
   <div><span>Rules</span><strong>Controlled grammar · no repeated lines</strong></div>
  </div>
- <p class="copyright">Copyright (c) 2026 Paul Hodara</p>
- <form method="dialog"><button type="submit">Close</button></form>
+ <section class="credits" aria-labelledby="creditsTitle">
+  <h2 id="creditsTitle">CREDITS AND LICENSES</h2>
+  <p>Third-party components are used under their own licenses, listed below. They are not covered by the reservation of rights above.</p>
+  <p><strong>Base language model and tokenizer.</strong> <a href="https://huggingface.co/slvDev/esp32-ai-tinystories">esp32-ai-tinystories</a>, Copyright &copy; 2026 Viacheslav Sierbov. Used and modified under the <a href="haiku-generator/LICENSE.txt">MIT License</a>.</p>
+  <p><strong>Training data of the base model.</strong> <a href="https://huggingface.co/datasets/roneneldan/TinyStories">TinyStories</a>, Ronen Eldan and Yuanzhi Li, Microsoft Research (2023), <a href="https://arxiv.org/abs/2305.07759">arXiv:2305.07759</a>. Licensed under the <a href="https://cdla.dev/sharing-1-0/">Community Data License Agreement &ndash; Sharing, Version 1.0</a> (CDLA-Sharing-1.0). The dataset is not redistributed here.</p>
+  <p><strong>Music.</strong> Araki Kod&omacr; III, <a href="https://commons.wikimedia.org/wiki/File:Shikanotoone.ogg"><em>Shika no T&omacr;ne</em></a> (shakuhachi), Victor 13029, via Wikimedia Commons. Public domain.</p>
+ </section>
+ <form method="dialog"><button type="submit" autofocus>Close</button></form>
 </dialog>
 <audio id="crawlMusic" preload="none" loop></audio>
 <script>
@@ -289,5 +310,12 @@ const q=new URLSearchParams(location.search).get('stars');if(q)on=q!=='off'&&q!=
 function apply(){box.style.display=on?'':'none';menu.value=on?'on':'off';start();}
 menu.onchange=()=>{on=menu.value==='on';try{localStorage.setItem('stars',menu.value);}catch(e){}apply();};
 addEventListener('resize',()=>{layout();start();});layout();apply();})();
+</script>
+<script>
+// Hide the top bar after 3 s without mouse movement; movement, a tap, a scroll or a key
+// brings it back. It stays while hovered, while a control has focus, and while About is open.
+(()=>{const bar=document.querySelector('.toolbar'),about=document.getElementById('aboutDialog');let timer;
+const wake=()=>{bar.classList.remove('is-idle');clearTimeout(timer);timer=setTimeout(()=>about.open ? wake() : bar.classList.add('is-idle'),3000);};
+['mousemove','pointerdown','keydown','wheel','touchstart','scroll'].forEach(e=>addEventListener(e,wake,{passive:true}));wake();})();
 </script>
 </body></html>
