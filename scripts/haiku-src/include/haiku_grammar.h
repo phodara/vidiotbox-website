@@ -35,6 +35,17 @@ enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPA
 #define G_BEE_NOUN 536870912u // bees are placed over a pond, not on it
 #define G_SINGLE_MOON 268435456u // singular moon similes are rejected
 #define G_SPACE_ONLY_NOUN 16777216u   // wave, waves: space only, not the earth seasons
+#define G_MOON_NOUN 33554432u   // moon, moons: all that "full" describes (review round 7)
+#define G_STONE_NOUN 67108864u  // stone, rock: no bird sings on one (review round 7)
+#define G_MOON_ONLY 0x80000000u // adjective object bit: "full"
+// Noun limits kept in GState.adjectives above G_ALL until the next noun (the lookahead
+// memo compares adjectives in full).
+#define G_LIMIT_MOON 0x80000000u   // after "full": the moon only, not "full stars"
+#define G_LIMIT_TREE 0x40000000u   // a bird "in" a plant is in a tree or reeds, not "a soft leaf"
+#define G_LIMIT_STONE 0x20000000u  // a bird "on" no stone or rock
+#define G_LIMITS (G_LIMIT_MOON | G_LIMIT_TREE | G_LIMIT_STONE)
+#define G_ACT_FLY (1u << 28)                    // animal action bits (generate_grammar_tables.py)
+#define G_ACT_HUM_CRAWL ((1u << 26) | (1u << 30))   // bees and beetles fly but are not birds
 // PP state bit 31 (outside the enum): the sky's bodies go "through" only weather or
 // foliage, not "through mud" or "through streams" (season review round 5).
 #define G_SKY_THROUGH 0x80000000u
@@ -84,8 +95,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       s.phase = subject ? G_SUBJECT_NOUN : s.phase == G_OBJECT ? G_OBJECT_NOUN : G_PP_NOUN;
     } else if (e->tag == G_ADJ && !s.nadj) {
       if (e->bare == 2) return 0;   // predicate-only: "are one", never "one time"
-      s.adjectives &= e->semantic;
-      if (!s.adjectives) return 0;
+      s.adjectives &= e->semantic | G_LIMITS;
+      if (!(s.adjectives & G_ALL)) return 0;
+      if (e->object & G_MOON_ONLY) s.adjectives |= G_LIMIT_MOON;
       s.nadj = 1;
       s.article = 0;
     } else if (e->tag == G_NOUN) {
@@ -114,6 +126,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.object & G_NO_POOL_NOUN) && (e->object & G_POOL_NOUN)) return 0; // not "bees hum in the lake"
       if ((s.object & G_SKY_THROUGH) && (e->object & G_SINGLE_FOREST)) return 0; // use "through the trees/pines/vines/branches"
       if ((s.tail & 64) && (s.object & G_ONLY_POOL) && (e->object & G_POOL_NOUN)) return 0; // bees float over ponds
+      if ((s.adjectives & G_LIMIT_MOON) && !(e->object & G_MOON_NOUN)) return 0;   // a full moon only
+      if ((s.adjectives & G_LIMIT_TREE) && (e->semantic & G_PLANT) && !(e->object & G_ROOTED_NOUN)) return 0;
+      if ((s.adjectives & G_LIMIT_STONE) && (e->object & G_STONE_NOUN)) return 0;
       if ((s.object & G_SKY_THROUGH) && !(((e->semantic & G_AIRY) && !(e->semantic & G_GROUND)) ||
                                           (e->semantic & G_PLANT))) return 0;   // not "a sun fades through mud"
       if (subject) {
@@ -132,6 +147,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         // adverb at all, which would read as "like sounds far".
         s.tail |= s.object == G_MUSIC ? 5 : 4;
         s.phase = G_DONE;
+        s.object &= ~G_NO_POOL_NOUN;   // "holds" is done with it; G_WET shares the bit
       }
       s.article = s.determiner = s.nadj = 0;
       s.adjectives = G_ALL;
@@ -223,6 +239,14 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       // Round 4: "bees hum in the lake". Bit 27 is the "swim" action (ducks, frogs, gulls).
       if ((s.subject & G_ANIMAL) && !(s.subject & (1u << 27)) && (e->object & G_NOT_SURFACE))
         s.object |= G_NO_POOL_NOUN;   // "in"
+      // Review round 7: "the lake sparkles on a pond". No water on or in water.
+      if ((s.tail & 8) && (e->object & (G_NOT_AIRY | G_NOT_SURFACE))) s.object |= G_NO_POOL_NOUN;
+      if ((s.tail & 64) && (e->object & G_NOT_AIRY)) s.object |= G_NO_POOL_NOUN;   // "bees hum on the lake"
+      // Review round 7: "the bird sings in a soft leaf", "birds sing on the stone".
+      if ((s.subject & G_ACT_FLY) && !(s.subject & G_ACT_HUM_CRAWL)) {
+        if (e->object & G_NOT_SURFACE) s.adjectives |= G_LIMIT_TREE;   // "in"
+        if (e->object & G_NOT_AIRY) s.adjectives |= G_LIMIT_STONE;     // on, upon
+      }
     } else return 0;
   } else return 0;
   *out = s;

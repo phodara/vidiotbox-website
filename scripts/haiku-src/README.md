@@ -31,10 +31,12 @@ The model is hash-checked before build and in the browser before inference.
 
 `parity.json` contains two consecutive native INT8-activation host results for
 each theme, plus a 20-poem Space sequence that exercises the exact-line repeat guard; tests compare the shipped WASM poems to those native results with
-interleaved themes. If updating source/model, regenerate these fixtures using
-the matching native host binary, compiled with `-ffp-contract=off` (Apple Silicon
-fuses multiply-adds and WebAssembly does not, which can flip a near-tie between two words),
-and review changes before accepting them.
+interleaved themes. If updating source/model, regenerate these fixtures with the native
+host built by `scripts/build-native-reference.sh OUT`, and review changes before accepting
+them. That build matches the WebAssembly float math bit for bit: no fused multiply-adds
+(Apple Silicon fuses them, WebAssembly does not), and Emscripten's musl `expf`, `logf`,
+`powf`, `sinf`, `cosf` and `erff` instead of the macOS ones, which differ by about one unit
+in the last place. Either difference eventually flips a near-tie between two words.
 
 ## Local preview
 

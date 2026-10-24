@@ -1,6 +1,9 @@
 #pragma once
 // Generation defaults shared by the firmware and host simulator.
 #define HAIKU_TOP_K 20
+// Finished poems the board writes ahead while nobody presses a button (firmware only).
+// One is written after each poem shown; more follow while idle, up to this many, then it rests.
+#define HAIKU_PREFETCH_MAX 5
 #define HAIKU_TEMPERATURE 0.7f
 #define HAIKU_TRIES 5
 // Weight of "the model would punctuate here" against mean word log-probability.
@@ -28,6 +31,9 @@
 #define HAIKU_SEASON_VERB_PERCENT 55    // share of intransitive verbs a seasonal poem may use
 #define HAIKU_SEASON_ADJ_PERCENT 70
 #define HAIKU_SEASON_ADV_PERCENT 70
+// Review round 7: "a small rock is dry" ended almost half the seasonal poems. Line three
+// may use is/are in this share of seasonal poems (it comes back if the line cannot finish).
+#define HAIKU_SEASON_COPULA_PERCENT 50
 // Model-written first lines lost the season ("Starlight burns through grass" opened spring,
 // summer and autumn), so seasonal poems keep their openers; the other features gave the gain.
 #define HAIKU_SEASON_FREE_PERCENT 0     // share of seasonal poems whose line one the model writes

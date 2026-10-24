@@ -208,6 +208,12 @@ static inline bool haiku_word_is_copula(int token, const GEntry *entries, int co
   const GEntry *entry = haiku_grammar_entry(token, entries, count);
   return entry && entry->tag == G_COPULA;
 }
+// Whether a seasonal poem's line three may use is/are, chosen from the poem's place seed
+// so the board, the simulator and the website agree (HAIKU_SEASON_COPULA_PERCENT).
+static inline bool haiku_keeps_copula(uint32_t seed, int percent) {
+  return (int)(((seed * 2246822519u) >> 16) % 100u) < percent;
+}
+
 static inline int haiku_drop_copulas(GEntry *entries, int count) {
   int kept = 0;
   for (int i = 0; i < count; i++)
