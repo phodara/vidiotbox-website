@@ -68,11 +68,11 @@
   .is-crawl .crawl {width:78vw;} .is-crawl .poem p {font-size:21px;} .is-crawl .poem h3 {font-size:18px;}
  }
  @media(prefers-reduced-motion:reduce) {html {scroll-behavior:auto;}}
- #stars{position:fixed;inset:0;z-index:30;pointer-events:none;mix-blend-mode:lighten;background-repeat:repeat;image-rendering:pixelated}
+ #stars{position:fixed;inset:0;z-index:30;pointer-events:none;mix-blend-mode:lighten;background-repeat:repeat;image-rendering:pixelated}#stars canvas{position:absolute;inset:0;width:100%;height:100%}
 </style>
 </head>
 <body class="is-crawl">
-<div id="stars" aria-hidden="true"></div>
+<div id="stars" aria-hidden="true"><canvas></canvas></div>
 <nav class="toolbar" aria-label="Haiku controls">
  <a class="brand" href="/">VIDIOTBOX / GENERATED hAIkus</a>
  <label>Theme <select id="theme"><option value="all">All themes</option><option value="space" selected>Space</option><option value="spring">Spring</option><option value="summer">Summer</option><option value="autumn">Autumn</option><option value="winter">Winter</option></select></label>
@@ -81,6 +81,7 @@
  <button id="more" type="button" hidden disabled>Write another</button>
  <label id="speedControl">Speed <select id="speed"><option value="0.5" selected>0.5×</option><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
  <label> Music Shakuhachi <select id="music"><option value="assets/audio/shika-no-toone-shakuhachi.mp3" selected>On</option><option value="">Off</option></select></label>
+ <label>Stars <select id="starsOpt"><option value="on">On</option><option value="off">Off</option></select></label>
  <button id="about" type="button">About</button>
  <span id="status" role="status">Loading the haiku model…</span>
 </nav>
@@ -262,8 +263,31 @@ playMusic().then(playing => { if (!playing) startMusicOnGesture(); });
 </script>
 <script>
 // The S3 crawl's star field (haiku-esp32-s3 include/crawl_32e.h): the same 140 stars on a 480x320 tile, repeated.
-(()=>{const c=document.createElement('canvas');c.width=480;c.height=320;const g=c.getContext('2d');let r=0x2545F491;const n=()=>(r=(Math.imul(r,1664525)+1013904223)>>>0)>>>8;
-for(let i=0;i<140;i++){const x=n()%480,y=n()%320,v=50+n()%150,w=v*7>>3;g.fillStyle=`rgb(${w},${w},${v})`;g.fillRect(x,y,1,1);}
-document.getElementById('stars').style.backgroundImage=`url(${c.toDataURL()})`;})();
+// About one star in eight is 2 px and about 15% twinkle. STARS_ON is the default; the Stars menu (remembered
+// in this browser) overrides it, and ?stars=on or ?stars=off in the address overrides both.
+(()=>{const STARS_ON=true;
+const box=document.getElementById('stars'),tw=box.querySelector('canvas'),menu=document.getElementById('starsOpt');
+let r=0x2545F491;const n=()=>(r=(Math.imul(r,1664525)+1013904223)>>>0)>>>8;
+const stars=[];for(let i=0;i<140;i++){const x=n()%480,y=n()%320,v=50+n()%150;stars.push({x,y,v});}
+for(const s of stars){s.size=n()%8?1:2;s.twinkle=n()%100<15;}
+const rgb=v=>{const w=v*7>>3;return `rgb(${w},${w},${v})`;};
+const c=document.createElement('canvas');c.width=480;c.height=320;const g=c.getContext('2d');
+for(const s of stars)if(!s.twinkle){g.fillStyle=rgb(s.v);g.fillRect(s.x,s.y,s.size,s.size);}
+box.style.backgroundImage=`url(${c.toDataURL()})`;
+const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let lit=[],running=false;
+function layout(){const W=innerWidth,H=innerHeight,dpr=devicePixelRatio||1;tw.width=W*dpr;tw.height=H*dpr;
+  tw.getContext('2d').setTransform(dpr,0,0,dpr,0,0);lit=[];
+  for(let ty=0;ty<H;ty+=320)for(let tx=0;tx<W;tx+=480)for(const s of stars)if(s.twinkle)
+    lit.push({x:tx+s.x,y:ty+s.y,v:s.v,size:s.size,phase:Math.random()*6.283,rate:.8+Math.random()*2.2});}
+function frame(t){const tg=tw.getContext('2d');tg.clearRect(0,0,tw.width,tw.height);
+  for(const s of lit){const k=still?1:.15+.85*(.5+.5*Math.sin(t/1000*s.rate+s.phase));tg.fillStyle=rgb(s.v*k|0);tg.fillRect(s.x,s.y,s.size,s.size);}
+  if(on&&!still)requestAnimationFrame(frame);else running=false;}
+function start(){if(on&&!running){running=true;requestAnimationFrame(frame);}}
+let on=STARS_ON;try{const saved=localStorage.getItem('stars');if(saved)on=saved==='on';}catch(e){}
+const q=new URLSearchParams(location.search).get('stars');if(q)on=q!=='off'&&q!=='0';
+function apply(){box.style.display=on?'':'none';menu.value=on?'on':'off';start();}
+menu.onchange=()=>{on=menu.value==='on';try{localStorage.setItem('stars',menu.value);}catch(e){}apply();};
+addEventListener('resize',()=>{layout();start();});layout();apply();})();
 </script>
 </body></html>
