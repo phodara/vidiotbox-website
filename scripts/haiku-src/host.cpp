@@ -145,15 +145,24 @@ static const GEntry *grammar_word(const char *word) {
 static bool parse_clause(const char *text, GState *state) {
   *state=g_start(); char copy[LINE_BYTES]; snprintf(copy,sizeof copy,"%s",text);
   for (char *p=copy;*p;p++) if (*p>='A' && *p<='Z') *p += 'a'-'A';
-  for (char *word=strtok(copy," .,");word;word=strtok(nullptr," .,")) {
-    const GEntry *entry=grammar_word(word); GState next;
-    if (!entry) return false;
+  const char *words[32]; int n=0;
+  for (char *word=strtok(copy," .,");word && n<32;word=strtok(nullptr," .,")) words[n++]=word;
+  // A phrase entry ("in a flash") is tried first, then its words one by one.
+  for (int i=0;i<n;) {
+    int taken=0;
+    for (int k=n-i<3 ? n-i : 3;k>=1 && !taken;k--) {
+      char word[LINE_BYTES]=""; GState next;
+      for (int j=0;j<k;j++) snprintf(word+strlen(word),sizeof word-strlen(word),"%s%s",j ? " " : "",words[i+j]);
+      const GEntry *entry=grammar_word(word);
+      if (!entry) continue;
 #ifdef HAIKU_SCENE_RESEARCH
-    GEntry adjusted=season==HAIKU_SEASON_SPACE ? research_ancient_light(*entry,word) : *entry;
-    entry=&adjusted;
+      GEntry adjusted=season==HAIKU_SEASON_SPACE ? research_ancient_light(*entry,word) : *entry;
+      entry=&adjusted;
 #endif
-    if (!g_advance(*state,entry,&next)) return false;
-    *state=next;
+      if (g_advance(*state,entry,&next)) { *state=next; taken=k; }
+    }
+    if (!taken) return false;
+    i+=taken;
   }
   return true;
 }
@@ -369,13 +378,13 @@ static int self_test() {
   for (const char *text : {"Birds chirp", "A duck swims", "Ducks swim in the pond", "Frogs swim in a lake", "Sunlight shines through the trees", "Frogs sing by a rock", "Light fades under a stone", "Wet leaves glisten", "Crows fly in the rain", "Petals float on the pond", "Leaves float over the field", "A star fades through the leaves", "Mist rises", "A full moon glows", "Twigs float over the old field", "Frogs sing in the pond", "Bees hum in the field", "Light glows on a soft branch", "Light glows through the leaves", "A worm crawls through the grass", "A beetle crawls on the stone", "Wind blows over the waves", "Wind blows through the rain", "Petals float on the pond", "Leaves fall on the grass", "Birds sing in the trees", "Rain falls in the field", "A star fades in fog", "Sunlight shines through the path", "Birds sing on the shore", "Frogs sing in the field", "Crows fly over the lake", "A moon shines over the lake", "Sunlight shines on a dark lake", "Cold rain falls on leaves", "Rain falls in the pond", "Sunlight shines through the trees", "The moon glows through the fog", "The stream flows by the pines", "The pond sparkles", "Spring rain falls", "Winter wind blows", "Crows fly through the rain", "Birds fly in the fog", "Birds perch on the fence", "Petals fall on the grass", "Snow falls on the pond", "Light shines on the lake", "Bees hum", "Crickets jump", "Gulls perch", "Frogs sing", "I breathe quietly", "We gasp", "I blink", "My palms open", "My hand opens", "I blink at stars", "We blink at the moon", "Now I blink at stars", "Stars blink over moons", "Full moons glow", "Birds sing in the reeds", "Crows perch in the old oak", "Gulls perch on the fence", "The tree holds rain", "Bees hum in the flowers", "The lake sparkles by the pines", "An atom whispers", "The wind whispers softly", "Dark matter glows"}) ok &= grammar_test(text,1);
   for (const char *text : {"Stars breathe", "An atom is dark", "Planets are dark", "Rocks whisper", "The atoms whisper in space", "My mind breathes", "My palms opens", "My heart opens", "I breathe past moons", "I blink past moons", "I open", "Palms open", "I blink by stars", "I blink around stars", "I now blink at stars", "We now wait", "Stars blink at moons", "I wait at stars", "I tremble at moons", "Ducks chirp", "A duck chirps", "Bees sing", "Worms fly", "Worms dart", "Frogs fly", "Crows swim", "Bees chirp", "Ducks swim in the fence", "Ducks swim on the path", "Frogs swim in a pine", "The sun rises in a rock", "Light shines through a stone", "Crows fly in the fence", "Leaves drift through sand", "Stones shine", "Water is dry", "A star fades on fog", "Leaves fall on the mist", "Snow falls upon the wind", "Sunlight shines in the path", "Frogs sing in the shore", "Petals fall on bees", "Rain falls on birds", "Frogs sing on the field", "Bees hum upon a meadow", "Crows fly on the lake", "A bird flies upon the pond", "Crows fly in the pond", "Bees fly through the water", "The water flows through a leaf", "A lake falls", "Puddles drift through the garden", "A moon shines in waves", "The sun rises in a field", "Sunlight shines through a dark lake", "The moon glows through a puddle", "Cold rain falls in leaves", "Snow falls in the pines", "Wet stones glisten", "The pale light glows through a root", "Ducks fly in the dry garden", "Birds float through rain", "Crows float by a stone", "A sun fades through mud", "A star fades through streams", "Tall grass sways on leaves", "A pond rises", "Light is full by rocks", "Twigs float under the old field", "Leaves float beneath the pond", "Bees hum in the lake", "Crickets sing in a puddle", "Light glows in a soft branch", "The moon shines in the trees", "A worm crawls through the pond", "Beetles crawl in the water", "The old shore sparkles", "Wind rises through waves", "Wind blows in a puddle", "A tree falls", "Branches drift", "Tall grass sways in leaves", "Leaves float on cold stones", "Birds float on ice", "An old sand is wet", "A star fades on leaves", "Green leaves are winter", "Full light glows", "Full stars warm wet fog", "A full sun burns", "The bird sings in a soft leaf", "Birds sing on the stone", "Crows perch upon a rock", "A tree holds cold water", "An old pine holds streams", "The lake sparkles on a pond", "The stream flows in the lake", "Bees hum on the lake", "Some bees rest on the water"}) ok &= grammar_test(text,0);
   for (const char *text : {"Rain falls softly", "Birds sing in the trees", "I tremble by moons", "We watch the comet", "I wait by asteroids here", "Comets glow by moons there", "I wander past the moons", "I wonder softly", "We watch the cosmos", "The sun pulls light", "The wind stirs leaves",
-                          "A cold pond freezes", "An old tree sways", "Snow is cold", "Mass bends light", "Now time and space shift apart", "Now stars drift", "Light now burns in space", "Time and space now shift apart", "Stars now drift softly", "Space and time are one", "Planets orbit stars",
+                          "A cold pond freezes", "An old tree sways", "Snow is cold", "Mass bends light", "Now time and space shift apart", "Now stars drift", "Light now burns in space", "Time and space now shift apart", "Stars now drift softly", "Space and time are one", "Planets orbit stars", "Time in a flash shifts", "A quasar in a flash fades", "A star in a flash vanishes", "Density shifts",
                           "Signals fade", "The plasma flows", "A pulsar spins", "A nebula glows", "Stars are like music", "Light is like a song", "Hydrogen glows", "The wavelength grows", "Neutrinos drift", "Stellar light fades"}) ok &= grammar_test(text,1);
   for (const char *text : {"Bird sing", "Birds sings", "The rain fall", "Rain falls in pond",
                           "The wind stirs", "The wind stirs the", "An tree sways", "A old tree sways",
                           "The snow is", "Rain falls the", "Trees grows", "Leaves", "It falls", "Signals orbit stars", "A crater transmits signals",
                           "A rocket sings", "One time and space shift", "Light burns in space now", "Stars drift now", "Light now burns now", "Time now and space shift", "Now now stars drift", "Stars drift now now", "Now the now stars drift", "The one moon glows", "Now", "The crew watches stars", "The clock floats",
-                          "The probe scans", "My eyes warm a wave", "We wait in dust", "I wait past a moon", "Planets are bright there", "We wonder around stars", "Planets orbit a cosmos", "Surfaces are still", "I wait in soft waves", "Energy is cool", "The old sun pulls a cold wave", "Planets orbits stars", "Music floats", "Sounds fade", "Stars drift through music", "Light is music", "A lander glows", "Hydrogen orbits stars", "The wavelength glows", "A neutrinos drift"}) ok &= grammar_test(text,0);
+                          "The probe scans", "My eyes warm a wave", "We wait in dust", "I wait past a moon", "Planets are bright there", "We wonder around stars", "Planets orbit a cosmos", "Surfaces are still", "I wait in soft waves", "Energy is cool", "The old sun pulls a cold wave", "Planets orbits stars", "Music floats", "Sounds fade", "Stars drift through music", "Light is music", "A lander glows", "Hydrogen orbits stars", "The wavelength glows", "A neutrinos drift", "Density and a flash shift", "A flash and density shift", "A void in a flash is cold", "Density in a flash now shifts", "Density now in a flash shifts", "Density shifts in a flash", "In a flash density shifts", "Mass in a flash bends light", "I in a flash blink", "An atom in a flash drifts", "Halos in a flash float far", "Halos in a flash pulse fast"}) ok &= grammar_test(text,0);
   for (int i=0;i<G_ENTRY_COUNT;i++) {
     int word=G_ENTRIES[i].token;
     if (word==UINT16_MAX) continue;

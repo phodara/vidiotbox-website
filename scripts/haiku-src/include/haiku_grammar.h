@@ -37,6 +37,7 @@ enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPA
 #define G_SPACE_ONLY_NOUN 16777216u   // wave, waves: space only, not the earth seasons
 #define G_MOON_NOUN 33554432u   // moon, moons: all that "full" describes (review round 7)
 #define G_STONE_NOUN 67108864u  // stone, rock: no bird sings on one (review round 7)
+#define G_LONE_NOUN 134217728u   // flash: not one of two subjects, "density and a flash shift"
 #define G_MOON_ONLY 0x80000000u // adjective object bit: "full"
 // Noun limits kept in GState.adjectives above G_ALL until the next noun (the lookahead
 // memo compares adjectives in full).
@@ -44,6 +45,12 @@ enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPA
 #define G_LIMIT_TREE 0x40000000u   // a bird "in" a plant is in a tree or reeds, not "a soft leaf"
 #define G_LIMIT_STONE 0x20000000u  // a bird "on" no stone or rock
 #define G_LIMITS (G_LIMIT_MOON | G_LIMIT_TREE | G_LIMIT_STONE)
+// Subject adjectives bit from "in a flash" (bare 7) to the verb, which must be intransitive.
+#define G_IN_A_FLASH 0x10000000u
+#define G_LONE_SUBJECT 0x08000000u   // the subject is a flash: no "and" after it
+// Intransitive verb object bit: a change that can happen "in a flash" (shifts, vanishes), not
+// "drifts" or "floats". G_NO_POOL shares the bit, but only after a preposition.
+#define G_SUDDEN 536870912u
 #define G_ACT_FLY (1u << 28)                    // animal action bits (generate_grammar_tables.py)
 #define G_ACT_HUM_CRAWL ((1u << 26) | (1u << 30))   // bees and beetles fly but are not birds
 // PP state bit 31 (outside the enum): the sky's bodies go "through" only weather or
@@ -132,6 +139,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.object & G_SKY_THROUGH) && !(((e->semantic & G_AIRY) && !(e->semantic & G_GROUND)) ||
                                           (e->semantic & G_PLANT))) return 0;   // not "a sun fades through mud"
       if (subject) {
+        if (s.conj && (e->object & G_LONE_NOUN)) return 0;   // 2026-10-24: "density in a flash shifts"
         // "Space and time bend": a second subject noun makes the clause plural.
         s.number = s.conj ? 2 : e->number;
         s.subject = s.conj ? (s.subject | e->semantic) : e->semantic;
@@ -150,20 +158,28 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         s.object &= ~G_NO_POOL_NOUN;   // "holds" is done with it; G_WET shares the bit
       }
       s.article = s.determiner = s.nadj = 0;
-      s.adjectives = G_ALL;
+      s.adjectives = subject && (e->object & G_LONE_NOUN) ? G_ALL | G_LONE_SUBJECT : G_ALL;
     } else return 0;
   } else if (s.phase == G_FINITE) {
     // "now" goes before the verb: "Light now burns in space". It is once per clause and
     // does not use the clause's adverb slot. article 3 marks it until the verb.
     if (e->tag == G_ADV && e->bare == 3) {
       // Not after I or we: "I now blink" reads as stilted; "Now I blink" still opens a clause.
-      if (s.article == 3 || (s.subject & G_HUMAN)) return 0;
+      if (s.article == 3 || (s.adjectives & G_IN_A_FLASH) || (s.subject & G_HUMAN)) return 0;
       s.article = 3;
       *out = s;
       return 1;
     }
+    // "in a flash" takes the same place, with a following verb that stands alone:
+    // "density in a flash shifts", not "a void in a flash is cold" (2026-10-24).
+    if (e->tag == G_ADV && e->bare == 7) {
+      if (s.article == 3 || (s.adjectives & G_IN_A_FLASH) || s.conj || !(e->semantic & s.subject)) return 0;
+      s.adjectives |= G_IN_A_FLASH;
+      *out = s;
+      return 1;
+    }
     if (e->tag == G_CONJ) {
-      if (s.conj || s.article == 3 || (s.subject & (G_HUMAN | G_INNER | G_HAND))) return 0;
+      if (s.conj || s.article == 3 || (s.adjectives & (G_IN_A_FLASH | G_LONE_SUBJECT)) || (s.subject & (G_HUMAN | G_INNER | G_HAND))) return 0;
       s.conj = 1;
       s.phase = G_SUBJECT;
       *out = s;
@@ -172,6 +188,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if (e->number != ((s.number==3 && e->tag!=G_COPULA) ? 2 : s.number) || !(e->semantic & s.subject) ||
         (s.conj && (s.subject & G_ALL & (uint32_t)~e->semantic))) return 0;
     s.article = 0;
+    if ((s.adjectives & G_IN_A_FLASH) && (e->tag != G_VERB || !(e->object & G_SUDDEN))) return 0;
+    if (s.adjectives & G_IN_A_FLASH) s.tail |= 1;   // it is the clause's adverb: no "shifts fast"
+    s.adjectives &= ~(G_IN_A_FLASH | G_LONE_SUBJECT);
     if ((s.tail & (8 | 32)) && e->tag == G_VERB && (e->object & G_LOOSE)) return 0;   // not "a lake falls", "a tree falls"
     if (e->tag == G_VERB) { s.phase = G_DONE; s.object = e->object; } // adverbs it accepts
     else if (e->tag == G_TRANSITIVE) { s.phase = G_OBJECT; s.object = e->object; }
@@ -191,7 +210,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     // Adverb number 1 is directional ("down") and 2 manner/distance ("far"); both
     // only follow an intransitive verb, never "is dark far" or "pulls light down".
     // "far" and "fast" also need a verb of motion or change: no "the quasar glows far".
-    if (e->tag == G_ADV && e->bare != 3 && !(e->bare == 4 && !(s.tail & 2)) && !(e->bare == 5 && (s.tail & 2)) &&
+    if (e->tag == G_ADV && e->bare != 3 && e->bare != 7 && !(e->bare == 4 && !(s.tail & 2)) && !(e->bare == 5 && (s.tail & 2)) &&
         (e->semantic & s.subject) && (e->object & s.object) && !(s.tail & 1) &&
         !(e->number && (s.tail & 4))) s.tail |= 1;
     else if (e->tag == G_PREP && !(s.tail & 2) && !(s.object & G_NO_PLACE) &&
