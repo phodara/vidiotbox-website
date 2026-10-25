@@ -74,10 +74,11 @@
   <h3 id="label">Writing…</h3>
   <p class="poem waiting" id="poem">Writing the first haiku on your device…</p>
   <div class="question">
-   <!-- Stored as one_scene (yes/partly/no). Worded for both styles: a two-part poem should hold two images. -->
-   <p>Do the lines belong together, as one scene or as two images that echo each other?</p>
+   <!-- Stored as one_scene: scene, echo, partly or no. Pages 1-2 stored yes instead of scene/echo. -->
+   <p>Do the lines belong together?</p>
    <div class="choices" data-field="one_scene">
-    <button type="button" data-value="yes" aria-pressed="false">Yes</button>
+    <button type="button" data-value="scene" aria-pressed="false">One scene</button>
+    <button type="button" data-value="echo" aria-pressed="false">Two images that echo</button>
     <button type="button" data-value="partly" aria-pressed="false">Partly</button>
     <button type="button" data-value="no" aria-pressed="false">No</button>
    </div>
@@ -111,7 +112,7 @@
 // Ratings go to the "Haiku Lab Ratings" Google Sheet through its Apps Script web app
 // (haiku-training/scripts/haiku_lab_ratings.gs). Empty: ratings wait in this browser.
 const RATINGS_URL = 'https://script.google.com/macros/s/AKfycbxISV4goKJoKo4eqOYvx4yQzC90WreOEPWhAWwMYCw5KNNsMasKolwX-elXVbgux4V-/exec';
-const PAGE = 'haiku-lab 2';   // 2: the belong-together question (25 October); 1 asked "one scene or moment?"
+const PAGE = 'haiku-lab 3';   // 3: one scene / two images that echo / partly / no; 2: belong together yes/partly/no; 1: "one scene or moment?"
 const CONCEPTS = ['ancient light', 'scale', 'awe', 'made of stars', 'edge of knowing', 'black hole',
                   'the beginning', 'impermanence', 'silence', 'order and beauty'];
 const LABELS = {'v8.9': 'V8.9 (current)', 'one-thing': 'One-thing', 'two-part': 'Two-part'};
