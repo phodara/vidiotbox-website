@@ -37,4 +37,4 @@ LAB_STYLE=2 /tmp/lab haiku-generator/model.bin grammar 20 space
 The page sends each rating to the "Haiku Lab Ratings" Google Sheet through its Apps Script
 (`haiku-training/scripts/haiku_lab_ratings.gs`; set `RATINGS_URL` in `haiku-lab.html` to the web
 app URL). Unsent ratings wait in the browser and are retried. In haiku-training, the task
-"Pull haiku lab ratings" (`scripts/pull_lab_ratings.py`) brings them into `data/haiku-lab-ratings/`.
+"Get new haiku lab ratings" (`scripts/pull_lab_ratings.py`) brings them into `data/haiku-lab-ratings/`.
