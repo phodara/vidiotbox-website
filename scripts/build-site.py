@@ -59,7 +59,7 @@ def build(root, output):
             continue
         if '.backup' in source.name:
             continue
-        if relative.parts[0] in ('assets', 'docs', 'firmware', 'stats', 'haiku-generator') or (
+        if relative.parts[0] in ('assets', 'docs', 'firmware', 'stats', 'haiku-generator', 'haiku-lab') or (
             len(relative.parts) == 1 and (source.suffix in ('.html', '.xml', '.txt', '.vcf') or source.name in ('CNAME', 'LICENSE'))
         ):
             sources.append(source)
