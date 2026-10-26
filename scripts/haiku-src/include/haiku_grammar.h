@@ -174,8 +174,10 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if (subject) {
         if (s.conj && (e->object & G_LONE_NOUN)) return 0;   // 2026-10-24: "density in a flash shifts"
         // Two lights are one subject named twice: not "sunlight and light shine", "starlight and a sun".
-        // Light itself is AIRY on earth and a SIGNAL in space (the space theme strips AIRY).
-        if (s.conj && (s.subject & e->semantic & G_LIGHT) && ((s.subject | e->semantic) & (G_AIRY | G_SIGNAL))) return 0;
+        // Light itself is AIRY on earth and a SIGNAL in space (the space theme strips AIRY);
+        // two signals one of which is light are light twice too: "sunlight and the sunbeam".
+        if (s.conj && (((s.subject & e->semantic & G_LIGHT) && ((s.subject | e->semantic) & (G_AIRY | G_SIGNAL))) ||
+                       ((s.subject & e->semantic & G_SIGNAL) && ((s.subject | e->semantic) & G_LIGHT)))) return 0;
         if (rank > (s.marks & G_ORBIT_RANK)) s.marks = (uint8_t)((s.marks & ~G_ORBIT_RANK) | rank);   // "planets and comets": the larger
         s.marks |= e->marks & G_PAIR_MARKS;
         // "Space and time bend": a second subject noun makes the clause plural.
