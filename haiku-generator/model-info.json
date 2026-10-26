@@ -11,6 +11,6 @@
   ],
   "runtime": "INT4 weights / INT8 activations",
   "decoder": "C5 controlled grammar",
-  "wasm_sha256": "de31b15d8f46553d61429601cc9ce8e085aaa5c6bd69b69444004a80875c7ce9",
+  "wasm_sha256": "52fb122897e4f606ce974f80298abfda64762128b19591958a25667c878a020d",
   "module_sha256": "9bf9886adcad21219b0e777fd518d075bf2e1ce89971d7ee7b194bb7c9b6eba7"
 }
