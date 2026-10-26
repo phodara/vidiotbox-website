@@ -1,5 +1,5 @@
 // Haiku lab worker: the lab decoder (one-thing and two-part styles) with the V8 model from
-// ../haiku-generator/. Runs entirely on the visitor's device. The V8.9 baseline on the lab page
+// ../haiku-generator/. Runs entirely on the visitor's device. The V8.10 baseline on the lab page
 // uses the unchanged ../haiku-generator/worker.js instead.
 let runtime, info, output, loading;
 const styles = {'one-thing': 1, 'two-part': 2};

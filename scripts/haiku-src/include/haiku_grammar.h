@@ -35,16 +35,23 @@ enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPA
 #define G_BEE_NOUN 536870912u // bees are placed over a pond, not on it
 #define G_SINGLE_MOON 268435456u // singular moon similes are rejected
 #define G_SPACE_ONLY_NOUN 16777216u   // wave, waves: space only, not the earth seasons
+#define G_EARTH_PHRASE 0x80000000u    // noun: a multi-word noun the seasons may use, "waves on the pond"
 #define G_MOON_NOUN 33554432u   // moon, moons: all that "full" describes (review round 7)
 #define G_STONE_NOUN 67108864u  // stone, rock: no bird sings on one (review round 7)
 #define G_LONE_NOUN 134217728u   // flash: not one of two subjects, "density and a flash shift"
 #define G_MOON_ONLY 0x80000000u // adjective object bit: "full"
+#define G_WET_ADJ 0x40000000u   // adjective object bit: "wet", "damp"
+#define G_THAW 0x80000000u      // intransitive verb object bit: "melt", which a wave cannot
+// A wave on water as subject: marked in GState.subject with a bit no verb, adjective or adverb
+// carries (G_SURFACE describes only place nouns), so it changes no match.
+#define G_WAVE_SUBJECT G_SURFACE
 // Noun limits kept in GState.adjectives above G_ALL until the next noun (the lookahead
 // memo compares adjectives in full).
 #define G_LIMIT_MOON 0x80000000u   // after "full": the moon only, not "full stars"
 #define G_LIMIT_TREE 0x40000000u   // a bird "in" a plant is in a tree or reeds, not "a soft leaf"
 #define G_LIMIT_STONE 0x20000000u  // a bird "on" no stone or rock
-#define G_LIMITS (G_LIMIT_MOON | G_LIMIT_TREE | G_LIMIT_STONE)
+#define G_LIMIT_WET 0x04000000u    // after "wet", "damp": no pond, stream, water or wave on water
+#define G_LIMITS (G_LIMIT_MOON | G_LIMIT_TREE | G_LIMIT_STONE | G_LIMIT_WET)
 // Subject adjectives bit from "in a flash" (bare 7) to the verb, which must be intransitive.
 #define G_IN_A_FLASH 0x10000000u
 #define G_LONE_SUBJECT 0x08000000u   // the subject is a flash: no "and" after it
@@ -105,6 +112,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       s.adjectives &= e->semantic | G_LIMITS;
       if (!(s.adjectives & G_ALL)) return 0;
       if (e->object & G_MOON_ONLY) s.adjectives |= G_LIMIT_MOON;
+      if (e->object & G_WET_ADJ) s.adjectives |= G_LIMIT_WET;
       s.nadj = 1;
       s.article = 0;
     } else if (e->tag == G_NOUN) {
@@ -130,12 +138,14 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.object & G_NOT_PLANT) && (e->semantic & G_PLANT)) return 0;     // not "falls in leaves"
       if ((s.object & G_NOT_WATER) && (e->semantic & G_WATER) && !(e->semantic & G_AIRY)) return 0;
       if ((s.object & G_ONLY_POOL) && !(e->object & G_POOL_NOUN)) return 0;  // not "float on ice"
-      if ((s.object & G_NO_POOL_NOUN) && (e->object & G_POOL_NOUN)) return 0; // not "bees hum in the lake"
+      // Not "bees hum in the lake", nor (2026-10-25) "roots hold a wave on the stream".
+      if ((s.object & G_NO_POOL_NOUN) && (e->object & (G_POOL_NOUN | G_EARTH_PHRASE))) return 0;
       if ((s.object & G_SKY_THROUGH) && (e->object & G_SINGLE_FOREST)) return 0; // use "through the trees/pines/vines/branches"
       if ((s.tail & 64) && (s.object & G_ONLY_POOL) && (e->object & G_POOL_NOUN)) return 0; // bees float over ponds
       if ((s.adjectives & G_LIMIT_MOON) && !(e->object & G_MOON_NOUN)) return 0;   // a full moon only
       if ((s.adjectives & G_LIMIT_TREE) && (e->semantic & G_PLANT) && !(e->object & G_ROOTED_NOUN)) return 0;
       if ((s.adjectives & G_LIMIT_STONE) && (e->object & G_STONE_NOUN)) return 0;
+      if ((s.adjectives & G_LIMIT_WET) && (e->object & (G_POOL_NOUN | G_EARTH_PHRASE))) return 0; // not "wet waves"
       if ((s.object & G_SKY_THROUGH) && !(((e->semantic & G_AIRY) && !(e->semantic & G_GROUND)) ||
                                           (e->semantic & G_PLANT))) return 0;   // not "a sun fades through mud"
       if (subject) {
@@ -149,6 +159,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         if (e->object & G_ROOTED_NOUN) s.tail |= 32;
         if (e->object & G_BEE_NOUN) s.tail |= 64;
         if (e->object & G_SINGLE_MOON) s.tail |= 128;
+        if (e->object & G_EARTH_PHRASE) s.subject |= G_WAVE_SUBJECT;
       }
       else {
         // An object ends the verb phrase: no "down". After a simile object no
@@ -192,7 +203,14 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if (s.adjectives & G_IN_A_FLASH) s.tail |= 1;   // it is the clause's adverb: no "shifts fast"
     s.adjectives &= ~(G_IN_A_FLASH | G_LONE_SUBJECT);
     if ((s.tail & (8 | 32)) && e->tag == G_VERB && (e->object & G_LOOSE)) return 0;   // not "a lake falls", "a tree falls"
-    if (e->tag == G_VERB) { s.phase = G_DONE; s.object = e->object; } // adverbs it accepts
+    if ((s.subject & G_WAVE_SUBJECT) && e->tag == G_VERB && (e->object & G_THAW)) return 0;   // not "waves on the brook melt"
+    // Review 2026-10-25: light bends. "Bend" and "curve" (bare 8) take an object after a
+    // physical cause ("mass bends light") and stand alone after light or a signal ("light
+    // waves bend", "starlight curves past the sun"), with a place but no adverb.
+    if (e->tag == G_TRANSITIVE && e->bare == 8 && !(s.subject & G_CRAFT)) {
+      s.phase = G_DONE; s.object = G_ALL; s.tail |= 1;
+    }
+    else if (e->tag == G_VERB) { s.phase = G_DONE; s.object = e->object & ~G_THAW; } // adverbs it accepts; bit 31 is G_SKY_THROUGH after a preposition
     else if (e->tag == G_TRANSITIVE) { s.phase = G_OBJECT; s.object = e->object; }
     else if (e->tag == G_COPULA) s.phase = G_PREDICATE;
     else return 0;

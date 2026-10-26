@@ -108,6 +108,12 @@ static inline float haiku_space_vocabulary_bonus(const GEntry &entry, bool space
     (entry.semantic & (G_CELESTIAL | G_CRAFT | G_SIGNAL | G_OBSERVER | G_TERRAIN)) ? 2.0f : 0.f;
 }
 
+// A sampling bias against "the waves on the pond fall" (HAIKU_WAVE_FALL_PENALTY): "fall" and
+// "falls" are the verbs that carry G_DOWNWARD.
+static inline float haiku_wave_fall_penalty(const GEntry &entry, const GState &state, float weight) {
+  return (state.subject & G_WAVE_SUBJECT) && entry.tag==G_VERB && (entry.object & G_DOWNWARD) ? weight : 0.f;
+}
+
 // Craters belong to moons: "crater" and "craters" are offered only once the poem
 // has used a moon word. `used` is the decoder's per-poem used-word bitmap.
 static inline bool haiku_moonless_crater(int token, const uint32_t *used) {

@@ -3,7 +3,7 @@
 The lab page (`haiku-lab.html`, unlinked) compares ways of making a haiku's three lines belong
 together. Its decoder is separate from the main generator, which stays as it is:
 
-- `lab_host.cpp`: a copy of `../haiku-src/host.cpp` (the V8.9 decoder) with a concept per poem.
+- `lab_host.cpp`: a copy of `../haiku-src/host.cpp` (the V8.10 decoder; V8.9 until 2026-10-25) with a concept per poem.
   `LAB_STYLE=1` (one-thing) favours the concept's space words in every line; `LAB_STYLE=2`
   (two-part) does so in line one, then switches lines 2-3 to the concept's season and earthly words,
   across the cut. A line with none of its concept words is scored down (`LAB_PICK_BONUS` 5,
@@ -14,7 +14,7 @@ together. Its decoder is separate from the main generator, which stays as it is:
 - `browser_lab.cpp`: the browser adapter, exporting `haiku_lab_generate(style, concept, case)`.
 
 Headers, `llm.h` and the generated tables are read from `../haiku-src/`, and the model from
-`../../haiku-generator/model.bin` (hash-checked). The V8.9 choice on the lab page runs the
+`../../haiku-generator/model.bin` (hash-checked). The V8.10 choice on the lab page runs the
 unchanged `haiku-generator/worker.js`.
 
 ## Rebuild and test

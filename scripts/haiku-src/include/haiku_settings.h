@@ -37,3 +37,6 @@
 // Model-written first lines lost the season ("Starlight burns through grass" opened spring,
 // summer and autumn), so seasonal poems keep their openers; the other features gave the gain.
 #define HAIKU_SEASON_FREE_PERCENT 0     // share of seasonal poems whose line one the model writes
+// Review 2026-10-25: a wave on water "falls" in about a third of its lines. Logit penalty on
+// "fall"/"falls" after one; waves still fall, less often than they ripple, drift or wash.
+#define HAIKU_WAVE_FALL_PENALTY 1.0f

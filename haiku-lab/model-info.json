@@ -4,10 +4,10 @@
   "sha256": "9090df31b7215f33656f747f8bca25bcc82f2b8d8d50cb781640b99b4b7103ed",
   "model_bytes": 14912348,
   "decoder": "C5 controlled grammar + lab concepts (scripts/haiku-lab-src)",
-  "wasm_sha256": "ed2eb78aef981c8eb126a6bcee0ca799aa4b5a8756d7320889f176f5474c6d67",
+  "wasm_sha256": "770cdcd9f8e8f21ba3bc05b1a03236359c9b30d7f76f29dbba222adba085fcf9",
   "module_sha256": "b39f8c8286b895531a330bc950022503af4a0957620da79677df351183756bdf",
   "source_sha256": {
-    "lab_host.cpp": "f171eb9bd67eec675996a79d044b1afea384fc5d9f62c3d681ea1653b4a185d9",
+    "lab_host.cpp": "1ceb7ad8246c285738857b72167e3834356c64a6b73282a491bb800b6d97947b",
     "lab_concepts.h": "a3afe5388ef0e70f791c1161aa7ce3963280c31e75626d68641b63ccd590414f",
     "browser_lab.cpp": "dbe61642a1c5c8676dda7fce84fdf2fdc5587c8a1e42ce9da3fbac773fd52947"
   }
