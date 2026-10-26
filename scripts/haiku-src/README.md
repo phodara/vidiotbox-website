@@ -25,6 +25,8 @@ python3 scripts/test-build-site.py
 ```
 
 Commit both `haiku-generator/decoder.mjs` and `decoder.wasm` after rebuilding.
+Then rebuild the Style menu's decoder, which applies its patch to this `host.cpp`:
+`python3 scripts/build-haiku-styles.py && node scripts/test-haiku-styles.mjs` (see `../haiku-styles-src/README.md`).
 The Pages workflow serves the checked-in binaries, so deployment needs no C++
 compiler. `model.bin` is a normal Git file (about 15 MB), not a Git LFS pointer.
 The model is hash-checked before build and in the browser before inference.

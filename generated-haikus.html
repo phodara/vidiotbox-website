@@ -86,6 +86,7 @@
 <nav class="toolbar" aria-label="Haiku controls">
  <a class="brand" href="/">VIDIOTBOX / GENERATED hAIkus</a>
  <label>Theme <select id="theme"><option value="all">All themes</option><option value="space" selected>Space</option><option value="spring">Spring</option><option value="summer">Summer</option><option value="autumn">Autumn</option><option value="winter">Winter</option></select></label>
+ <label>Style <select id="style"><option value="standard" selected>Standard</option><option value="one-thing">One-thing</option><option value="two-part">Two-part</option></select></label>
  <button id="mode" type="button">Reading view</button>
  <button id="pause" type="button">Pause</button>
  <button id="more" type="button" hidden disabled>Write another</button>
@@ -114,6 +115,7 @@
   <div><span>Model</span><strong>V8.11 · PLE / TinyStories</strong></div>
   <div><span>Inference</span><strong>INT4 + INT8</strong></div>
   <div><span>Rules</span><strong>Controlled grammar · no repeated lines</strong></div>
+  <div><span>Styles</span><strong>Standard · One-thing · Two-part (Space)</strong></div>
  </div>
  <section class="credits" aria-labelledby="creditsTitle">
   <h2 id="creditsTitle">CREDITS AND LICENSES</h2>
@@ -128,21 +130,25 @@
 <script>
 const $ = id => document.getElementById(id);
 const crawl = document.querySelector('.crawl'), poems = $('poems'), writing = $('writing');
-const mode = $('mode'), pause = $('pause'), more = $('more'), speed = $('speed'), theme = $('theme');
+const mode = $('mode'), pause = $('pause'), more = $('more'), speed = $('speed'), theme = $('theme'), style = $('style');
 const audio = $('crawlMusic'), music = $('music'), statusLine = $('status');
 const THEMES = ['spring', 'summer', 'autumn', 'winter', 'space'];
 const PX_PER_SECOND = 34, BUFFER_PX = 2400, MAX_POEMS = 300;
 const title = s => s[0].toUpperCase() + s.slice(1);
 let offset = 0, lastFrame = null, paused = false, readingScroll = 0, musicOn = false;
-let worker, ready = false, busy = false, failed = false, requestId = 0, pending = null, nextTheme = 0, themeEpoch = 0;
+let worker, ready = false, styleWorker, styleReady = false, busy = false, failed = false, requestId = 0, pending = null, nextTheme = 0, themeEpoch = 0;
 
 // ---- Generator (same worker as /haiku-generator/, runs entirely on this device) ----
+// Standard poems come from that worker. The One-thing and Two-part styles (Space only) come from
+// haiku-styles/worker.js, started the first time one is chosen; it reads the same cached model.
+const styled = () => style.value !== 'standard';
+const canWrite = () => styled() ? styleReady : ready;
 function fail(message) {
-  ready = false; failed = true; statusLine.textContent = message;
+  ready = false; styleReady = false; failed = true; statusLine.textContent = message;
   writing.textContent = 'The haiku model could not run here.';
   more.disabled = true;
   if (pending) { clearTimeout(pending.timeout); pending.reject(Error(message)); pending = null; }
-  worker?.terminate();
+  worker?.terminate(); styleWorker?.terminate();
 }
 function requestPoem(themeName) {
   return new Promise((resolve, reject) => {
@@ -150,7 +156,8 @@ function requestPoem(themeName) {
     crypto.getRandomValues(random);
     const timeout = setTimeout(() => fail('Generation took too long. Reload the page to try again.'), 180000);
     pending = {id, resolve, reject, timeout};
-    worker.postMessage({type: 'generate', id, theme: themeName, case: random[0] % 1000000000});
+    if (styled()) styleWorker.postMessage({type: 'generate', id, style: style.value, case: random[0] % 1000000000});
+    else worker.postMessage({type: 'generate', id, theme: themeName, case: random[0] % 1000000000});
   });
 }
 function pickTheme() {
@@ -160,7 +167,7 @@ function pickTheme() {
 function addPoem(result) {
   const article = document.createElement('article'), h3 = document.createElement('h3'), p = document.createElement('p');
   article.className = 'poem';
-  h3.textContent = `${title(result.theme)} · No. ${result.case}`;
+  h3.textContent = `${title(result.theme)}${result.style ? ` · ${result.style === 1 ? 'One-thing' : 'Two-part'}` : ''} · No. ${result.case}`;
   result.lines.forEach((line, i) => { if (i) p.append(document.createElement('br')); p.append(line); });
   article.append(h3, p);
   poems.append(article);
@@ -172,7 +179,7 @@ function addPoem(result) {
   }
 }
 async function writeOne() {
-  if (busy || !ready) return;
+  if (busy || !canWrite()) return;
   busy = true; more.disabled = true;
   const started = themeEpoch;
   try {
@@ -184,13 +191,13 @@ async function writeOne() {
   } catch (error) {
     if (!failed) statusLine.textContent = 'One poem did not finish; trying another.';
   } finally {
-    busy = false; more.disabled = !ready;
+    busy = false; more.disabled = !canWrite();
     fillBuffer();
   }
 }
 // In the crawl, keep a couple of screens of poems ready below the visible text.
 function fillBuffer() {
-  if (!ready || busy || paused || !document.body.classList.contains('is-crawl')) return;
+  if (!canWrite() || busy || paused || !document.body.classList.contains('is-crawl')) return;
   if (crawl.offsetHeight - offset < BUFFER_PX) writeOne();
 }
 
@@ -233,12 +240,24 @@ pause.addEventListener('click', () => {
 });
 more.addEventListener('click', writeOne);
 // Poems are written well ahead of the crawl, so restart it to show the new theme right away.
-theme.addEventListener('change', () => {
+function restartCrawl() {
   themeEpoch++; nextTheme = 0;
   if (!document.body.classList.contains('is-crawl')) return;
   poems.replaceChildren();
   offset = 0; lastFrame = null;
   fillBuffer();
+}
+theme.addEventListener('change', restartCrawl);
+// The styles are written for Space: the theme stays there until Standard is chosen again.
+style.addEventListener('change', () => {
+  theme.disabled = styled();
+  if (styled()) {
+    theme.value = 'space';
+    if (!styleWorker && !failed) startStyleWorker();
+    else if (!styleReady && !failed) statusLine.textContent = 'Loading the style generator…';
+  }
+  more.disabled = !canWrite();
+  restartCrawl();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('is-crawl') && !$('aboutDialog').open) showReading(); });
 $('about').addEventListener('click', () => $('aboutDialog').showModal());
@@ -266,19 +285,31 @@ music.addEventListener('change', () => { if (!music.value) { audio.pause(); setM
 // ---- Start ----
 try {
   if (!globalThis.Worker || !globalThis.WebAssembly || !crypto.subtle) throw Error('The haiku generator needs a modern browser and HTTPS.');
-  worker = new Worker('haiku-generator/worker.js', {type: 'module'});
-  worker.onmessage = ({data}) => {
-    if (data.type === 'progress') { statusLine.textContent = data.text; return; }
+  worker = startWorker('haiku-generator/worker.js', () => { ready = true; }, () => !styled());
+} catch (error) { fail(error.message); }
+function startStyleWorker() {
+  styleWorker = startWorker('haiku-styles/worker.js', () => { styleReady = true; }, styled);
+}
+// `showing` says whether this worker's style is the one selected, so only it reports progress.
+function startWorker(url, onReady, showing) {
+  const w = new Worker(url, {type: 'module'});
+  w.onmessage = ({data}) => {
+    if (data.type === 'progress') { if (showing()) statusLine.textContent = data.text; return; }
     if (data.type === 'fatal') { fail(data.error); return; }
-    if (data.type === 'ready') { ready = true; more.disabled = false; statusLine.textContent = 'Model verified. Writing haiku on your device…'; fillBuffer(); return; }
+    if (data.type === 'ready') {
+      onReady();
+      if (showing()) { more.disabled = false; statusLine.textContent = 'Model verified. Writing haiku on your device…'; fillBuffer(); }
+      return;
+    }
     if (pending && data.id === pending.id) {
       const request = pending; pending = null; clearTimeout(request.timeout);
       data.type === 'result' ? request.resolve(data.result) : request.reject(Error(data.error));
     }
   };
-  worker.onerror = () => fail('The haiku generator could not start. Reload the page to retry.');
-  worker.postMessage({type: 'init'});
-} catch (error) { fail(error.message); }
+  w.onerror = () => fail('The haiku generator could not start. Reload the page to retry.');
+  w.postMessage({type: 'init'});
+  return w;
+}
 requestAnimationFrame(frame);
 playMusic().then(playing => { if (!playing) startMusicOnGesture(); });
 </script>
