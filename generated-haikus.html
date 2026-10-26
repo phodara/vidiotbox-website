@@ -247,10 +247,14 @@ function restartCrawl() {
   offset = 0; lastFrame = null;
   fillBuffer();
 }
-theme.addEventListener('change', restartCrawl);
-// The styles are written for Space: the theme stays there until Standard is chosen again.
+// The styles are written for Space: choosing one sets the theme to Space, and choosing
+// another theme sets the style back to Standard.
+theme.addEventListener('change', () => {
+  if (styled() && theme.value !== 'space') style.value = 'standard';
+  more.disabled = !canWrite();
+  restartCrawl();
+});
 style.addEventListener('change', () => {
-  theme.disabled = styled();
   if (styled()) {
     theme.value = 'space';
     if (!styleWorker && !failed) startStyleWorker();
