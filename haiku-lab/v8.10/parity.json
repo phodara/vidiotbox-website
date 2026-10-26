@@ -1,0 +1,92 @@
+{
+ "spring": [
+  {
+   "case": 0,
+   "lines": [
+    "Soft rain falls slowly...",
+    "Now the moon shines in dark fog",
+    "still branches shade stones."
+   ]
+  },
+  {
+   "case": 1,
+   "lines": [
+    "Blossoms drift by grass...",
+    "Now the sun fades in cold rain",
+    "a lake is quiet."
+   ]
+  }
+ ],
+ "summer": [
+  {
+   "case": 0,
+   "lines": [
+    "Hot winds blow slowly...",
+    "Now the moon burns through a leaf",
+    "still rain flows on earth."
+   ]
+  },
+  {
+   "case": 1,
+   "lines": [
+    "Tall grass sways on stones...",
+    "The wind rises in a pine",
+    "cold air is quiet."
+   ]
+  }
+ ],
+ "autumn": [
+  {
+   "case": 0,
+   "lines": [
+    "Red leaves drift slowly...",
+    "The moon burns through a dark leaf",
+    "bright light now warms fields."
+   ]
+  },
+  {
+   "case": 1,
+   "lines": [
+    "Dry leaves fall on grass...",
+    "bees hum in the cold raindrop",
+    "a sun is pale here."
+   ]
+  }
+ ],
+ "winter": [
+  {
+   "case": 0,
+   "lines": [
+    "Cold wind howls in dew...",
+    "petals now bloom by the lake",
+    "stars glow through a reed."
+   ]
+  },
+  {
+   "case": 1,
+   "lines": [
+    "Snow falls on the grass...",
+    "wind rises in a red branch",
+    "still fields are cold here."
+   ]
+  }
+ ],
+ "space": [
+  {
+   "case": 0,
+   "lines": [
+    "I watch the planet...",
+    "spheres drift far past dark halos",
+    "a neutron bends light."
+   ]
+  },
+  {
+   "case": 1,
+   "lines": [
+    "My hand now opens...",
+    "density and the gas shift",
+    "I wait over stars."
+   ]
+  }
+ ]
+}

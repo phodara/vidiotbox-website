@@ -35,3 +35,23 @@ for (const style of [1, 2]) {
   assert.equal(JSON.parse(line).concept, 'black hole');
 }
 console.log(`lab: 22 complete poems, ${concepts.size} concepts`);
+// The V8.10 baseline (haiku-lab/v8.10/) must still write V8.10's poems: its native parity fixtures
+// from 04faca3, interleaving themes as test-haiku.mjs does.
+const baseDir = new URL('../haiku-lab/v8.10/', import.meta.url);
+const baseInfo = JSON.parse(readFileSync(new URL('model-info.json', baseDir)));
+const baseWasm = readFileSync(new URL('decoder.wasm', baseDir));
+assert.equal(baseInfo.sha256, info.sha256);
+assert.equal(hash(baseWasm), baseInfo.wasm_sha256);
+assert.equal(hash(readFileSync(new URL('decoder.mjs', baseDir))), baseInfo.module_sha256);
+const {default: createBase} = await import('../haiku-lab/v8.10/decoder.mjs');
+const base = await createBase({wasmBinary: baseWasm, print: text => {line = text;}});
+base.FS.writeFile('/model.bin', model);
+const baseFixture = JSON.parse(readFileSync(new URL('parity.json', baseDir)));
+for (const caseNumber of [0, 1]) {
+  for (const theme of [4, 0, 1, 2, 3]) {
+    line = null;
+    assert.equal(base._haiku_generate(theme, caseNumber), 0);
+    assert.deepEqual(JSON.parse(line).lines, baseFixture[baseInfo.themes[theme]][caseNumber].lines);
+  }
+}
+console.log('lab baseline: V8.10 poems match the 04faca3 fixtures in all five themes');

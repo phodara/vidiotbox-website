@@ -14,8 +14,10 @@ together. Its decoder is separate from the main generator, which stays as it is:
 - `browser_lab.cpp`: the browser adapter, exporting `haiku_lab_generate(style, concept, case)`.
 
 Headers, `llm.h` and the generated tables are read from `../haiku-src/`, and the model from
-`../../haiku-generator/model.bin` (hash-checked). The V8.10 choice on the lab page runs the
-unchanged `haiku-generator/worker.js`.
+`../../haiku-generator/model.bin` (hash-checked). The V8.10 choice on the lab page runs
+`haiku-lab/v8.10/`, the main page's V8.10 generator frozen as it shipped (04faca3), so the lab's
+ratings stay comparable while the main page moves on. `v8.10` ratings received between
+2026-10-26 06:51 UTC (V8.11 on the main page) and the pin came from V8.11, not V8.10.
 
 ## Rebuild and test
 

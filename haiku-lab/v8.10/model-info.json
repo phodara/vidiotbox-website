@@ -1,0 +1,17 @@
+{
+  "model": "haiku-cosmic-v8",
+  "sha256": "9090df31b7215f33656f747f8bca25bcc82f2b8d8d50cb781640b99b4b7103ed",
+  "model_bytes": 14912348,
+  "themes": [
+    "spring",
+    "summer",
+    "autumn",
+    "winter",
+    "space"
+  ],
+  "runtime": "INT4 weights / INT8 activations",
+  "decoder": "V8.10 main-page generator, frozen for the haiku lab baseline (vidiotbox-website 04faca3)",
+  "wasm_sha256": "de31b15d8f46553d61429601cc9ce8e085aaa5c6bd69b69444004a80875c7ce9",
+  "module_sha256": "9bf9886adcad21219b0e777fd518d075bf2e1ce89971d7ee7b194bb7c9b6eba7",
+  "model_path": "../../haiku-generator/model.bin"
+}
