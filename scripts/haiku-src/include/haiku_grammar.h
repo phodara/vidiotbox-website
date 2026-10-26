@@ -76,14 +76,31 @@ typedef struct {
   uint8_t tag, number;
   uint32_t semantic, object;
   uint8_t syl, vowel, bare;
+  uint8_t marks;   // G_ORBIT_RANK, G_PAIR_MARKS, G_MARK_DRY, G_ORBIT_VERB (below)
 } GEntry;
 typedef struct {
   uint32_t subject, object, adjectives;
   uint8_t phase, number, determiner, article, nadj, tail, conj;
+  uint8_t marks;   // the subject's rank and pair marks until the verb; then the rank (orbit verbs only), dry, G_ORBIT_VERB
 } GState;
+// Review 2026-10-26: "planets orbit moons". A body orbits only a larger one: moon 2 < planet,
+// asteroid, comet, meteor 3 < star, sun, pulsar, sphere of gas or light 4 < galaxy, quasar 5.
+// A ranked subject needs a higher-ranked object; an unranked one (halos) may circle anything.
+// Planets and the other rank-3 bodies orbit stars and the sun only, not a galaxy or quasar.
+// Rank 7 (nebula, supernova) neither orbits nor is orbited.
+#define G_ORBIT_VERB 0x80
+#define G_ORBIT_RANK 0x07
+// Review 2026-10-26: subjects and verbs that share a pair mark do not go together. A subject
+// noun carries its marks to the verb, which is refused if it has one of them too.
+#define G_MARK_AIR 0x08      // air does not blow or howl; wind, gusts and breezes do
+#define G_MARK_FROZEN 0x10   // snow, frost, ice, fog, mist, dew do not flow or ripple
+#define G_MARK_FALLING 0x20  // snow, rain, dew, frost, ice do not rise or ripple
+#define G_PAIR_MARKS (G_MARK_AIR | G_MARK_FROZEN | G_MARK_FALLING)
+// On the adjective "dry": a dry subject takes no water and is not wet ("a dry pine holds rain").
+#define G_MARK_DRY 0x40
 
 static inline GState g_start(void) {
-  GState s = {0, G_ALL, G_ALL, G_SUBJECT, 0, 0, 0, 0, 0, 0};
+  GState s = {0, G_ALL, G_ALL, G_SUBJECT, 0, 0, 0, 0, 0, 0, 0};
   return s;
 }
 static inline int g_complete(GState s) { return s.phase == G_DONE; }
@@ -113,6 +130,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if (!(s.adjectives & G_ALL)) return 0;
       if (e->object & G_MOON_ONLY) s.adjectives |= G_LIMIT_MOON;
       if (e->object & G_WET_ADJ) s.adjectives |= G_LIMIT_WET;
+      if (subject && (e->marks & G_MARK_DRY)) s.marks |= G_MARK_DRY;
       s.nadj = 1;
       s.article = 0;
     } else if (e->tag == G_NOUN) {
@@ -134,7 +152,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.object & G_NO_POOL) && (e->semantic & G_WATER) && !(e->semantic & G_AIRY)) return 0; // not "fly in the pond"
       // Weather only, not "in waves" or "in a field" (fields are G_AIRY for "not on").
       if ((s.object & G_ONLY_AIRY) && (!(e->semantic & G_AIRY) || (e->semantic & G_GROUND))) return 0;
-      if ((s.object & G_LIT_POOL) && (e->object & G_POOL_NOUN)) return 0;   // not "light through a lake"
+      if ((s.object & G_LIT_POOL) && (e->object & (G_POOL_NOUN | G_EARTH_PHRASE))) return 0;   // not "light through a lake"
       if ((s.object & G_NOT_PLANT) && (e->semantic & G_PLANT)) return 0;     // not "falls in leaves"
       if ((s.object & G_NOT_WATER) && (e->semantic & G_WATER) && !(e->semantic & G_AIRY)) return 0;
       if ((s.object & G_ONLY_POOL) && !(e->object & G_POOL_NOUN)) return 0;  // not "float on ice"
@@ -148,8 +166,18 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.adjectives & G_LIMIT_WET) && (e->object & (G_POOL_NOUN | G_EARTH_PHRASE))) return 0; // not "wet waves"
       if ((s.object & G_SKY_THROUGH) && !(((e->semantic & G_AIRY) && !(e->semantic & G_GROUND)) ||
                                           (e->semantic & G_PLANT))) return 0;   // not "a sun fades through mud"
+      const int rank = e->marks & G_ORBIT_RANK;
+      if (!subject && (s.marks & G_ORBIT_VERB) &&
+          (rank <= (s.marks & G_ORBIT_RANK) || rank == G_ORBIT_RANK ||
+           ((s.marks & G_ORBIT_RANK) == 3 && rank == 5))) return 0;   // not "planets orbit moons", nor the quasar: stars, the sun
+      if (!subject && (s.marks & G_MARK_DRY) && (e->semantic & G_WATER)) return 0;   // not "a dry leaf holds dew"
       if (subject) {
         if (s.conj && (e->object & G_LONE_NOUN)) return 0;   // 2026-10-24: "density in a flash shifts"
+        // Two lights are one subject named twice: not "sunlight and light shine", "starlight and a sun".
+        // Light itself is AIRY on earth and a SIGNAL in space (the space theme strips AIRY).
+        if (s.conj && (s.subject & e->semantic & G_LIGHT) && ((s.subject | e->semantic) & (G_AIRY | G_SIGNAL))) return 0;
+        if (rank > (s.marks & G_ORBIT_RANK)) s.marks = (uint8_t)((s.marks & ~G_ORBIT_RANK) | rank);   // "planets and comets": the larger
+        s.marks |= e->marks & G_PAIR_MARKS;
         // "Space and time bend": a second subject noun makes the clause plural.
         s.number = s.conj ? 2 : e->number;
         s.subject = s.conj ? (s.subject | e->semantic) : e->semantic;
@@ -167,6 +195,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         s.tail |= s.object == G_MUSIC ? 5 : 4;
         s.phase = G_DONE;
         s.object &= ~G_NO_POOL_NOUN;   // "holds" is done with it; G_WET shares the bit
+        s.marks &= G_MARK_DRY;
       }
       s.article = s.determiner = s.nadj = 0;
       s.adjectives = subject && (e->object & G_LONE_NOUN) ? G_ALL | G_LONE_SUBJECT : G_ALL;
@@ -204,6 +233,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     s.adjectives &= ~(G_IN_A_FLASH | G_LONE_SUBJECT);
     if ((s.tail & (8 | 32)) && e->tag == G_VERB && (e->object & G_LOOSE)) return 0;   // not "a lake falls", "a tree falls"
     if ((s.subject & G_WAVE_SUBJECT) && e->tag == G_VERB && (e->object & G_THAW)) return 0;   // not "waves on the brook melt"
+    if (s.marks & e->marks & G_PAIR_MARKS) return 0;   // not "air blows", "snow flows", "snow rises", "dew ripples"
+    s.marks = (uint8_t)((s.marks & G_MARK_DRY) |
+                        ((e->marks & G_ORBIT_VERB) ? (s.marks & G_ORBIT_RANK) | G_ORBIT_VERB : 0));
     // Review 2026-10-25: light bends. "Bend" and "curve" (bare 8) take an object after a
     // physical cause ("mass bends light") and stand alone after light or a signal ("light
     // waves bend", "starlight curves past the sun"), with a place but no adverb.
@@ -222,6 +254,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     }
     // bare 6: attributive only ("winter wind", never "leaves are winter").
     if (e->tag != G_ADJ || e->bare == 6 || !(e->semantic & s.subject)) return 0;
+    if ((s.marks & G_MARK_DRY) && (e->object & G_WET_ADJ)) return 0;   // not "dry fields are wet"
     s.phase = G_DONE;
     s.tail |= 4; // after a predicate adjective, no directional adverb
   } else if (s.phase == G_DONE) {
@@ -237,6 +270,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
              (e->number == 2) == ((s.object & G_GAZE) && (s.subject & (G_HUMAN | G_INNER | G_HAND))) &&
              !((s.object & G_ALOFT) && (e->object & G_NOT_AIRY)) &&   // on/upon carry G_NOT_AIRY
              !((s.object & G_ADRIFT) && (e->object & G_BELOW)) &&   // nothing floats under a field
+             !((s.object & G_DOWNWARD) && (e->object & G_BELOW)) &&   // nor falls under a rock (2026-10-26)
              // Round 5: floating is "on" water, or over or across things; not through or by.
              !((s.object & G_ADRIFT) && !(e->object & G_NOT_AIRY) &&
                !((e->object & G_SKYWARD) && !(e->object & G_NOT_SOLID))) &&
@@ -265,6 +299,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       // Season review 2026-10-22: sunlight shines on a lake, not in or through it.
       if ((s.subject & G_LIGHT) && (e->object & (G_NOT_SOLID | G_NOT_SURFACE)))
         s.object |= G_LIT_POOL;   // "in"/"through" after light
+      // Review 2026-10-26: nothing goes "through" a pond or water ("dry grass shines through the
+      // lake", "moss grows through the pond"); "in", "on", "over" and "across" stay.
+      if ((e->object & G_NOT_SOLID) && !(e->object & G_NOT_SURFACE)) s.object |= G_LIT_POOL;
       // Season review 2026-10-22: "cold rain falls in leaves" should be "on leaves".
       if ((verb_object & G_DOWNWARD) && (e->object & G_NOT_SURFACE)) s.object |= G_NOT_PLANT;   // "in"
       // Season review round 3: "tall grass sways in leaves", "wind rises through waves",
@@ -298,7 +335,9 @@ typedef struct { GMemo cells[G_MEMO_SIZE]; } GWorkspace;
 // are compared separately so human classes cannot alias legacy classes.
 static inline uint64_t g_key(GState s, int remaining) {
   (void)remaining;
-  return (uint64_t)(s.subject & 65535) | (uint64_t)(s.object & 65535) << 16 | (uint64_t)(s.adjectives & 65535) << 32 |
+  // The marks are folded into the subject's key bits: the full subject is compared
+  // separately, so equal keys with equal subjects mean equal marks.
+  return (uint64_t)((s.subject ^ (uint32_t)s.marks << 8) & 65535) | (uint64_t)(s.object & 65535) << 16 | (uint64_t)(s.adjectives & 65535) << 32 |
     (uint64_t)s.phase << 48 | (uint64_t)s.number << 52 | (uint64_t)s.determiner << 54 |
     (uint64_t)s.article << 57 | (uint64_t)s.nadj << 59 | (uint64_t)s.tail << 60 |
     (uint64_t)s.conj << 63;

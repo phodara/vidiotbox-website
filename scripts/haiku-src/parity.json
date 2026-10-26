@@ -22,11 +22,11 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 80,
-      "grammar_filtered": 6960,
+      "grammar_filtered": 6961,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.143148,
+      "host_seconds": 0.147939,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -56,11 +56,11 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 80,
-      "grammar_filtered": 6596,
+      "grammar_filtered": 6600,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.141896,
+      "host_seconds": 0.146256,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -92,11 +92,11 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 78,
-      "grammar_filtered": 6723,
+      "grammar_filtered": 6779,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.140534,
+      "host_seconds": 0.143772,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -126,11 +126,11 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 80,
-      "grammar_filtered": 6598,
+      "grammar_filtered": 6605,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.141596,
+      "host_seconds": 0.145009,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -162,11 +162,11 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 72,
-      "grammar_filtered": 6243,
+      "grammar_filtered": 6244,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.12753,
+      "host_seconds": 0.131213,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -184,8 +184,8 @@
       "generated_first_line": false,
       "lines": [
         "Dry leaves fall on grass...",
-        "bees hum in the cold raindrop",
-        "a sun is pale here."
+        "air rises in the cold rain",
+        "still wind is quiet."
       ],
       "syllables": [
         5,
@@ -195,12 +195,12 @@
       "complete": true,
       "attempts": 15,
       "rejected_attempts": 0,
-      "forwards": 81,
-      "grammar_filtered": 6599,
+      "forwards": 80,
+      "grammar_filtered": 6672,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.14408,
+      "host_seconds": 0.144671,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -232,11 +232,11 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 79,
-      "grammar_filtered": 6940,
+      "grammar_filtered": 6952,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.140189,
+      "host_seconds": 0.143409,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -266,11 +266,11 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 89,
-      "grammar_filtered": 7714,
+      "grammar_filtered": 7727,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.157708,
+      "host_seconds": 0.163745,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -302,11 +302,11 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 105,
-      "grammar_filtered": 15170,
+      "grammar_filtered": 15186,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.19557,
+      "host_seconds": 0.198684,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -324,8 +324,8 @@
       "generated_first_line": true,
       "lines": [
         "My hand now opens...",
-        "density and the gas shift",
-        "I wait here by stars."
+        "we wait by a nebula",
+        "I watch light waves here."
       ],
       "syllables": [
         5,
@@ -335,12 +335,12 @@
       "complete": true,
       "attempts": 15,
       "rejected_attempts": 0,
-      "forwards": 99,
-      "grammar_filtered": 14972,
+      "forwards": 94,
+      "grammar_filtered": 14694,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.179542,
+      "host_seconds": 0.171063,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -363,8 +363,8 @@
       "case": 1,
       "lines": [
         "My hand now opens...",
-        "density and the gas shift",
-        "I wait here by stars."
+        "we wait by a nebula",
+        "I watch light waves here."
       ],
       "line_repeat_attempts": 0
     },
@@ -372,17 +372,17 @@
       "case": 2,
       "lines": [
         "Starlight rises fast...",
-        "neutrons merge in the cold space",
-        "a galaxy fades."
+        "density and wavelengths grow",
+        "momentum shifts here."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 3,
       "lines": [
-        "Radiation drifts...",
-        "sunlight now glows in the space",
-        "a quasar is still."
+        "Particles merge fast...",
+        "sunlight now fades in the space",
+        "a comet expands."
       ],
       "line_repeat_attempts": 0
     },
@@ -390,8 +390,8 @@
       "case": 4,
       "lines": [
         "My eyes now seek light...",
-        "spheres of gas orbit the moon",
-        "a nebula drifts."
+        "dusty galaxies drift far",
+        "still stars are like songs."
       ],
       "line_repeat_attempts": 0
     },
@@ -399,71 +399,71 @@
       "case": 5,
       "lines": [
         "My small hands tremble...",
-        "gravity flows over stars",
-        "I seek the light wave."
+        "radiation flows in dust",
+        "I seek spheres of light."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 6,
       "lines": [
-        "We blink at the sun...",
-        "radio waves and dust fade",
-        "a galaxy turns."
+        "My palm opens here...",
+        "gravity bends the signals",
+        "a solar sun shines."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 7,
       "lines": [
-        "My old heart wonders...",
-        "faint moonlight in a flash burns",
-        "I wait by the sun."
+        "My old heart wanders...",
+        "ancient planets turn in clouds",
+        "now I trace beams here."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 8,
       "lines": [
-        "Particles bend light...",
-        "giant meteors pulse fast",
-        "a wave of light shines."
+        "Meteors float fast...",
+        "giant moons circle the sun",
+        "a dark neutron drifts."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 9,
       "lines": [
-        "Planets and gas rise...",
-        "constellations glow through clouds",
-        "a comet expands."
+        "Spheres of gas pulse fast...",
+        "silent halos rise in space",
+        "an asteroid spins."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 10,
       "lines": [
-        "Antimatter drifts...",
-        "density and wavelengths grow",
-        "a dark star is lit."
+        "Density changes...",
+        "lit stars orbit the quasar",
+        "an atom is cold."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 11,
       "lines": [
-        "Mass and the dust merge...",
-        "sunlight in a flash pulses",
-        "a signal is bright."
+        "Meteors float far...",
+        "sleeping shadows pull the light",
+        "a black comet glows."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 12,
       "lines": [
-        "My old eyes seek light...",
-        "celestial moons lift a sun",
-        "now I grasp atoms."
+        "My old eyes seek dust...",
+        "constellations and time fade",
+        "now I grasp fusion."
       ],
       "line_repeat_attempts": 0
     },
@@ -471,98 +471,98 @@
       "case": 13,
       "lines": [
         "My hand traces stars...",
-        "spheres of light orbit the moon",
+        "faint moons cross the wave of light",
         "a crater is deep."
       ],
-      "line_repeat_attempts": 1
+      "line_repeat_attempts": 0
     },
     {
       "case": 14,
       "lines": [
-        "My palm opens here...",
-        "halos and the comet turn",
-        "photons are like songs."
+        "My mind wanders here...",
+        "frequency shifts in the space",
+        "a tiny sun burns."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 15,
       "lines": [
-        "Loose stardust falls far...",
-        "faint light waves burn under space",
-        "a pulsar is still."
+        "Antimatter drifts...",
+        "energy and the mass merge",
+        "a photon is bright."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 16,
       "lines": [
-        "Meteors fade fast...",
-        "protons and beams bend the space",
-        "an asteroid spins."
+        "Starlight shines in space...",
+        "steady light waves and lights glow",
+        "a pulsar is small."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 17,
       "lines": [
-        "We wait under stars...",
-        "momentum and wavelengths change",
-        "the universe stays."
+        "We wait by the stars...",
+        "neutrinos and a cloud merge",
+        "quiet matter stays."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 18,
       "lines": [
-        "My cold heart wanders...",
-        "Now the nebula floats far",
-        "I watch a sunbeam."
-      ],
-      "line_repeat_attempts": 0
-    },
-    {
-      "case": 19,
-      "lines": [
-        "My old mind grasps time...",
-        "matter pulls the quiet moon",
-        "now I breathe slowly."
+        "My hands now open...",
+        "planets rise in a cosmos",
+        "I blink at the sun."
       ],
       "line_repeat_attempts": 1
     },
     {
+      "case": 19,
+      "lines": [
+        "My old heart grasps mass...",
+        "sunlight burns under the moon",
+        "now I breathe slowly."
+      ],
+      "line_repeat_attempts": 0
+    },
+    {
       "case": 20,
       "lines": [
-        "Golden planets turn...",
-        "sunlight shines in the gas there",
-        "a galaxy drifts."
+        "Spheres of light whisper...",
+        "momentum and the gas shift",
+        "a dark quasar fades."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 21,
       "lines": [
-        "Particles merge here...",
-        "giant halos circle stars",
-        "a neutron expands."
+        "Meteors turn fast...",
+        "The moonlight in a flash burns",
+        "a proton flows far."
       ],
-      "line_repeat_attempts": 0
+      "line_repeat_attempts": 1
     },
     {
       "case": 22,
       "lines": [
-        "Gravity flows fast...",
-        "sleeping shadows fill the sun",
-        "a quasar is pale."
+        "Particles bend light...",
+        "pale light waves in a flash pulse",
+        "the galaxy spins."
       ],
       "line_repeat_attempts": 0
     },
     {
       "case": 23,
       "lines": [
-        "Density shifts fast...",
-        "Now the neutrinos curve light",
-        "a dark cosmos glows."
+        "Density grows fast...",
+        "The radio waves sparkle",
+        "a comet is small."
       ],
       "line_repeat_attempts": 1
     }
