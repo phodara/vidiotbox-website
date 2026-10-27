@@ -98,7 +98,7 @@ typedef struct {
 #define G_PAIR_MARKS (G_MARK_AIR | G_MARK_FROZEN | G_MARK_FALLING)
 // On the adjective "dry": a dry subject takes no water and is not wet ("a dry pine holds rain").
 #define G_MARK_DRY 0x40
-// Review 2026-10-27: "Still reeds shade a stone in fog". Trees, pines, oaks and vines carry rank 6
+// Review 2026-10-27: "Still reeds shade a stone in fog". Trees, branches, pines, oaks and vines carry rank 6
 // and the verb "shade" needs it; shade also takes no fog, mist, dew or rain in its clause.
 // The verb's state is rank 6 without G_ORBIT_VERB.
 #define G_SHADE_RANK 6
