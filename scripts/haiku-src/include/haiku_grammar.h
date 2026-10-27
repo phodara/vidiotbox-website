@@ -98,6 +98,10 @@ typedef struct {
 #define G_PAIR_MARKS (G_MARK_AIR | G_MARK_FROZEN | G_MARK_FALLING)
 // On the adjective "dry": a dry subject takes no water and is not wet ("a dry pine holds rain").
 #define G_MARK_DRY 0x40
+// Review 2026-10-27: "Still reeds shade a stone in fog". Trees, pines, oaks and vines carry rank 6
+// and the verb "shade" needs it; shade also takes no fog, mist, dew or rain in its clause.
+// The verb's state is rank 6 without G_ORBIT_VERB.
+#define G_SHADE_RANK 6
 
 static inline GState g_start(void) {
   GState s = {0, G_ALL, G_ALL, G_SUBJECT, 0, 0, 0, 0, 0, 0, 0};
@@ -169,8 +173,10 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       const int rank = e->marks & G_ORBIT_RANK;
       if (!subject && (s.marks & G_ORBIT_VERB) &&
           (rank <= (s.marks & G_ORBIT_RANK) || rank == G_ORBIT_RANK ||
-           ((s.marks & G_ORBIT_RANK) == 3 && rank == 5))) return 0;   // not "planets orbit moons", nor the quasar: stars, the sun
+           rank == G_SHADE_RANK || ((s.marks & G_ORBIT_RANK) == 3 && rank == 5))) return 0;   // not "planets orbit moons", nor the quasar: stars, the sun
       if (!subject && (s.marks & G_MARK_DRY) && (e->semantic & G_WATER)) return 0;   // not "a dry leaf holds dew"
+      if (!subject && (s.marks & (G_ORBIT_VERB | G_ORBIT_RANK)) == G_SHADE_RANK &&
+          (e->semantic & G_WATER) && (e->semantic & G_AIRY)) return 0;   // not "pines shade a stone in fog"
       if (subject) {
         if (s.conj && (e->object & G_LONE_NOUN)) return 0;   // 2026-10-24: "density in a flash shifts"
         // Two lights are one subject named twice: not "sunlight and light shine", "starlight and a sun".
@@ -197,7 +203,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         s.tail |= s.object == G_MUSIC ? 5 : 4;
         s.phase = G_DONE;
         s.object &= ~G_NO_POOL_NOUN;   // "holds" is done with it; G_WET shares the bit
-        s.marks &= G_MARK_DRY;
+        s.marks = (uint8_t)((s.marks & G_MARK_DRY) |
+                            ((s.marks & (G_ORBIT_VERB | G_ORBIT_RANK)) == G_SHADE_RANK ? G_SHADE_RANK : 0));
       }
       s.article = s.determiner = s.nadj = 0;
       s.adjectives = subject && (e->object & G_LONE_NOUN) ? G_ALL | G_LONE_SUBJECT : G_ALL;
@@ -236,7 +243,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if ((s.tail & (8 | 32)) && e->tag == G_VERB && (e->object & G_LOOSE)) return 0;   // not "a lake falls", "a tree falls"
     if ((s.subject & G_WAVE_SUBJECT) && e->tag == G_VERB && (e->object & G_THAW)) return 0;   // not "waves on the brook melt"
     if (s.marks & e->marks & G_PAIR_MARKS) return 0;   // not "air blows", "snow flows", "snow rises", "dew ripples"
-    s.marks = (uint8_t)((s.marks & G_MARK_DRY) |
+    const int shade = (e->marks & (G_ORBIT_VERB | G_ORBIT_RANK)) == G_SHADE_RANK;
+    if (shade && (s.marks & G_ORBIT_RANK) != G_SHADE_RANK) return 0;   // not "reeds shade a stone"
+    s.marks = (uint8_t)((s.marks & G_MARK_DRY) | (shade ? G_SHADE_RANK : 0) |
                         ((e->marks & G_ORBIT_VERB) ? (s.marks & G_ORBIT_RANK) | G_ORBIT_VERB : 0));
     // Review 2026-10-25: light bends. "Bend" and "curve" (bare 8) take an object after a
     // physical cause ("mass bends light") and stand alone after light or a signal ("light

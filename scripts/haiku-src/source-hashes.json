@@ -1,9 +1,9 @@
 {
   "browser.cpp": "42c673aaf86c13bf65d4a867d01b0f9b90ea604a76aa6736a9a0e3c4853738e7",
-  "parity.json": "458f1bbccca1b5488719ed317700645da6317d05e84e3746da2fe63e1f6676b4",
+  "parity.json": "7492c8b793a57d99ac2792d47e2b17024a4a356334e3dce4211e8312f457e147",
   "llm.h": "866756e03a06e03862930c74e148791f645acac70c00108fff449901dfa291cf",
-  "host.cpp": "1bdd1b91590dda62b9bdb76c5142a8c891a6ba5834c99f8ad40e6de26a0dac3d",
-  "generated/grammar_tables.h": "5699c2efe542946d90398bebf624101bf975e33dda86ad2e477168bf21f23c5f",
+  "host.cpp": "2f52238f1abc40db7f099e96f2d1a397bd0c07cbaae00057b9a439aac23c8da0",
+  "generated/grammar_tables.h": "6dbbeacc1ed328fda7e46ba40c8ab1dbe835506784823ee83ce919510a56016b",
   "generated/haiku_tables.h": "98f24dc5b7111a0b9300c67b7a5edd7a0f6e7b65cf33a65fbade7ba0eeab0d96",
   "generated/vocab.h": "7df25a38e19731381c7b7d0a4da89a838852f4f5bba805de06ea7f6c64b2cc73",
   "include/haiku_grammar_decode.h": "3df6918cda55e17a95afe56036801c8fa6c7285e82d488ce62ba103ffe7ab32a",
@@ -11,5 +11,5 @@
   "include/haiku_voice.h": "db2625097624872cd95d19cc9e751b89f43209711f170b8b95edca2a325ae6fe",
   "include/haiku_controls.h": "17f605dabf764140c7c976766a8f9ac29312bd81e169a3ac1d32745e5ee173b7",
   "include/haiku_seasons.h": "7d3238841d08404080b5530777244492888c6dac067d4d4cc73d2562881fe880",
-  "include/haiku_grammar.h": "3ad7828059721d9637857de68afbbc39b7070364fd6e7506eea505d6a1368989"
+  "include/haiku_grammar.h": "ec45aeb16bdd702e142cd779ffc758b152898530528ce7e42e4c9cf1fbf0bc6c"
 }
