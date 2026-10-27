@@ -114,6 +114,12 @@ static inline float haiku_wave_fall_penalty(const GEntry &entry, const GState &s
   return (state.subject & G_WAVE_SUBJECT) && entry.tag==G_VERB && (entry.object & G_DOWNWARD) ? weight : 0.f;
 }
 
+// A sampling bias against the seasons naming a sun, moon or star in nearly half their poems
+// (HAIKU_SEASON_SKY_PENALTY). G_ORB_NOUN marks sun, moon, star and their plurals.
+static inline float haiku_season_sky_penalty(const GEntry &entry, bool space, float weight) {
+  return !space && entry.tag==G_NOUN && (entry.object & G_ORB_NOUN) ? weight : 0.f;
+}
+
 // Craters belong to moons: "crater" and "craters" are offered only once the poem
 // has used a moon word. `used` is the decoder's per-poem used-word bitmap.
 static inline bool haiku_moonless_crater(int token, const uint32_t *used) {
@@ -224,6 +230,32 @@ static inline int haiku_drop_copulas(GEntry *entries, int count) {
   int kept = 0;
   for (int i = 0; i < count; i++)
     if (entries[i].tag != G_COPULA) entries[kept++] = entries[i];
+  return kept;
+}
+
+// Review 2026-10-27: "here" and "there" read as padding for the syllable count. "Here" (and "nearby")
+// needs someone standing in the poem, so only a first-person poem may use it; "there" needs something
+// far away named in an earlier line (a moon, sun, star, hill, ridge, cliff, or a space body).
+// `used` is the poem's used-word bitmap at the start of the line. Applied to the line's word list
+// so the grammar lookahead sees the same words.
+static inline int haiku_drop_deixis(GEntry *entries, int count, bool first_person, const uint32_t *used, bool space) {
+  static int here = -2, nearby, there, now, distant[32], ndistant;
+  if (here == -2) {
+    here = haiku_word_token("here"); nearby = haiku_word_token("nearby"); there = haiku_word_token("there"); now = haiku_word_token("now");
+    const char *names[] = {"moon", "moons", "sun", "suns", "star", "stars", "hill", "hills", "hillside", "hillsides",
+                           "hilltop", "hilltops", "ridge", "ridges", "cliff", "cliffs", "planet", "planets", "comet",
+                           "comets", "galaxy", "galaxies", "asteroid", "asteroids", "nebula", "nebulas", "pulsar",
+                           "pulsars", "quasar", "quasars", "cosmos"};
+    for (const char *name : names) { int id = haiku_word_token(name); if (id >= 0 && ndistant < 32) distant[ndistant++] = id; }
+  }
+  bool far_named = false;
+  for (int i = 0; i < ndistant; i++) if (used[distant[i] >> 5] & (1u << (distant[i] & 31))) far_named = true;
+  int kept = 0;
+  for (int i = 0; i < count; i++) {
+    int t = entries[i].token;
+    if (t >= 0 && t != UINT16_MAX && ((!first_person && (t == here || t == nearby)) || (!far_named && t == there) || (!space && t == now))) continue;   // review 2026-10-27: "Now" is pointless in the seasons (7 of 13 "Now" lines were nonsense)
+    entries[kept++] = entries[i];
+  }
   return kept;
 }
 
