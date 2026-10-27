@@ -105,7 +105,7 @@ typedef struct {
 #define G_MARK_FALLING 0x20  // snow, rain, dew, frost, ice do not rise or ripple
 #define G_MARK_STILLWATER 0x100  // pond, lake, puddle stand still: they do not flow; "a pond is soft" is out too
 #define G_MARK_POOLISH 0x200     // pond, lake, puddle, stream, brook, water: none covers a garden
-#define G_PAIR_MARKS (G_MARK_AIR | G_MARK_FROZEN | G_MARK_FALLING | G_MARK_STILLWATER | G_MARK_POOLISH | G_MARK_NOBLOOM | G_MARK_TINY | G_MARK_BRIGHT | G_MARK_COLD | G_MARK_IMMOVABLE | G_MARK_NOPULL | G_MARK_NOMERGE | G_MARK_ALL)
+#define G_PAIR_MARKS (G_MARK_AIR | G_MARK_FROZEN | G_MARK_FALLING | G_MARK_STILLWATER | G_MARK_POOLISH | G_MARK_NOBLOOM | G_MARK_TINY | G_MARK_BRIGHT | G_MARK_COLD | G_MARK_IMMOVABLE | G_MARK_NOPULL | G_MARK_NOMERGE | G_MARK_ALL | G_MARK_FOREVER)
 // Verb marks carried to the place phrase (review 2026-10-27): drift and float refuse "a dry meadow";
 // a moss or ivy subject (rank 1) is a creeper, the only plant that grows "on" a stone.
 #define G_MARK_DRIFTY 0x400
@@ -118,6 +118,7 @@ typedef struct {
 #define G_MARK_NEEDS_PLACE 0x2000  // stay, stays: "a universe stays" is unfinished without a place (shares EARTH_WORD's bit; nouns only carry that one)
 #define G_MARK_NOPULL 0x10000000   // vacuum, moon, moons: they pull nothing
 #define G_MARK_ALL 0x4000          // universe, cosmos, stay, stays: everything cannot stay in anything (shares G_MARK_TREE's state-only bit)
+#define G_MARK_FOREVER 0x8000      // photon, photons, faint, fade, fades: a photon never fades or grows faint (shares G_MARK_STILLNOW's state-only bit)
 #define G_MARK_NOMERGE 0x20000000  // fusion, hydrogen, helium, deuterium: atoms and particles merge, these do not
 #define G_MARK_NOGRASP 0x40000000  // neutrino, proton, photon...: nothing subatomic is grasped
 #define G_MARK_GRASPY 0x80000000u  // grasp, grasps (carried to the object)
@@ -175,6 +176,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if (e->object & G_MOON_ONLY) s.adjectives |= G_LIMIT_MOON;
       if (e->object & G_WET_ADJ) s.adjectives |= G_LIMIT_WET;
       if (subject && (e->marks & G_MARK_DRY)) s.marks |= G_MARK_DRY;
+      if (subject && (e->marks & G_MARK_FOREVER)) s.marks |= G_MARK_FOREVER;   // "faint": not before "photon"
       if (!subject && (s.marks & G_MARK_DRIFTY) && (e->marks & G_MARK_DRY)) return 0;   // not "twigs drift through a dry meadow"
       if (e->object & G_OLD_ADJ) s.adjectives |= G_LIMIT_STONE;   // all stones are old: not "an old stone"
       if (e->marks & G_MARK_AIR) s.adjectives |= G_LIMIT_NOAIR;    // soft air is always wrong
@@ -243,6 +245,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         if (s.conj && (((s.subject & e->semantic & G_LIGHT) && ((s.subject | e->semantic) & (G_AIRY | G_SIGNAL))) ||
                        ((s.subject & e->semantic & G_SIGNAL) && ((s.subject | e->semantic) & G_LIGHT)))) return 0;
         if (rank > (int)(s.marks & G_ORBIT_RANK)) s.marks = (uint32_t)((s.marks & ~G_ORBIT_RANK) | (uint32_t)rank);   // "planets and comets": the larger
+        if (s.marks & e->marks & G_MARK_FOREVER) return 0;   // not "a faint photon"
+        s.marks &= ~(uint32_t)G_MARK_FOREVER;   // the adjective's mark ends with its noun: "faint light fades" is fine
         s.marks |= e->marks & (G_PAIR_MARKS | G_MARK_WATERWORD | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE);
         // "Space and time bend": a second subject noun makes the clause plural.
         s.number = s.conj ? 2 : e->number;

@@ -1,15 +1,15 @@
 {
   "browser.cpp": "42c673aaf86c13bf65d4a867d01b0f9b90ea604a76aa6736a9a0e3c4853738e7",
-  "parity.json": "e4ec8da6258b353ab924f5c128e3ed03a5105ec305e2da01037094e4da0e487b",
+  "parity.json": "92e03415245cc378ffbe2c9de42b20f75684bb28a7fc56be655e05f27e30cc68",
   "llm.h": "866756e03a06e03862930c74e148791f645acac70c00108fff449901dfa291cf",
-  "host.cpp": "d0237988c1248f68d3f86b7305e5fb6d6def7c9d31d181da26bb689078899715",
-  "generated/grammar_tables.h": "b47c80a7d7921a6963679d565d20be191f688eedbdccc7916782836abc1e1110",
-  "generated/haiku_tables.h": "98f24dc5b7111a0b9300c67b7a5edd7a0f6e7b65cf33a65fbade7ba0eeab0d96",
+  "host.cpp": "97995b2fa30cdfe0041bf0cfbbc19d7eb28c2a0c08a6c55aa2a32b30e82ee81e",
+  "generated/grammar_tables.h": "a4563c75a2c27a819f3c10430078cc0ef8f183e5ce0e91440349fd529c6027a2",
+  "generated/haiku_tables.h": "9f017074384ccc67158f3be792d237bf2f9a70c0d55f54ac87aaac5b9364e944",
   "generated/vocab.h": "7df25a38e19731381c7b7d0a4da89a838852f4f5bba805de06ea7f6c64b2cc73",
   "include/haiku_grammar_decode.h": "d22144507ba0dae26bb67943e8119052f2105bd4dd4de298bb8f4d653a7e427d",
   "include/haiku_settings.h": "1ebe1c3502f9c2efbaa4e878c59991d903506f6e7ccc3a7731f8c117baea1531",
   "include/haiku_voice.h": "db2625097624872cd95d19cc9e751b89f43209711f170b8b95edca2a325ae6fe",
   "include/haiku_controls.h": "17f605dabf764140c7c976766a8f9ac29312bd81e169a3ac1d32745e5ee173b7",
   "include/haiku_seasons.h": "7d3238841d08404080b5530777244492888c6dac067d4d4cc73d2562881fe880",
-  "include/haiku_grammar.h": "6994eb0a30c5e8bb131358126b95e2d62479e693c71b620923731df77d9f845c"
+  "include/haiku_grammar.h": "861f5e0768ade4c4e878cf0b4db7b01d0ac5622415b745fed5eb34e60a3516b2"
 }

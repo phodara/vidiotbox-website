@@ -1184,7 +1184,7 @@ static const HaikuSeed HAIKU_SEEDS[] = {
   {4, 5, 3, {15620, 2247, 2063}, "Singularity", 1},
   {4, 5, 5, {33, 425, 4396, 65, 10538}, "A nebula glows", 1},
   {4, 4, 5, {382, 840, 5046, 287, 7051}, "The pulsar spins", 1},
-  {4, 4, 4, {382, 3648, 1564, 8715}, "The photons fade", 2},
+  {4, 4, 4, {382, 3648, 1564, 2870}, "The photons glow", 2},
   {4, 4, 3, {382, 22387, 8715}, "The signals fade", 2},
   {4, 3, 4, {45, 1845, 10576, 1349}, "Mass bends light", 1},
   {4, 4, 4, {19696, 83, 735, 14479}, "Comets orbit", 2},
