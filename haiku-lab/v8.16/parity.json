@@ -1,0 +1,92 @@
+{
+ "spring": [
+  {
+   "case": 0,
+   "lines": [
+    "Soft rain falls slowly...",
+    "The wind rises through a field",
+    "bright light glows on mud."
+   ]
+  },
+  {
+   "case": 1,
+   "lines": [
+    "Blossoms drift in rain...",
+    "mist falls on the dry hilltops",
+    "cold air is quiet."
+   ]
+  }
+ ],
+ "summer": [
+  {
+   "case": 0,
+   "lines": [
+    "Hot winds blow slowly...",
+    "sunlight glows in the dark field",
+    "a bright moon rises."
+   ]
+  },
+  {
+   "case": 1,
+   "lines": [
+    "Tall grass sways on banks...",
+    "pale sunlight burns through the rain",
+    "a puddle is cold."
+   ]
+  }
+ ],
+ "autumn": [
+  {
+   "case": 0,
+   "lines": [
+    "Red leaves drift slowly...",
+    "The sunlight fades in a field",
+    "light glows through dark rain."
+   ]
+  },
+  {
+   "case": 1,
+   "lines": [
+    "Dry leaves fall on grass...",
+    "air rises over the pond",
+    "a pale sun is red."
+   ]
+  }
+ ],
+ "winter": [
+  {
+   "case": 0,
+   "lines": [
+    "Cold wind howls in fog...",
+    "The light rises under rain",
+    "a dark puddle shines."
+   ]
+  },
+  {
+   "case": 1,
+   "lines": [
+    "Snow falls on the grass...",
+    "ducks swim in a quiet pond",
+    "cold wind stirs wet trees."
+   ]
+  }
+ ],
+ "space": [
+  {
+   "case": 0,
+   "lines": [
+    "I watch the planet...",
+    "constellations glow in clouds",
+    "a moon and stars shine."
+   ]
+  },
+  {
+   "case": 1,
+   "lines": [
+    "My hand now opens...",
+    "sunlight in a flash pulses",
+    "I breathe silently."
+   ]
+  }
+ ]
+}

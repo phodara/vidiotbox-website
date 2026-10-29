@@ -58,7 +58,7 @@
  <a class="brand" href="/">VIDIOTBOX / hAIku LAB</a>
  <label>Model <select id="variant">
   <option value="blind" selected>Blind mix</option>
-  <option value="v8.10">V8.10</option>
+  <option value="v8.16">V8.16</option>
   <option value="one-thing">One-thing (concept)</option>
   <option value="two-part">Two-part (cut)</option>
  </select></label>
@@ -102,7 +102,7 @@
 <dialog id="aboutDialog" aria-labelledby="aboutTitle">
  <h2 id="aboutTitle">ABOUT THE LAB</h2>
  <p>Every poem here is written on your device by the same tiny model and grammar as the Vidiotbox C5 board. The lab compares ways of making the three lines belong together.</p>
- <p><strong>V8.10</strong> is the main page's generator as of 25 October, kept unchanged here for comparison. <strong>One-thing</strong> keeps every line to one concept, such as ancient light, scale or silence. <strong>Two-part</strong> sets a cosmic first line against an earthly image after the cut, the way a traditional haiku sets two images side by side. <strong>Blind mix</strong> picks one of the three at random and tells you which after you rate it.</p>
+ <p><strong>V8.16</strong> is the main page's generator as of 27 October, kept unchanged here for comparison. <strong>One-thing</strong> keeps every line to one concept, such as ancient light, scale or silence. <strong>Two-part</strong> sets a cosmic first line against an earthly image after the cut, the way a traditional haiku sets two images side by side. <strong>Blind mix</strong> picks one of the three at random and tells you which after you rate it.</p>
  <p>Your ratings go to the project with the name you entered, and a copy stays in this browser.</p>
  <h2>CREDITS AND LICENSES</h2>
  <p>Copyright &copy; 2026 Paul Hodara. <strong>Base language model and tokenizer:</strong> <a href="https://huggingface.co/slvDev/esp32-ai-tinystories">esp32-ai-tinystories</a>, Copyright &copy; 2026 Viacheslav Sierbov, used and modified under the <a href="haiku-generator/LICENSE.txt">MIT License</a>. <strong>Training data of the base model:</strong> <a href="https://huggingface.co/datasets/roneneldan/TinyStories">TinyStories</a> (Eldan and Li, 2023), CDLA-Sharing-1.0, not redistributed here.</p>
@@ -112,10 +112,10 @@
 // Ratings go to the "Haiku Lab Ratings" Google Sheet through its Apps Script web app
 // (haiku-training/scripts/haiku_lab_ratings.gs). Empty: ratings wait in this browser.
 const RATINGS_URL = 'https://script.google.com/macros/s/AKfycbxISV4goKJoKo4eqOYvx4yQzC90WreOEPWhAWwMYCw5KNNsMasKolwX-elXVbgux4V-/exec';
-const PAGE = 'haiku-lab 4';   // 4: V8.10 decoder (named waves), same questions as 3; 3: one scene / two images that echo / partly / no; 2: belong together yes/partly/no; 1: "one scene or moment?"
+const PAGE = 'haiku-lab 5';   // 5: V8.16 baseline, one-thing and two-part on the V8.16 rules, same questions as 3; 4: V8.10 decoder (named waves), same questions as 3; 3: one scene / two images that echo / partly / no; 2: belong together yes/partly/no; 1: "one scene or moment?"
 const CONCEPTS = ['ancient light', 'scale', 'awe', 'made of stars', 'edge of knowing', 'black hole',
                   'the beginning', 'impermanence', 'silence', 'order and beauty'];
-const LABELS = {'v8.10': 'V8.10', 'one-thing': 'One-thing', 'two-part': 'Two-part'};
+const LABELS = {'v8.16': 'V8.16', 'one-thing': 'One-thing', 'two-part': 'Two-part'};
 const $ = id => document.getElementById(id);
 const store = {
   get(key, fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } },
@@ -123,12 +123,12 @@ const store = {
 };
 for (const [i, name] of CONCEPTS.entries()) $('concept').add(new Option(name[0].toUpperCase() + name.slice(1), i));
 
-// ---- Generators: the lab worker, and the main page's V8.10 generator, frozen in haiku-lab/v8.10/ ----
+// ---- Generators: the lab worker, and the main page's V8.16 generator, frozen in haiku-lab/v8.16/ ----
 const workers = {};
 let nextId = 0;
 function startWorker(kind) {
   if (workers[kind]) return workers[kind].ready;
-  const worker = new Worker(kind === 'lab' ? 'haiku-lab/worker.js' : 'haiku-lab/v8.10/worker.js', {type: 'module'});
+  const worker = new Worker(kind === 'lab' ? 'haiku-lab/worker.js' : 'haiku-lab/v8.16/worker.js', {type: 'module'});
   const entry = workers[kind] = {worker, pending: new Map()};
   entry.ready = new Promise((resolve, reject) => {
     worker.onmessage = ({data}) => {
@@ -146,7 +146,7 @@ function startWorker(kind) {
   return entry.ready;
 }
 async function generate(variant, concept) {
-  const kind = variant === 'v8.10' ? 'base' : 'lab';
+  const kind = variant === 'v8.16' ? 'base' : 'lab';
   await startWorker(kind);
   const entry = workers[kind], id = ++nextId, random = new Uint32Array(1);
   crypto.getRandomValues(random);
@@ -166,8 +166,8 @@ let current = null, queued = null, epoch = 0;
 function choose() {
   const picked = $('variant').value;
   const blind = picked === 'blind';
-  const variant = blind ? ['v8.10', 'one-thing', 'two-part'][Math.floor(Math.random() * 3)] : picked;
-  const concept = variant === 'v8.10' || blind ? -1 : Number($('concept').value);
+  const variant = blind ? ['v8.16', 'one-thing', 'two-part'][Math.floor(Math.random() * 3)] : picked;
+  const concept = variant === 'v8.16' || blind ? -1 : Number($('concept').value);
   return {variant, concept, blind};
 }
 function prepare() {
@@ -271,7 +271,7 @@ $('download').addEventListener('click', () => {
 });
 $('variant').addEventListener('change', () => {
   const v = $('variant').value;
-  $('concept').disabled = v === 'v8.10' || v === 'blind';
+  $('concept').disabled = v === 'v8.16' || v === 'blind';
   epoch++; queued = null; $('reveal').textContent = ''; next();
 });
 $('concept').addEventListener('change', () => { epoch++; queued = null; next(); });
