@@ -134,6 +134,11 @@ const mode = $('mode'), pause = $('pause'), more = $('more'), speed = $('speed')
 const audio = $('crawlMusic'), music = $('music'), statusLine = $('status');
 const THEMES = ['spring', 'summer', 'autumn', 'winter', 'space'];
 const PX_PER_SECOND = 34, BUFFER_PX = 2400, MAX_POEMS = 300;
+// A display left running for hours (2026-10-30: a smart panel stopped after about 5 minutes): a stalled
+// poem or a worker the browser killed restarts the generator instead of stopping the page. Three restarts
+// with no poem between them still stop it, so a device that cannot run the model says so.
+const POEM_TIMEOUT_MS = 30000, MAX_RESTARTS = 3;
+let restarts = 0;
 const title = s => s[0].toUpperCase() + s.slice(1);
 let offset = 0, lastFrame = null, paused = false, readingScroll = 0, musicOn = false;
 let worker, ready = false, styleWorker, styleReady = false, busy = false, failed = false, requestId = 0, pending = null, nextTheme = 0, themeEpoch = 0;
@@ -153,11 +158,21 @@ function fail(message) {
   if (pending) { clearTimeout(pending.timeout); pending.reject(Error(message)); pending = null; }
   worker?.terminate(); styleWorker?.terminate();
 }
+function restart(reason) {
+  if (failed) return;
+  if (++restarts > MAX_RESTARTS) { fail(`${reason} Reload the page to try again.`); return; }
+  statusLine.textContent = `${reason} Restarting the generator…`;
+  if (pending) { clearTimeout(pending.timeout); pending.reject(Error(reason)); pending = null; }
+  worker?.terminate(); styleWorker?.terminate();
+  ready = false; styleReady = false;
+  worker = startWorker('haiku-generator/worker.js', () => { ready = true; }, () => !styled() || mixed());
+  if (styleWorker) startStyleWorker();
+}
 function requestPoem(themeName) {
   return new Promise((resolve, reject) => {
     const id = ++requestId, random = new Uint32Array(2);
     crypto.getRandomValues(random);
-    const timeout = setTimeout(() => fail('Generation took too long. Reload the page to try again.'), 180000);
+    const timeout = setTimeout(() => restart('A poem took too long.'), POEM_TIMEOUT_MS);
     const kind = mixed() ? STYLES[random[1] % 3] : style.value;
     // The heading names the style when it is not Standard, and every style in Mixed.
     const label = kind === 'standard' ? (mixed() ? 'Standard' : '') : STYLE_NAMES[kind];
@@ -193,9 +208,10 @@ async function writeOne() {
     if (!result.complete) throw Error('incomplete');
     if (started !== themeEpoch) return; // theme changed while this poem was being written
     addPoem(result);
+    restarts = 0;
     statusLine.textContent = `${poems.children.length} haiku written on this device · last took ${result.browser_seconds.toFixed(1)}s`;
   } catch (error) {
-    if (!failed) statusLine.textContent = 'One poem did not finish; trying another.';
+    if (!failed && (ready || styleReady)) statusLine.textContent = 'One poem did not finish; trying another.';
   } finally {
     busy = false; more.disabled = !canWrite();
     fillBuffer();
@@ -238,6 +254,21 @@ function showCrawl() {
   fillBuffer();
 }
 mode.addEventListener('click', () => document.body.classList.contains('is-crawl') ? showReading() : showCrawl());
+// Keep the screen awake while the crawl plays, so a display's power saving does not pause it. The browser
+// drops the lock whenever the page is hidden, so it is asked for again when the page comes back.
+let wakeLock = null;
+async function keepAwake() {
+  const want = document.body.classList.contains('is-crawl') && !paused && document.visibilityState === 'visible';
+  if (!want) { wakeLock?.release().catch(() => {}); wakeLock = null; return; }
+  if (wakeLock || !navigator.wakeLock) return;
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', () => { wakeLock = null; });
+  } catch { wakeLock = null; }
+}
+document.addEventListener('visibilitychange', keepAwake);
+mode.addEventListener('click', keepAwake);
+pause.addEventListener('click', keepAwake);
 pause.addEventListener('click', () => {
   paused = !paused;
   pause.textContent = paused ? 'Resume' : 'Pause';
@@ -316,11 +347,12 @@ function startWorker(url, onReady, showing) {
       data.type === 'result' ? request.resolve(data.result) : request.reject(Error(data.error));
     }
   };
-  w.onerror = () => fail('The haiku generator could not start. Reload the page to retry.');
+  w.onerror = () => restart('The haiku generator stopped.');
   w.postMessage({type: 'init'});
   return w;
 }
 requestAnimationFrame(frame);
+keepAwake();
 playMusic().then(playing => { if (!playing) startMusicOnGesture(); });
 </script>
 <script>
