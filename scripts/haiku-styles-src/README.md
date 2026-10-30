@@ -7,6 +7,9 @@ The Style menu on `generated-haikus.html` offers three kinds of poem (and Mixed,
 - **One-thing** and **Two-part** (Space only): this decoder, `haiku-styles/worker.js`. One-thing keeps
   every line to one concept's space words; two-part writes line one from them and lines 2-3 from the
   concept's earthly image, across the cut. These are the haiku lab's styles, on the current rules.
+  Since V8.17 (2026-10-30) both leave technical words (fusion, atoms, density, radio waves...) out of their space
+  lines, a two-part line one names something in space (light counts), and a line on is/are loses to one with an
+  action (`lab_rules_init()` and `attempt_line()` in the patch; LAB_SPACE_MISS and LAB_COPULA_PENALTY tune them).
 
 Files:
 

@@ -63,6 +63,7 @@ enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPA
 // Subject adjectives bit from "in a flash" (bare 7) to the verb, which must be intransitive.
 #define G_IN_A_FLASH 0x10000000u
 #define G_LONE_SUBJECT 0x08000000u   // the subject is a flash: no "and" after it
+#define G_LIMIT_INWATER 0x08000000u  // after a ground object ("coats a field"): no "in water"; shares G_LONE_SUBJECT's bit, which ends at the verb
 // Intransitive verb object bit: a change that can happen "in a flash" (shifts, vanishes), not
 // "drifts" or "floats". G_NO_POOL shares the bit, but only after a preposition.
 #define G_SUDDEN 536870912u
@@ -84,8 +85,20 @@ typedef struct {
   uint8_t tag, number;
   uint32_t semantic, object;
   uint8_t syl, vowel, bare;
+  uint8_t extra;   // GX_* word flags (below), read by tag; fills what was padding, so an entry stays 20 bytes
   uint32_t marks;  // G_ORBIT_RANK, G_PAIR_MARKS, G_MARK_DRY, G_ORBIT_VERB (below)
 } GEntry;
+// GEntry.extra, V8.17 (review 2026-10-30). The bits mean different things for each tag.
+#define GX_THE_ONLY 1     // noun: cosmos, universe take "the" only, never "a cosmos"
+#define GX_NO_DET 2       // noun: space takes no article: "in space", never "in the space"
+#define GX_BIG_PLACE 4    // noun: hills, shores, fields, trees, walls...: too big a place for a worm
+#define GX_SIZELESS 8     // noun: dew, rain, mist, mud, light, dust...: no "small dew", "huge stardust"
+#define GX_SIZE 1         // adjective: small, tiny, huge, giant, large, tall (never after is/are)
+#define GX_WEAR 2         // adjective: worn, weathered, cracked; after is/are, for G_MARK_IMMOVABLE subjects
+#define GX_STILL_VERB 1   // verb: crumble, lean, remain, stand; G_MARK_IMMOVABLE subjects only
+#define GX_BURN 2         // verb: burn, burns (not "moonlight burns" on earth)
+#define GX_GENTLE 1       // adverb: softly, gently (not "a bridge stands gently")
+#define GX_DEIXIS 2       // adverb: here, there (the sun, moon and stars are never "here")
 typedef struct {
   uint32_t subject, object, adjectives;
   uint8_t phase, number, determiner, article, nadj, tail, conj;
@@ -153,6 +166,9 @@ static inline int g_complete(GState s) {
 // A deliberately limited clause grammar, not a general English parser.
 static inline int g_advance(GState s, const GEntry *e, GState *out) {
   int subject = s.phase == G_SUBJECT || s.phase == G_SUBJECT_NOUN;
+  // Review 2026-10-30: "a full moon fades there", "a pale sun glows here". The seasons only:
+  // space clears G_ORB_NOUN, so s.tail bit 16 is never set there.
+  if ((s.tail & 16) && !subject && e->tag == G_ADV && (e->extra & GX_DEIXIS)) return 0;
   int np = subject || s.phase == G_OBJECT || s.phase == G_OBJECT_NOUN ||
            s.phase == G_PP || s.phase == G_PP_NOUN;
   if (np) {
@@ -180,11 +196,24 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if (!subject && (s.marks & G_MARK_DRIFTY) && (e->marks & G_MARK_DRY)) return 0;   // not "twigs drift through a dry meadow"
       if (e->object & G_OLD_ADJ) s.adjectives |= G_LIMIT_STONE;   // all stones are old: not "an old stone"
       if (e->marks & G_MARK_AIR) s.adjectives |= G_LIMIT_NOAIR;    // soft air is always wrong
-      if (e->marks & G_MARK_TINY) s.adjectives |= G_LIMIT_NOTINY;  // a worm is small already
+      if ((e->marks & G_MARK_TINY) || (e->extra & GX_SIZE)) s.adjectives |= G_LIMIT_NOTINY;  // a worm is small already; dew has no size
       if (e->marks & G_MARK_BRIGHT) s.adjectives |= G_LIMIT_DARK;  // not "dark sunlight"
       s.nadj = 1;
       s.article = 0;
     } else if (e->tag == G_NOUN) {
+      // Review 2026-10-30 (V8.17).
+      if ((e->extra & GX_THE_ONLY) && s.determiner != 1) return 0;   // "the cosmos", never "a cosmos"
+      if ((e->extra & GX_NO_DET) && s.determiner) return 0;          // "space", never "the space"
+      if (!subject && (s.tail & 2)) {
+        // Nothing sings, rests or grows "in", "under" or "through" ice.
+        if ((s.subject & (G_ANIMAL | G_PLANT)) && (s.object & (G_NOT_SURFACE | G_NOT_SOLID)) && (e->marks & G_MARK_ICE)) return 0;
+        // A worm keeps to small places: soil, mud, a stone or leaf, grass, a path; not hills, shores or trees.
+        if ((s.marks & G_MARK_TINY) && (e->extra & GX_BIG_PLACE)) return 0;
+        // Worms and roots stay off water: not "worms crawl on the puddles", "roots grow on the lake" (rain is fine).
+        if ((s.marks & (G_MARK_TINY | G_MARK_ROOT)) && (e->semantic & G_WATER) && !(e->semantic & G_AIRY)) return 0;
+        // A wall or stone is in rain, mist or fog, not "in the dew"; and by things, not "by frost" or "by soil".
+        if ((s.marks & G_MARK_IMMOVABLE) && ((e->marks & G_MARK_DEW) || (!(s.object & G_ONLY_AIRY) && (e->extra & GX_SIZELESS)))) return 0;
+      }
       if (e->semantic & G_HUMAN) {
         if (!subject || s.determiner || s.nadj || s.conj) return 0;
       }
@@ -228,6 +257,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.adjectives & G_LIMIT_WEATHER) && (e->semantic & G_AIRY) && !(e->semantic & G_GROUND)) return 0;   // not "grass grows across rain"
       if ((s.adjectives & G_LIMIT_NOAIR) && (e->marks & G_MARK_AIR)) return 0;      // not "soft air"
       if ((s.adjectives & G_LIMIT_NOTINY) && (e->marks & G_MARK_TINY)) return 0;    // not "a small worm"
+      if ((s.adjectives & G_LIMIT_NOTINY) && (e->extra & GX_SIZELESS)) return 0;    // not "small dew", "huge stardust"
       if ((s.adjectives & G_LIMIT_DARK) && (e->marks & G_MARK_BRIGHT)) return 0;     // not "dark sunlight"
       if (!subject && (s.marks & G_MARK_ICE) && (s.object & (G_NOT_AIRY | G_NOT_SURFACE)) && (e->semantic & G_PLANT) && !(e->object & G_LOW_PLANT_BIT)) return 0;   // not "ice shines on the grass"
       if (!subject && (s.marks & G_MARK_FLYER) && (e->marks & G_MARK_ROOT) && (s.object & (G_NOT_AIRY | G_NOT_SURFACE))) return 0;   // not "birds sing on roots"
@@ -247,7 +277,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         if (rank > (int)(s.marks & G_ORBIT_RANK)) s.marks = (uint32_t)((s.marks & ~G_ORBIT_RANK) | (uint32_t)rank);   // "planets and comets": the larger
         if (s.marks & e->marks & G_MARK_FOREVER) return 0;   // not "a faint photon"
         s.marks &= ~(uint32_t)G_MARK_FOREVER;   // the adjective's mark ends with its noun: "faint light fades" is fine
-        s.marks |= e->marks & (G_PAIR_MARKS | G_MARK_WATERWORD | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE);
+        s.marks |= e->marks & (G_PAIR_MARKS | G_MARK_WATERWORD | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE | G_MARK_ROOT);
         // "Space and time bend": a second subject noun makes the clause plural.
         s.number = s.conj ? 2 : e->number;
         s.subject = s.conj ? (s.subject | e->semantic) : e->semantic;
@@ -269,7 +299,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
                              ((s.marks & (G_ORBIT_VERB | G_ORBIT_RANK)) == G_SHADE_RANK ? G_SHADE_RANK : 0));
       }
       s.article = s.determiner = s.nadj = 0;
+      const int ground_object = s.phase == G_DONE && s.object != G_MUSIC && !(s.tail & 2) && (e->semantic & G_GROUND);
       s.adjectives = subject && (e->object & G_LONE_NOUN) ? G_ALL | G_LONE_SUBJECT : G_ALL;
+      if (ground_object) s.adjectives |= G_LIMIT_INWATER;   // not "snow coats a field in water"
     } else return 0;
   } else if (s.phase == G_FINITE) {
     // "now" goes before the verb: "Light now burns in space". It is once per clause and
@@ -316,12 +348,16 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if ((s.subject & G_WAVE_SUBJECT) && e->tag == G_VERB && (e->object & G_THAW)) return 0;   // not "waves on the brook melt"
     if ((s.subject & G_WAVE_SUBJECT) && e->tag == G_VERB && (e->object & G_DOWNWARD)) return 0;   // not "a wave on the pond falls"
     if (s.marks & e->marks & G_PAIR_MARKS) return 0;   // not "air blows", "snow flows", "snow rises", "dew ripples"
+    if (e->tag == G_VERB && (e->extra & GX_STILL_VERB) && !(s.marks & G_MARK_IMMOVABLE)) return 0;   // walls, gates, stones... crumble, lean, remain, stand
+    // Moonlight and starlight are G_AIRY on earth only: "starlight burns through space" stays.
+    if (e->tag == G_VERB && (e->extra & GX_BURN) && (s.marks & G_MARK_COLD) && (s.subject & G_AIRY)) return 0;   // not "moonlight burns"
     const int shade = (e->marks & (G_ORBIT_VERB | G_ORBIT_RANK)) == G_SHADE_RANK;
     if (shade && (s.marks & G_ORBIT_RANK) != G_SHADE_RANK) return 0;   // not "reeds shade a stone"
     const int creeper = (s.marks & G_ORBIT_RANK) == 1;   // moss, ivy
     const int tree = (s.marks & G_ORBIT_RANK) == G_SHADE_RANK;   // trees, branches, vines
     s.marks = (uint32_t)((s.marks & G_MARK_DRY) | (shade ? G_SHADE_RANK : 0) | (e->marks & (G_MARK_DRIFTY | G_MARK_JUMPY | G_MARK_GRASPY | G_MARK_NOBLOOM | G_MARK_NEEDS_PLACE)) |
                          (s.marks & (G_MARK_WATERWORD | G_MARK_AIR | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE)) |
+                         (s.marks & (G_MARK_TINY | G_MARK_ROOT | G_MARK_IMMOVABLE)) |   // where a worm, a root or a wall may be (V8.17)
                          (creeper ? G_MARK_CREEPER : 0) | (tree ? G_MARK_TREE : 0) |
                          (e->tag == G_COPULA ? (s.marks & G_PAIR_MARKS) : 0) |   // "a pond is soft"
                          ((e->marks & G_ORBIT_VERB) ? (s.marks & G_ORBIT_RANK) | G_ORBIT_VERB : 0));
@@ -333,7 +369,10 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     }
     else if (e->tag == G_VERB) { s.phase = G_DONE; s.object = e->object & ~G_THAW; } // adverbs it accepts; bit 31 is G_SKY_THROUGH after a preposition
     else if (e->tag == G_TRANSITIVE) { s.phase = G_OBJECT; s.object = e->object; }
-    else if (e->tag == G_COPULA) s.phase = G_PREDICATE;
+    else if (e->tag == G_COPULA) {
+      if (s.marks & G_MARK_TINY) return 0;   // a worm is never described ("a worm is tall"): it crawls or rests
+      s.phase = G_PREDICATE;
+    }
     else return 0;
   } else if (s.phase == G_PREDICATE) {
     if (e->tag == G_LIKE && (e->semantic & s.subject)) {
@@ -343,12 +382,15 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     }
     // bare 6: attributive only ("winter wind", never "leaves are winter").
     if (e->tag != G_ADJ || e->bare == 6 || !(e->semantic & s.subject)) return 0;
+    if (e->extra & GX_SIZE) return 0;   // "an old wall is small" measures, it makes no image; "a small stone" is fine
+    if ((e->extra & GX_WEAR) && !(s.marks & G_MARK_IMMOVABLE)) return 0;   // "an old wall is worn", not "a pond is worn"
     if ((s.marks & G_MARK_DRY) && (e->object & G_WET_ADJ)) return 0;   // not "dry fields are wet"
     if (s.marks & e->marks & G_PAIR_MARKS) return 0;   // not "a pond is soft"
     s.phase = G_DONE;
     s.tail |= 4; // after a predicate adjective, no directional adverb
     if (e->object & G_STILL_ADJ) { s.tail |= 1; s.marks |= G_MARK_STILLNOW; }   // not "an oak is still there": it reads as "continues"
   } else if (s.phase == G_DONE) {
+    if (e->tag == G_ADV && (e->extra & GX_GENTLE) && (s.marks & G_MARK_IMMOVABLE)) return 0;   // not "a bridge stands gently"
     // Adverb number 1 is directional ("down") and 2 manner/distance ("far"); both
     // only follow an intransitive verb, never "is dark far" or "pulls light down".
     // "far" and "fast" also need a verb of motion or change: no "the quasar glows far".
@@ -374,6 +416,10 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
              !((s.tail & 16) && !(e->object & (G_SKYWARD | G_NOT_SURFACE)))) {
       uint32_t verb_object = s.object;
       s.tail |= 2;
+      // Walls, gates, stones, hills... are "in" weather or by, near, beside, along or around things;
+      // never on, under, over or through them ("an old cliff stands on a leaf").
+      const int still_thing = (s.marks & G_MARK_IMMOVABLE) != 0;
+      if (still_thing && (e->object & (G_NOT_AIRY | G_BELOW | G_SKYWARD))) return 0;
       s.phase = G_PP;
       s.object = G_PLANT | G_GROUND | G_WATER |
         (e->object & (G_SPACE | G_CELESTIAL | G_BODY | G_TERRAIN));
@@ -385,6 +431,10 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       // The preposition's own limits ride in the object mask, which the lookahead memo compares.
       s.object |= e->object & (G_NOT_SOLID | G_NOT_AIRY | G_NOT_SURFACE);
       if (e->object & G_BELOW) s.object |= G_NOT_SURFACE;   // nothing is under a path or shore ("a tree blooms under a path")
+      if (e->object & G_BELOW) s.object |= G_NOT_WATER;     // nor under or beneath a lake, pond or water (V8.17)
+      if (still_thing) s.object |= (e->object & G_NOT_SURFACE) ? G_ONLY_AIRY : G_NOT_AIRY;   // "in the rain"; "by the path", not "along cool fog"
+      if ((s.adjectives & G_LIMIT_INWATER) && (e->object & G_NOT_SURFACE)) s.object |= G_NOT_WATER;   // "in": not "a field in water"
+      s.adjectives &= ~G_LIMIT_INWATER;
       if ((verb_object & (G_ALOFT | G_GROUNDED)) && (e->object & G_NOT_SOLID)) s.object |= G_NO_POOL;   // in/through
       if ((s.tail & 16) && !(e->object & G_SKYWARD)) s.object |= G_ONLY_AIRY;   // a star "in" fog only
       if ((s.tail & 16) && (e->object & G_NOT_SOLID) && !(e->object & G_NOT_SURFACE)) s.object |= G_SKY_THROUGH;

@@ -116,7 +116,8 @@ static void select_theme(int index) {
   for (const GEntry &entry:G_ENTRIES) {
     GEntry out;
     if (index<0) { themed[themed_count++]=entry; continue; }
-    if (entry.token!=UINT16_MAX && (entry.token>=VOCAB_N ? index==HAIKU_SEASON_SPACE || (entry.tag==G_NOUN && ((entry.object & G_EARTH_PHRASE) || (entry.marks & G_MARK_EARTH_WORD))) : haiku_season_allows(entry.token,index)) &&
+    if (entry.token!=UINT16_MAX && (entry.token>=VOCAB_N ? index==HAIKU_SEASON_SPACE || (entry.tag==G_NOUN && ((entry.object & G_EARTH_PHRASE) || (entry.marks & G_MARK_EARTH_WORD))) ||
+                                   (entry.tag==G_VERB && (entry.extra & GX_STILL_VERB)) : haiku_season_allows(entry.token,index)) &&   // "crumbles" (V8.17)
         haiku_theme_entry(entry,index==HAIKU_SEASON_SPACE,&out)) {
 #ifdef HAIKU_SCENE_RESEARCH
       if (index==HAIKU_SEASON_SPACE) out=research_ancient_light(out,research_word(entry.token));
@@ -144,6 +145,7 @@ static const GEntry *grammar_word(const char *word) {
   }
   return nullptr;
 }
+static bool parse_themed=false;   // --check THEME and the themed self-tests: read each word as select_theme() left it
 static bool parse_clause(const char *text, GState *state) {
   *state=g_start(); char copy[LINE_BYTES]; snprintf(copy,sizeof copy,"%s",text);
   for (char *p=copy;*p;p++) if (*p>='A' && *p<='Z') *p += 'a'-'A';
@@ -157,6 +159,7 @@ static bool parse_clause(const char *text, GState *state) {
       for (int j=0;j<k;j++) snprintf(word+strlen(word),sizeof word-strlen(word),"%s%s",j ? " " : "",words[i+j]);
       const GEntry *entry=grammar_word(word);
       if (!entry) continue;
+      if (parse_themed) { entry=entry->token==UINT16_MAX ? nullptr : grammar_entry(entry->token); if (!entry) continue; }
 #ifdef HAIKU_SCENE_RESEARCH
       GEntry adjusted=season==HAIKU_SEASON_SPACE ? research_ancient_light(*entry,word) : *entry;
       entry=&adjusted;
@@ -390,8 +393,45 @@ static bool grammar_test(const char *text,int expected) {
   if (actual!=!!expected) { fprintf(stderr,"grammar test failed: %s\n",text); return false; }
   return true;
 }
+// The same, with the words of one theme ("moonlight burns" is refused on earth, "starlight burns" kept in space).
+static bool themed_test(int theme,const char *text,int expected) {
+  const uint32_t seed=place_seed; place_seed=0; select_theme(theme); parse_themed=true;
+  const bool ok=grammar_test(text,expected);
+  parse_themed=false; place_seed=seed; select_theme(-1);
+  if (!ok) fprintf(stderr,"  (theme %d)\n",theme);
+  return ok;
+}
 static int self_test() {
   bool ok=true;
+  // V8.17 (review 2026-10-30).
+  for (const char *text : {"The cosmos lifts stars", "The vast cosmos expands", "Stars cross the cosmos", "The universe expands",
+                           "A worm crawls silently", "A worm crawls under a stone", "A worm crawls in the mud", "A worm rests under a leaf", "A worm crawls in rain",
+                           "Ducks swim under a bridge", "Frogs rest under a leaf", "Mist drifts over the lake", "Rain falls in the pond", "Snow coats a field in the rain",
+                           "Flowers bloom on walls", "Grass grows in fields", "Pines sway", "Roots hold rain", "Snow falls softly", "Leaves fall", "Dust falls",
+                           "An oak holds dew", "A small stone is cool", "Small bees fly in rain", "Tall reeds sway", "A huge cloud drifts", "Giant planets glow",
+                           "An old wall crumbles", "The bridge crumbles slowly", "A fence leans", "An old gate leans by the path", "A gate stands", "The old bridge stands",
+                           "A stone stands", "A stone remains", "A hill remains", "An old wall is worn", "The gate is weathered", "The stone is cracked",
+                           "A rock stands in mist", "A stone remains in the rain", "A fence stands along the path", "An old wall crumbles slowly", "A full moon fades",
+                           "A bright star rises", "Rain falls by the wall", "Moss grows on a stone"}) ok &= grammar_test(text,1);
+  for (const char *text : {"A cosmos lifts stars", "An older cosmos lifts stars", "A universe expands", "Stars cross a cosmos", "Ancient stars stay in the space", "The space is vast",
+                           "A worm is tall", "A worm is small", "Worms are still", "A worm crawls on hills", "A worm rests on the shore", "A worm crawls up a tree",
+                           "A worm crawls over the field", "A worm floats on streams", "A worm drifts in rain", "Worms crawl on the puddles", "A worm crawls on the pond",
+                           "Roots grow slowly on the lake", "Roots sway on the soft water", "Roots sway", "Green grass blooms on walls", "Grass blooms",
+                           "The universe falls", "Primordial space falls fast", "Space falls", "The cosmos falls",
+                           "Petals shine beneath the lake", "Petals shine under the water", "A crow flies under the lake", "Light shines under the lake", "Snow coats a field in water",
+                           "A frog sings in ice", "Moss grows under ice", "An oak holds small dew", "Tiny rain falls", "Huge fog drifts", "Giant stardust falls away",
+                           "An old wall is small", "A garden is small", "A cricket is small", "The hill is tall", "A tall worm crawls",
+                           "A stone leans", "The bridge leans", "A hill leans", "The cliff leans", "A hill stands", "The path is worn", "A pond is worn", "An oak crumbles",
+                           "A leaf remains", "A frog stands", "A rock stands through vines", "An old cliff stands on a leaf", "Walls remain in the bare branch",
+                           "Ridges stand under the rock", "Bridges crumble on the fence", "The stone leans along cool fog", "Bridges crumble in the dew",
+                           "A rock stands by frost", "A rock stands by soil", "A bridge stands gently", "Walls lean softly"}) ok &= grammar_test(text,0);
+  for (int theme : {0,1,2,3}) {
+    for (const char *text : {"Moonlight glows", "Sunlight burns on a tall fence", "A bright star rises", "A stream reflects stars", "A full moon fades", "A frog sings there"})
+      ok &= themed_test(theme,text,1);
+    for (const char *text : {"Bright moonlight burns", "Bright moonlight burns there", "A full moon fades there", "A pale sun glows here"}) ok &= themed_test(theme,text,0);
+  }
+  for (const char *text : {"Starlight burns through space", "Stars burn", "Stars glow in space", "The vast universe expands"}) ok &= themed_test(HAIKU_SEASON_SPACE,text,1);
+  for (const char *text : {"Ancient stars stay in the space", "The universe falls", "Giant stardust falls away", "Tiny stardust burns"}) ok &= themed_test(HAIKU_SEASON_SPACE,text,0);
   for (const char *text : {"Birds chirp", "A duck swims", "Ducks swim in the pond", "Frogs swim in a lake", "Sunlight shines through the trees", "Frogs sing by a rock", "Light fades under a stone", "Wet leaves glisten", "Crows fly in the rain", "Petals float on the pond", "Leaves float over the field", "A star fades through the leaves", "Mist rises", "A full moon glows", "Twigs float over the old field", "Frogs sing in the pond", "Bees hum in the field", "Light glows on a soft branch", "Light glows through the leaves", "A worm crawls through the grass", "A beetle crawls on the stone", "Wind blows over the pond", "Waves on the lake ripple", "A wave on the pond sparkles", "Waves on the brook sparkle", "Wind stirs the waves on the pond", "Snow melts", "Wet snow melts", "Damp fog drifts", "A wave on the stream shines", "Crows fly over the waves on the lake", "Wind blows through the rain", "Petals float on the pond", "Leaves fall on the grass", "Birds sing in the trees", "Rain falls in the field", "A star fades in fog", "Sunlight shines through the path", "Birds sing on the shore", "Frogs sing in the field", "Crows fly over the lake", "A moon shines over the lake", "Sunlight shines on a dark lake", "Cold rain falls on leaves", "Rain falls in the pond", "Sunlight shines through the trees", "The moon glows through the fog", "The stream flows by the pines", "The pond sparkles", "Spring rain falls", "Winter wind blows", "Crows fly through the rain", "Birds fly in the fog", "Birds perch on the fence", "Petals fall on the grass", "Snow falls on the pond", "Light shines on the lake", "Bees hum", "Crickets jump", "Gulls perch", "Frogs sing", "I breathe quietly", "We gasp", "I blink", "My palms open", "My hand opens", "I blink at stars", "We blink at the moon", "Now I blink at stars", "Stars blink over moons", "Full moons glow", "Birds sing in the reeds", "Crows perch in the old oak", "Gulls perch on the fence", "The tree holds rain", "Bees hum in the flowers", "The lake sparkles by the pines", "An atom whispers", "The wind whispers softly", "Dark matter glows", "Moss grows on a rock", "Ivy grows on a stone", "The brook flows in mist", "Streams flow", "Rain washes the field", "A stream washes the shore", "Snow covers the field", "Frost covers a stone", "Leaves cover the path", "Grass grows across the field", "Light glows on the lake", "Sunlight shines on the path", "Petals float on the pond", "Twigs drift through a wet meadow", "A lake is cold", "A pond is calm", "Air rises over a bank", "Oaks shade the path", "Rain falls in a field", "Mist rises over a field", "Air is cold over leaves", "Soft winds blow", "A soft breeze stirs the leaves", "Frogs jump over a stone", "Petals drift over stones", "A worm crawls", "A small bird sings", "An old tree sways", "Old pines sway", "Water shines on a stone", "Crows fly under a bridge", "Birds fly over the path", "Ducks rest on the pond", "Ducks swim under a bridge", "Ducks fly over a pine", "Soft sunlight glows on the hill", "Snow falls on the hill", "Snowflakes fall on the lake", "A star shines through the leaves", "Soft starlight fades", "Soft moonlight glows", "Waves on the pond wash the shore", "The waves on the lake ripple", "The sun warms a stone", "Sunlight warms the water", "A breeze stirs a wave on the stream", "The wind stirs the leaves", "Gusts stir the pond", "Worms crawl beneath stones", "Frogs sing under a rock", "Birds sing under a bridge", "Birds sing under the branches", "Dew shines on the lake", "Dew shines in the field", "Worms crawl by roots", "Birds sing in the trees", "Ice shines on the pond", "Ice shines on a stone", "Frost sparkles on the grass", "Ice shines on a branch", "An oak is still", "Frogs are still", "Particles merge fast", "Atoms merge", "My eyes grasp mass", "The sun pulls light", "Buds bloom in the rain", "Flowers bloom on the hill", "Frogs rest under a wall", "Worms crawl beneath stones", "Crows fly under a bridge", "Ducks swim under a bridge", "Light fades under a stone", "I wander slowly", "I wonder quietly", "I silently wander", "I wander silently", "I softly wonder", "My heart softly wonders", "We quietly wait", "I quietly breathe", "Stars are faint", "Starlight fades", "A faint star glows", "Pines sway beside the pond", "Oaks sway in the field", "Birds are still", "Air rises over a bank", "Sunlight shines on the shore", "A star fades through the leaves", "Buds bloom in the rain", "Flowers bloom on the hill", "A frog rests on a stone", "Crows rest on the vine", "Ivy grows on a wall", "Birds sing on the wall", "Mist rises over the hillside", "Frogs sing on a bridge", "Light fades under a bridge", "Wind blows on the hilltop", "Crows rest on a cliff", "Dew shines on the ridge", "Moss grows on a cliff", "Pines shade a stone", "The pond is still", "The air is still", "Branches shade the path", "An oak shades the path", "Trees shade the shore"}) ok &= grammar_test(text,1);
   for (const char *text : {"Stars breathe", "An atom is dark", "Planets are dark", "Rocks whisper", "The atoms whisper in space", "My mind breathes", "My palms opens", "My heart opens", "I breathe past moons", "I blink past moons", "I open", "Palms open", "I blink by stars", "I blink around stars", "I now blink at stars", "We now wait", "Stars blink at moons", "I wait at stars", "I tremble at moons", "Ducks chirp", "A duck chirps", "Bees sing", "Worms fly", "Worms dart", "Frogs fly", "Crows swim", "Bees chirp", "Ducks swim in the fence", "Ducks swim on the path", "Frogs swim in a pine", "The sun rises in a rock", "Light shines through a stone", "Crows fly in the fence", "Leaves drift through sand", "Stones shine", "Water is dry", "A star fades on fog", "Leaves fall on the mist", "Snow falls upon the wind", "Sunlight shines in the path", "Frogs sing in the shore", "Petals fall on bees", "Rain falls on birds", "Frogs sing on the field", "Bees hum upon a meadow", "Crows fly on the lake", "A bird flies upon the pond", "Crows fly in the pond", "Bees fly through the water", "The water flows through a leaf", "A lake falls", "Puddles drift through the garden", "A moon shines in waves", "The sun rises in a field", "Sunlight shines through a dark lake", "The moon glows through a puddle", "Cold rain falls in leaves", "Snow falls in the pines", "Wet stones glisten", "The pale light glows through a root", "Ducks fly in the dry garden", "Birds float through rain", "Crows float by a stone", "A sun fades through mud", "A star fades through streams", "Tall grass sways on leaves", "A pond rises", "Light is full by rocks", "Twigs float under the old field", "Leaves float beneath the pond", "Bees hum in the lake", "Crickets sing in a puddle", "Light glows in a soft branch", "The moon shines in the trees", "A worm crawls through the pond", "Beetles crawl in the water", "The old shore sparkles", "Wind rises through waves", "Wind blows in a puddle", "A tree falls", "Branches drift", "Tall grass sways in leaves", "Leaves float on cold stones", "Birds float on ice", "An old sand is wet", "A star fades on leaves", "Green leaves are winter", "Full light glows", "Full stars warm wet fog", "A full sun burns", "The bird sings in a soft leaf", "Birds sing on the stone", "Crows perch upon a rock", "A tree holds cold water", "An old pine holds streams", "The lake sparkles on a pond", "The stream flows in the lake", "Bees hum on the lake", "Some bees rest on the water"}) ok &= grammar_test(text,0);
   for (const char *text : {"Rain falls softly", "Birds sing in the trees", "I tremble by moons", "We watch the comet", "I wait by asteroids here", "Comets glow by moons there", "I wander past the moons", "I wonder softly", "We watch the cosmos", "The sun pulls light", "The wind stirs leaves",
@@ -459,7 +499,13 @@ static float *allocate(size_t count) {
 }
 int main(int argc,char **argv) {
   if (argc==2 && !strcmp(argv[1],"--self-test")) return self_test();
-  if (argc==2 && !strcmp(argv[1],"--check")) {   // one clause per stdin line: does the grammar accept it?
+  if ((argc==2 || argc==3) && !strcmp(argv[1],"--check")) {   // one clause per stdin line: does the grammar accept it?
+    if (argc==3) {   // --check THEME: read the words as that theme does (no per-poem thinning)
+      static const char *const names[]={"spring","summer","autumn","winter","space"}; int t=-1;
+      for (int i=0;i<HAIKU_N_SEASONS;i++) if (!strcmp(argv[2],names[i])) t=i;
+      if (t<0) { fprintf(stderr,"unknown theme %s\n",argv[2]); return 2; }
+      place_seed=0; select_theme(t); parse_themed=true;
+    }
     char line[256];
     while (fgets(line,sizeof line,stdin)) {
       size_t n=strlen(line); while (n && (line[n-1]=='\n' || line[n-1]=='\r' || line[n-1]=='.' || line[n-1]==' ')) line[--n]=0;

@@ -28,7 +28,7 @@
  static void mark_used(int t) {
    used[t>>5] |= 1u<<(t&31);
    int sibling=haiku_word_sibling(t); if (sibling>=0) used[sibling>>5] |= 1u<<(sibling&31);
-@@ -144,6 +154,19 @@
+@@ -145,6 +155,52 @@
    }
    return nullptr;
  }
@@ -45,19 +45,55 @@
 +  }
 +  return missing;
 +}
++// ---- Lab: style rules (review of 30 October 2026, test batches 1-10) ----
++// Space lines of both styles leave out technical words ("Fusion ruins the images", "Sounds too much like
++// Astronomy class"); a two-part line one names something in space, not only the person feeling it ("My hands
++// now tremble... / snow falls on the winter lake"); and a line built on is/are loses to one with an action.
++static const char *const LAB_TECHNICAL="fusion atom atoms hydrogen helium gas gases matter density mass particle particles plasma radiation "
++  "energy entropy frequency wavelength wavelengths momentum proton protons electron electrons neutron neutrons quark quarks antimatter "
++  "neutrino neutrinos transmission transmissions";
++static const char *const LAB_TECHNICAL_PHRASES[]={"radio", "sound wave", "of sound", " gas", "gravitational"};   // radio waves, spheres of gas...
++static const char *const LAB_SPACE_WORDS="star stars sun suns moon moons space universe cosmos void vacuum orbit orbits stardust dust galaxy cosmic infinite primordial";
++static uint32_t lab_technical[(G_WORD_CAPACITY+31)/32], lab_space[(G_WORD_CAPACITY+31)/32];
++static float lab_space_miss=20.f, lab_copula_penalty=10.f;   // tuned on 200 poems per style, 2026-10-30
++static int lab_retry_rounds=4;
++static void lab_mark(uint32_t *set,int token) { if (token>=0 && token<G_WORD_CAPACITY) set[token>>5] |= 1u<<(token&31); }
++static bool lab_in(const uint32_t *set,int token) { return token>=0 && token<G_WORD_CAPACITY && (set[token>>5] & (1u<<(token&31))); }
++static void lab_mark_words(uint32_t *set,const char *list) {
++  char copy[512]; snprintf(copy,sizeof copy,"%s",list);
++  for (char *word=strtok(copy," ");word;word=strtok(nullptr," ")) {
++    const GEntry *entry=grammar_word(word);
++    if (entry && entry->token!=UINT16_MAX) lab_mark(set,entry->token);
++  }
++}
++static void lab_rules_init() {
++  lab_mark_words(lab_technical,LAB_TECHNICAL);
++  for (int i=0;i<G_ENTRY_COUNT;i++) {
++    const GEntry &e=G_ENTRIES[i];
++    if (e.token==UINT16_MAX) continue;
++    for (const char *phrase:LAB_TECHNICAL_PHRASES) if (strstr(G_WORDS[i],phrase)) lab_mark(lab_technical,e.token);
++    // A space word: a celestial, craft, signal, observer or terrain noun (light counts), or one of LAB_SPACE_WORDS.
++    if (e.tag==G_NOUN && (e.semantic & (G_CELESTIAL | G_CRAFT | G_SIGNAL | G_OBSERVER | G_TERRAIN))) lab_mark(lab_space,e.token);
++  }
++  lab_mark_words(lab_space,LAB_SPACE_WORDS);
++}
++static bool lab_technical_word(int token) { return lab_style && season==HAIKU_SEASON_SPACE && lab_in(lab_technical,token); }
+ static bool parse_themed=false;   // --check THEME and the themed self-tests: read each word as select_theme() left it
  static bool parse_clause(const char *text, GState *state) {
    *state=g_start(); char copy[LINE_BYTES]; snprintf(copy,sizeof copy,"%s",text);
-   for (char *p=copy;*p;p++) if (*p>='A' && *p<='Z') *p += 'a'-'A';
-@@ -237,7 +260,7 @@
+@@ -239,16 +295,17 @@
+     int n=f&HAIKU_SYL_MASK,pc=HAIKU_PRON(f);
      if (is_used(word) || !fits(n,rem,f&HAIKU_NO_END) || (pc && pc!=pron_class)) continue;
      if (season>=0 && !haiku_season_allows(word,season)) continue;
++    if (lab_technical_word(word)) continue;
      if (!grammar_allows(word,n,rem,state)) continue;
 -    sl.offer(HAIKU_CAPS[i].cap,n,s.logits[HAIKU_CAPS[i].cap]+scene_bonus(word,state),word);
 +    sl.offer(HAIKU_CAPS[i].cap,n,s.logits[HAIKU_CAPS[i].cap]+scene_bonus(word,state)+(lab_has(word)?lab_pick_bonus:0.f),word);
    }
    if (constrained) for (int i=0;i<themed_count;i++) {
      const GEntry &e=themed[i];
-@@ -245,7 +268,7 @@
+-    if (e.token==UINT16_MAX || is_used(e.token) || haiku_moonless_crater(e.token,used) ||
++    if (e.token==UINT16_MAX || lab_technical_word(e.token) || is_used(e.token) || haiku_moonless_crater(e.token,used) ||
          haiku_word_length(e.token)>budget || !grammar_allows(e.token,e.syl,rem,state)) continue;
      int first=haiku_word_piece(e.token,0);
      // First-piece shortlist ranking; every forced continuation is scored below.
@@ -66,33 +102,57 @@
    }
    if (!sl.k) return {-1,0,-1};
    float probabilities[TOP_K],sum=0;
-@@ -256,7 +279,7 @@
+@@ -257,9 +314,9 @@
+   for (int i=0;i<sl.k;i++) { r-=probabilities[i]; if (r<=0) return sl.c[i]; }
+   return sl.c[sl.k-1];
  }
- struct Attempt { int ids[MAX_TOKENS],cost[MAX_TOKENS],word[MAX_TOKENS],n; float score; };
+-struct Attempt { int ids[MAX_TOKENS],cost[MAX_TOKENS],word[MAX_TOKENS],n; float score; };
++struct Attempt { int ids[MAX_TOKENS],cost[MAX_TOKENS],word[MAX_TOKENS],n,space,copula; float score; };
  static bool attempt_line(int line,int syl,int pos,GState grammar,Attempt *a) {
 -  a->n=0; float tok_lp=0,fresh=0,scene_score=0; int nature=0,prev=-1;
-+  a->n=0; float tok_lp=0,fresh=0,scene_score=0; int nature=0,prev=-1,lab_hits=0;
++  a->n=0; float tok_lp=0,fresh=0,scene_score=0; int nature=0,prev=-1,lab_hits=0,space_hits=0,copula=0;
    while (a->n<MAX_TOKENS) {
      bool open=!constrained && prev>=0 && (HAIKU_TOK[prev]&HAIKU_FRAG);
      if (syl>=TARGET[line] && !open) break;
-@@ -270,6 +293,7 @@
+@@ -273,6 +330,9 @@
      }
      int pieces=constrained ? haiku_word_length(pk.word) : 1;
      if (pieces<1 || a->n+pieces>MAX_TOKENS || pos+pieces>=model.c.seq_len-2) return false;
 +    if (lab_has(pk.word)) lab_hits++;
++    if (lab_in(lab_space,pk.word)) space_hits++;
++    if (pk.word>=0) { const GEntry *entry=grammar_entry(pk.word); if (entry && entry->tag==G_COPULA) copula=1; }
      if (pk.word>=0) mark_used(pk.word);
      if (pk.word>=0 && pk.word<VOCAB_N && (HAIKU_TOK[pk.word]&HAIKU_NATURE)) nature++;
      if (constrained && pk.word>=0) fresh+=haiku_freshness_penalty(pk.word,FRESHNESS);
-@@ -289,6 +313,8 @@
+@@ -292,6 +352,11 @@
    float end=std::max(s.logits[HAIKU_TOK_COMMA],std::max(s.logits[HAIKU_TOK_PERIOD],s.logits[HAIKU_TOK_ELLIPSIS]));
    // Freshness lowers stale words' log-probability, so best-of-five does not undo it.
    a->score=(a->n?(tok_lp-fresh+scene_score)/a->n:0.f)+HAIKU_END_WEIGHT*(end-log_norm())+NATURE_SCORE*nature;
 +  // Lab: a line that names the concept beats one that does not.
 +  if (lab_style) a->score+=lab_word_score*lab_hits-(lab_hits ? 0.f : lab_miss);
++  a->space=space_hits; a->copula=copula;
++  if (lab_style && copula) a->score-=lab_copula_penalty;               // "a stone is quiet" loses to an action
++  if (lab_style==2 && line==0 && !space_hits) a->score-=lab_space_miss;   // two-part line one names space
    return true;
  }
  static bool free_line_one=false;   // the model writes line one itself (HAIKU_FREE_LINE_ONE, or the space mix)
-@@ -453,12 +479,28 @@
+@@ -345,6 +410,15 @@
+     }
+   };
+   tries();
++  // Lab: a two-part line one with no space word, or any line on is/are, gets more tries; a line one that
++  // still names nothing in space is written without the person's voice.
++  for (int r=0;r<lab_retry_rounds && lab_style==2 && line==0 && best.n && !best.space;r++) tries();
++  for (int r=0;r<lab_retry_rounds && lab_style && best.n && best.copula;r++) tries();
++  if (lab_style==2 && line==0 && best.n && !best.space) {
++    Attempt keep=best; best.score=-1e30f; best.n=0; grammar=haiku_voice_start(false);
++    for (int r=0;r<lab_retry_rounds && !(best.n && best.space);r++) tries();
++    if (!best.n) best=keep;
++  }
+   // The poem's palette can leave a line no way to finish; retry it with every word.
+   if (!best.n && constrained && featured()) {
+     palette_on=false; palette_fallbacks++;
+@@ -493,12 +567,28 @@
           ok?"true":"false",sizeof workspace,sizeof G_ENTRIES,sizeof(GState));
    return ok?0:1;
  }
@@ -118,23 +178,25 @@
  int main(int argc,char **argv) {
    if (argc==2 && !strcmp(argv[1],"--self-test")) return self_test();
 +  if (argc==2 && !strcmp(argv[1],"--lab-check")) return lab_check();
-   if (argc==2 && !strcmp(argv[1],"--check")) {   // one clause per stdin line: does the grammar accept it?
-     char line[256];
-     while (fgets(line,sizeof line,stdin)) {
-@@ -545,6 +587,12 @@
+   if ((argc==2 || argc==3) && !strcmp(argv[1],"--check")) {   // one clause per stdin line: does the grammar accept it?
+     if (argc==3) {   // --check THEME: read the words as that theme does (no per-poem thinning)
+       static const char *const names[]={"spring","summer","autumn","winter","space"}; int t=-1;
+@@ -591,6 +681,14 @@
    }
  #endif
    if (strcmp(argv[2],"baseline") && strcmp(argv[2],"grammar")) return 2;
 +  if (const char *value=getenv("LAB_STYLE")) lab_style=atoi(value);
 +  if (const char *value=getenv("LAB_CONCEPT")) lab_concept=atoi(value);
 +  read_tuning("LAB_PICK_BONUS",&lab_pick_bonus); read_tuning("LAB_WORD_SCORE",&lab_word_score); read_tuning("LAB_MISS",&lab_miss);
++  read_tuning("LAB_SPACE_MISS",&lab_space_miss); read_tuning("LAB_COPULA_PENALTY",&lab_copula_penalty);
++  lab_rules_init();
 +  if (lab_style<0 || lab_style>2 || lab_concept<-1 || lab_concept>=LAB_N_CONCEPTS || (lab_style && chosen!=HAIKU_SEASON_SPACE)) {
 +    fprintf(stderr,"LAB_STYLE 1-2 needs the space theme; LAB_CONCEPT is -1 or 0-%d\n",LAB_N_CONCEPTS-1); return 2;
 +  }
    // Simulator protocol: one case number per stdin line, one JSON poem per stdout line.
    // Keep the model and recent-word history alive between requests.
    bool interactive=!strcmp(argv[3],"interactive");
-@@ -601,6 +649,15 @@
+@@ -647,6 +745,15 @@
      // Person poems always generate their first line; canned lines have no guaranteed voice.
      if (person_voice) { free_start="0"; free_line_one=true; }
      person_end=person_voice && (int)(((uint32_t)(c+1)*2654435761u)>>17)%100<person_end_percent;
@@ -150,7 +212,7 @@
      const char *first_prefix=free_start?"":seed.text;
      if (free_start) forward(atoi(free_start),pos++);
      else {
-@@ -609,6 +666,8 @@
+@@ -655,6 +762,8 @@
        line_syl[0]=seed.syl;
      }
      for (int line=0;line<3;line++) {
@@ -159,7 +221,7 @@
        pos=write_line(line,line==0?first_prefix:"",pos);
        if (constrained) haiku_capitalize_i(lines[line]);
        if (line==0 && free_line_one && lines[0][0]>='a' && lines[0][0]<='z') lines[0][0]-='a'-'A';
-@@ -617,8 +676,10 @@
+@@ -663,8 +772,10 @@
        if (line==2) append(lines[2],".",1);
      }
      remember_poem_lines();
