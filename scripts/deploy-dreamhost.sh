@@ -24,8 +24,9 @@ python3 "$ROOT/scripts/build-site.py" --output "$SITE" >/dev/null
 python3 - "$SITE/generated-haikus.html" "$OUT/index.html" <<'EOF'
 import sys
 page = open(sys.argv[1]).read()
-for old, new in [('<a class="brand" href="/">VIDIOTBOX / GENERATED hAIkus</a>',
-                  '<span class="brand" aria-hidden="true"></span>'),   # keeps the controls on the right
+for old, new in [(' <button id="about" type="button">About</button>\n', ''),
+                 ('<a class="brand" href="/">VIDIOTBOX / GENERATED hAIkus</a>',   # About first, the bar left-justified
+                  '<button id="about" type="button">About hAIku Toy</button>'),
                  ('<h1>A sky<br>without edges</h1>',
                   '<p class="eyebrow" style="font-size:18px;letter-spacing:2px">hAIku Generator Toy <span style="white-space:nowrap">- by Paul Hodara</span></p>\n'
                   '<h1>A sky<br>without edges</h1>'),
