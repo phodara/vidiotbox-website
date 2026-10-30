@@ -19,8 +19,25 @@ SITE=$(mktemp -d); OUT=$(mktemp -d)
 trap 'rm -rf "$SITE" "$OUT"' EXIT
 python3 "$ROOT/scripts/build-site.py" --output "$SITE" >/dev/null
 
-cp "$SITE/generated-haikus.html" "$OUT/index.html"
-cp "$SITE/generated-haikus.html" "$OUT/generated-haikus.html"
+# haiku-matic.com puts its own name on the crawl's first line instead of the top bar, and in the tab
+# title, and is its own canonical address; vidiotbox.net keeps "VIDIOTBOX / GENERATED hAIkus" in its top bar.
+python3 - "$SITE/generated-haikus.html" "$OUT/index.html" <<'EOF'
+import sys
+page = open(sys.argv[1]).read()
+for old, new in [('<a class="brand" href="/">VIDIOTBOX / GENERATED hAIkus</a>',
+                  '<span class="brand" aria-hidden="true"></span>'),   # keeps the controls on the right
+                 ('<h1>A sky<br>without edges</h1>',
+                  '<p class="eyebrow" style="font-size:18px;letter-spacing:2px">hAIku Generator Toy <span style="white-space:nowrap">- by Paul Hodara</span></p>\n'
+                  '<h1>A sky<br>without edges</h1>'),
+                 ('<link rel="canonical" href="https://vidiotbox.net/generated-haikus.html">',
+                  '<link rel="canonical" href="https://haiku-matic.com/">'),
+                 ('<title>Vidiotbox · Generated Haikus</title>', '<title>hAIku Generator Toy - by Paul Hodara</title>')]:
+    if page.count(old) != 1:
+        sys.exit(f"deploy-dreamhost.sh: expected one {old!r} in generated-haikus.html")
+    page = page.replace(old, new)
+open(sys.argv[2], 'w').write(page)
+EOF
+cp "$OUT/index.html" "$OUT/generated-haikus.html"
 cp -R "$SITE/haiku-generator" "$SITE/haiku-styles" "$OUT/"
 rm -f "$OUT/haiku-generator/index.html"   # the generator page links to the rest of vidiotbox.net
 mkdir -p "$OUT/assets/audio" "$OUT/philosophy-assets"
