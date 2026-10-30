@@ -1,8 +1,8 @@
 # Haiku style decoder source
 
-The Style menu on `generated-haikus.html` offers three kinds of poem:
+The Style menu on `generated-haikus.html` offers three kinds of poem (and Mixed, one of the three at random):
 
-- **Standard**: the unchanged main decoder, `haiku-generator/worker.js` (built from `../haiku-src/`),
+- **Free** (value `standard`): the unchanged main decoder, `haiku-generator/worker.js` (built from `../haiku-src/`),
   the same poems as the boards.
 - **One-thing** and **Two-part** (Space only): this decoder, `haiku-styles/worker.js`. One-thing keeps
   every line to one concept's space words; two-part writes line one from them and lines 2-3 from the

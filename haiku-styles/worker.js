@@ -1,6 +1,6 @@
 // Style worker for generated-haikus.html: one-thing and two-part space poems from the style decoder
 // (scripts/haiku-styles-src, the current host.cpp plus the styles patch) with the V8 model from
-// ../haiku-generator/. Runs entirely on the visitor's device. The Standard style uses the unchanged
+// ../haiku-generator/. Runs entirely on the visitor's device. The Free style uses the unchanged
 // ../haiku-generator/worker.js instead.
 let runtime, info, output, loading;
 const styles = {'one-thing': 1, 'two-part': 2};

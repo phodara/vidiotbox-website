@@ -86,7 +86,7 @@
 <nav class="toolbar" aria-label="Haiku controls">
  <a class="brand" href="/">VIDIOTBOX / GENERATED hAIkus</a>
  <label>Theme <select id="theme"><option value="all">All themes</option><option value="space" selected>Space</option><option value="spring">Spring</option><option value="summer">Summer</option><option value="autumn">Autumn</option><option value="winter">Winter</option></select></label>
- <label>Style <select id="style"><option value="standard" selected>Standard</option><option value="one-thing">One-thing</option><option value="two-part">Two-part</option><option value="mixed">Mixed</option></select></label>
+ <label>Style <select id="style"><option value="standard" selected>Free</option><option value="one-thing">One-thing</option><option value="two-part">Two-part</option><option value="mixed">Mixed</option></select></label>
  <button id="mode" type="button">Reading view</button>
  <button id="pause" type="button">Pause</button>
  <button id="more" type="button" hidden disabled>Write another</button>
@@ -115,7 +115,7 @@
   <div><span>Model</span><strong>V8.16 · PLE / TinyStories</strong></div>
   <div><span>Inference</span><strong>INT4 + INT8</strong></div>
   <div><span>Rules</span><strong>Controlled grammar · no repeated lines</strong></div>
-  <div><span>Styles</span><strong>Standard · One-thing · Two-part · Mixed (Space)</strong></div>
+  <div><span>Styles</span><strong>Free · One-thing · Two-part · Mixed (Space)</strong></div>
  </div>
  <section class="credits" aria-labelledby="creditsTitle">
   <h2 id="creditsTitle">CREDITS AND LICENSES</h2>
@@ -144,7 +144,7 @@ let offset = 0, lastFrame = null, paused = false, readingScroll = 0, musicOn = f
 let worker, ready = false, styleWorker, styleReady = false, busy = false, failed = false, requestId = 0, pending = null, nextTheme = 0, themeEpoch = 0;
 
 // ---- Generator (same worker as /haiku-generator/, runs entirely on this device) ----
-// Standard poems come from that worker. The One-thing and Two-part styles (Space only) come from
+// Free (internally "standard") poems come from that worker. The One-thing and Two-part styles (Space only) come from
 // haiku-styles/worker.js, started the first time one is chosen; it reads the same cached model.
 // Mixed (Space only too) draws one of the three for each poem and so needs both workers.
 const STYLES = ['standard', 'one-thing', 'two-part'], STYLE_NAMES = {'one-thing': 'One-thing', 'two-part': 'Two-part'};
@@ -174,8 +174,8 @@ function requestPoem(themeName) {
     crypto.getRandomValues(random);
     const timeout = setTimeout(() => restart('A poem took too long.'), POEM_TIMEOUT_MS);
     const kind = mixed() ? STYLES[random[1] % 3] : style.value;
-    // The heading names the style when it is not Standard, and every style in Mixed.
-    const label = kind === 'standard' ? (mixed() ? 'Standard' : '') : STYLE_NAMES[kind];
+    // The heading names the style when it is not Free, and every style in Mixed.
+    const label = kind === 'standard' ? (mixed() ? 'Free' : '') : STYLE_NAMES[kind];
     pending = {id, resolve: result => resolve({...result, label}), reject, timeout};
     if (kind !== 'standard') styleWorker.postMessage({type: 'generate', id, style: kind, case: random[0] % 1000000000});
     else worker.postMessage({type: 'generate', id, theme: themeName, case: random[0] % 1000000000});
@@ -285,7 +285,7 @@ function restartCrawl() {
   fillBuffer();
 }
 // The styles are written for Space: choosing one sets the theme to Space, and choosing
-// another theme sets the style back to Standard.
+// another theme sets the style back to Free.
 theme.addEventListener('change', () => {
   if (styled() && theme.value !== 'space') style.value = 'standard';
   more.disabled = !canWrite();
