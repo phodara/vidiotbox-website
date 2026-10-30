@@ -301,7 +301,8 @@ style.addEventListener('change', () => {
   restartCrawl();
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('is-crawl') && !$('aboutDialog').open) showReading(); });
-$('about').addEventListener('click', () => $('aboutDialog').showModal());
+// Open at the top: on a short screen the browser scrolls to the focused Close button and hides the title and author.
+$('about').addEventListener('click', () => { const dialog = $('aboutDialog'); dialog.showModal(); dialog.scrollTop = 0; });
 
 // ---- Music (browsers block audio until the visitor interacts) ----
 function setMusic(on) { musicOn = on; if (!on) music.value = ''; }
