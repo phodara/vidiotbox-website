@@ -41,7 +41,8 @@ function load(file, mobile) {
       matchMedia: () => ({matches:false}), addEventListener() {}, setTimeout() {} }
   });
   const html = fs.readFileSync(file, 'utf8');
-  const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
+  // The first inline script after the Google tag.
+  const script = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]).find(s => !s.includes('dataLayer'));
   vm.runInContext(script, sandbox);
   return { run: code => vm.runInContext(code, sandbox), calls };
 }

@@ -202,7 +202,12 @@ function pickTheme() {
   if (theme.value !== 'all') return theme.value;
   return THEMES[nextTheme++ % THEMES.length];
 }
+// One Google Analytics event per finished haiku shown on the page.
+function trackHaikuGenerated(theme, style) {
+  if (typeof window.gtag === 'function') window.gtag('event', 'haiku_generated', {generation_method: 'wasm', theme, style});
+}
 function addPoem(result) {
+  trackHaikuGenerated(result.theme, result.label || 'Free');
   const article = document.createElement('article'), h3 = document.createElement('h3'), p = document.createElement('p');
   article.className = 'poem';
   h3.textContent = `${title(result.theme)}${result.label ? ` · ${result.label}` : ''} · No. ${result.case}`;
