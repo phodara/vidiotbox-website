@@ -387,6 +387,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     s.marks = (uint32_t)((s.marks & G_MARK_DRY) | (shade ? G_SHADE_RANK : 0) | (e->marks & (G_MARK_DRIFTY | G_MARK_JUMPY | G_MARK_GRASPY | G_MARK_NOBLOOM | G_MARK_NEEDS_PLACE)) |
                          (s.marks & (G_MARK_WATERWORD | G_MARK_AIR | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE)) |
                          (s.marks & (G_MARK_TINY | G_MARK_ROOT | G_MARK_IMMOVABLE)) |   // where a worm, a root or a wall may be (V8.17)
+                         // A hill, cliff, ridge or bank (immovable and G_MARK_NOPULL) keeps that mark for its place phrase (2026-10-31).
+                         ((s.marks & G_MARK_IMMOVABLE) ? (s.marks & G_MARK_NOPULL) : 0) |
                          (creeper ? G_MARK_CREEPER : 0) | (tree ? G_MARK_TREE : 0) |
                          (e->tag == G_COPULA ? (s.marks & G_PAIR_MARKS) : 0) |   // "a pond is soft"
                          ((e->marks & G_ORBIT_VERB) ? (s.marks & G_ORBIT_RANK) | G_ORBIT_VERB : 0));
@@ -453,6 +455,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       // never on, under, over or through them ("an old cliff stands on a leaf").
       const int still_thing = (s.marks & G_MARK_IMMOVABLE) != 0;
       if (still_thing && (e->object & (G_NOT_AIRY | G_BELOW | G_SKYWARD))) return 0;
+      // Review 2026-10-31: "hills remain by a soft branch". A hill, cliff, ridge or bank is too big to be by, near, beside,
+      // along or around a thing; it is only "in" weather ("hills remain in the cold rain"). Walls and stones keep "by".
+      if (still_thing && (s.marks & G_MARK_NOPULL) && !(e->object & G_NOT_SURFACE)) return 0;
       s.phase = G_PP;
       s.object = G_PLANT | G_GROUND | G_WATER |
         (e->object & (G_SPACE | G_CELESTIAL | G_BODY | G_TERRAIN));

@@ -510,7 +510,8 @@ static int self_test() {
                            "Branches shade a rock in a field", "Branches shade a rock in the fields", "Branches shade rocks in fields", "Crows rest in fields",
                            "A crow rests in the fields", "A stone remains in rain", "Grass grows in fields", "Rain falls in fields", "Branches hold rain in fields",
                            "Wet leaves shine", "Petals shine on the pond", "Branches sway on the dark path", "Ice shines on a branch",
-                           "Dew coats a leaf", "Damp fog drifts", "Wet snow melts", "Wet leaves glisten", "Damp moss grows"}) ok &= grammar_test(text,1);
+                           "Dew coats a leaf", "Damp fog drifts", "Wet snow melts", "Wet leaves glisten", "Damp moss grows",
+                           "Hills remain in the cold rain", "A cliff remains in mist", "The wall remains by the path", "A stone remains near the pond"}) ok &= grammar_test(text,1);
   for (const char *text : {"A cosmos lifts stars", "An older cosmos lifts stars", "A universe expands", "Stars cross a cosmos", "Ancient stars stay in the space", "The space is vast",
                            "A worm is tall", "A worm is small", "Worms are still", "A worm crawls on hills", "A worm rests on the shore", "A worm crawls up a tree",
                            "A worm crawls over the field", "A worm floats on streams", "A worm drifts in rain", "Worms crawl on the puddles", "A worm crawls on the pond",
@@ -535,7 +536,8 @@ static int self_test() {
                            "Sunlight glows through the bare branch", "Moonlight shines through a pine", "Starlight fades through the tree", "Light glows through a vine",
                            "Branches shade a rock in fields", "A crow rests in fields", "A stone remains in fields", "Oaks shade the rock in dark fields",
                            "Branches shine on the dark path", "An old pine shines", "Trees shine in the rain", "Roots shine in the soil", "Vines shine by the wall",
-                           "Damp dew coats a leaf", "Wet rain falls", "The wet raindrops fall", "Damp water shines"}) ok &= grammar_test(text,0);
+                           "Damp dew coats a leaf", "Wet rain falls", "The wet raindrops fall", "Damp water shines",
+                           "Hills remain by a soft branch", "A hill remains by the lake", "Cliffs remain near the trees", "The ridge remains along the path", "Banks remain beside a stone"}) ok &= grammar_test(text,0);
   for (int theme : {0,1,2,3}) {
     for (const char *text : {"Moonlight glows", "Sunlight burns on a tall fence", "A bright star rises", "A stream reflects stars", "A full moon fades", "A frog sings"})
       ok &= themed_test(theme,text,1);
