@@ -4,7 +4,7 @@ The Style menu on `generated-haikus.html` offers three kinds of poem (and Mixed,
 
 - **Free** (value `standard`): the unchanged main decoder, `haiku-generator/worker.js` (built from `../haiku-src/`),
   the same poems as the boards.
-- **One-thing** and **Two-part** (Space only): this decoder, `haiku-styles/worker.js`. One-thing keeps
+- **One-thing** and **Two-part** (Space and Winter): this decoder, `haiku-styles/worker.js`. One-thing keeps
   every line to one concept's space words; two-part writes line one from them and lines 2-3 from the
   concept's earthly image, across the cut. These are the haiku lab's styles, on the current rules.
   Since V8.17 (2026-10-30) both leave technical words (fusion, atoms, density, radio waves...) out of their space
@@ -19,6 +19,11 @@ Files:
   styles with a rebuild. If a new `host.cpp` no longer takes the patch, the build stops; update the patch.
 - `lab_concepts.h`: the ten concepts, copied from `../haiku-lab-src/` so the lab and this page do not
   affect each other.
+  Since 2026-10-31 it also holds SEASON_CONCEPTS: a season poem keeps its written opener, which picks the
+  concept (winter: falling snow, ice and frost, winter wind, fog, crows, with stillness and winter light as
+  two-part partners). One-thing stays with that image; two-part sets it against the partner in lines 2-3. The
+  concept's words survive the per-poem palette (`lab_keep`). `--lab-check` checks every word is in its season and
+  every opener of a season with concepts has one. A theme without concepts (spring, summer, autumn) is refused.
 - `browser_styles.cpp`: the browser adapter, exporting `haiku_styles_generate(style, case)`.
 
 The haiku lab (`haiku-lab.html`, `../haiku-lab-src/`, `haiku-lab/`) is separate and unchanged.

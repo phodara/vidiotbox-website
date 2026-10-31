@@ -102,6 +102,7 @@ typedef struct {
 #define GX_BURN 2         // verb: burn, burns (not "moonlight burns" on earth)
 #define GX_SOUND 4        // verb: sing, chirp, hum, howl, whisper, rustle: not after a quiet or calm subject (2026-10-31)
 #define GX_BEE_VERB 8     // verb: buzz, buzzes, swarm, favoured after a bee (haiku_bee_verb_bias)
+#define GX_SHINE 16       // verb: shine, shines: not after trees, branches, pines, oaks, vines or roots (2026-10-31)
 #define GX_GENTLE 1       // adverb: softly, gently (not "a bridge stands gently")
 #define GX_DEIXIS 2       // adverb: here, there (the sun, moon and stars are never "here")
 typedef struct {
@@ -215,6 +216,12 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((e->extra & GX_NO_DET) && s.determiner) return 0;          // "space", never "the space"
       // Review 2026-10-31: "branches hold the dark raindrop". Many things hold raindrops, not one.
       if ((s.phase == G_OBJECT || s.phase == G_OBJECT_NOUN) && s.number == 2 && (e->extra & GX_DROP)) return 0;
+      // Review 2026-10-31: "branches shade a rock in fields". After "in" (G_NOT_SOLID with G_NOT_SURFACE), a bare plural
+      // place needs a plural thing in it: "a rock in a field", "a rock in the fields", "rocks in fields", and mass
+      // things fill one: "grass grows in fields" (number 0). s.number is the subject's until an object noun replaces it
+      // (below); after the verb only these two rules read it.
+      if ((s.phase == G_PP || s.phase == G_PP_NOUN) && (s.object & G_NOT_SOLID) && (s.object & G_NOT_SURFACE) &&
+          !s.determiner && e->number == 2 && s.number == 1) return 0;
       if (!subject && (s.tail & 2)) {
         // Nothing sings, rests or grows "in", "under" or "through" ice.
         if ((s.subject & (G_ANIMAL | G_PLANT)) && (s.object & (G_NOT_SURFACE | G_NOT_SOLID)) && (e->marks & G_MARK_ICE)) return 0;
@@ -294,8 +301,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         if (s.marks & e->marks & G_MARK_FOREVER) return 0;   // not "a faint photon"
         s.marks &= ~(uint32_t)G_MARK_FOREVER;   // the adjective's mark ends with its noun: "faint light fades" is fine
         s.marks |= e->marks & (G_PAIR_MARKS | G_MARK_WATERWORD | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE | G_MARK_ROOT);
-        // "Space and time bend": a second subject noun makes the clause plural.
-        s.number = s.conj ? 2 : e->number;
+        // "Space and time bend": a second subject noun makes the clause plural. A mass noun (singular, no article
+        // needed: grass, rain, snow) is number 0 until the verb, which agrees with it as singular (2026-10-31).
+        s.number = s.conj ? 2 : (e->number == 1 && e->bare) ? 0 : e->number;
         s.subject = s.conj ? (s.subject | e->semantic) : e->semantic;
         s.phase = G_FINITE;
         if (e->object & G_POOL_NOUN) s.tail |= 8;    // season review 2026-10-22
@@ -310,6 +318,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         // adverb at all, which would read as "like sounds far".
         s.tail |= s.object == G_MUSIC ? 5 : 4;
         s.phase = G_DONE;
+        s.number = (e->number == 1 && e->bare) ? 0 : e->number;   // the object's from here on: "a rock in fields" (2026-10-31)
         s.object &= ~G_NO_POOL_NOUN;   // "holds" is done with it; G_WET shares the bit
         s.marks = (uint32_t)((s.marks & G_KEEP_MARKS) |
                              ((s.marks & (G_ORBIT_VERB | G_ORBIT_RANK)) == G_SHADE_RANK ? G_SHADE_RANK : 0));
@@ -353,7 +362,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       *out = s;
       return 1;
     }
-    if (e->number != ((s.number==3 && e->tag!=G_COPULA) ? 2 : s.number) || !(e->semantic & s.subject) ||
+    if (e->number != ((s.number==3 && e->tag!=G_COPULA) ? 2 : s.number==0 ? 1 : s.number) || !(e->semantic & s.subject) ||
         (s.conj && (s.subject & G_ALL & (uint32_t)~e->semantic))) return 0;
     if ((s.tail & 1) && e->tag != G_VERB && e->tag != G_TRANSITIVE) return 0;   // after "I softly", a verb
     s.article = 0;
@@ -372,6 +381,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if (shade && (s.marks & G_ORBIT_RANK) != G_SHADE_RANK) return 0;   // not "reeds shade a stone"
     const int creeper = (s.marks & G_ORBIT_RANK) == 1;   // moss, ivy
     const int tree = (s.marks & G_ORBIT_RANK) == G_SHADE_RANK;   // trees, branches, vines
+    // Review 2026-10-31: "branches shine on the dark path". Wood and roots do not shine; leaves and petals may.
+    if ((e->extra & GX_SHINE) && (tree || (s.marks & G_MARK_ROOT))) return 0;
     s.marks = (uint32_t)((s.marks & G_MARK_DRY) | (shade ? G_SHADE_RANK : 0) | (e->marks & (G_MARK_DRIFTY | G_MARK_JUMPY | G_MARK_GRASPY | G_MARK_NOBLOOM | G_MARK_NEEDS_PLACE)) |
                          (s.marks & (G_MARK_WATERWORD | G_MARK_AIR | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE)) |
                          (s.marks & (G_MARK_TINY | G_MARK_ROOT | G_MARK_IMMOVABLE)) |   // where a worm, a root or a wall may be (V8.17)

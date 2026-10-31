@@ -506,7 +506,10 @@ static int self_test() {
                            "Soft grass sways", "Soft rain falls on the wall", "A soft breeze blows", "The moss is soft",
                            "Bees buzz in the garden", "A bee buzzes over the flowers", "Bees swarm over the field", "Bees hum",
                            "An old crow rests", "Old frogs sing", "A small bee buzzes",
-                           "Sunlight glows through the bare branches", "Moonlight shines through the pines", "The wind rises through a tree", "Sunlight glows on the bare branch"}) ok &= grammar_test(text,1);
+                           "Sunlight glows through the bare branches", "Moonlight shines through the pines", "The wind rises through a tree", "Sunlight glows on the bare branch",
+                           "Branches shade a rock in a field", "Branches shade a rock in the fields", "Branches shade rocks in fields", "Crows rest in fields",
+                           "A crow rests in the fields", "A stone remains in rain", "Grass grows in fields", "Rain falls in fields", "Branches hold rain in fields",
+                           "Wet leaves shine", "Petals shine on the pond", "Branches sway on the dark path", "Ice shines on a branch"}) ok &= grammar_test(text,1);
   for (const char *text : {"A cosmos lifts stars", "An older cosmos lifts stars", "A universe expands", "Stars cross a cosmos", "Ancient stars stay in the space", "The space is vast",
                            "A worm is tall", "A worm is small", "Worms are still", "A worm crawls on hills", "A worm rests on the shore", "A worm crawls up a tree",
                            "A worm crawls over the field", "A worm floats on streams", "A worm drifts in rain", "Worms crawl on the puddles", "A worm crawls on the pond",
@@ -528,7 +531,9 @@ static int self_test() {
                            "A soft wall is dry", "Soft stones are cracked", "The wall is soft", "A rock is soft", "A soft bridge stands",
                            "A bee swarms", "Birds buzz", "Crows swarm over the field", "Quiet bees buzz", "Frogs buzz in the pond",
                            "An old bee buzzes", "Old crickets chirp", "An old beetle crawls", "Old worms crawl",
-                           "Sunlight glows through the bare branch", "Moonlight shines through a pine", "Starlight fades through the tree", "Light glows through a vine"}) ok &= grammar_test(text,0);
+                           "Sunlight glows through the bare branch", "Moonlight shines through a pine", "Starlight fades through the tree", "Light glows through a vine",
+                           "Branches shade a rock in fields", "A crow rests in fields", "A stone remains in fields", "Oaks shade the rock in dark fields",
+                           "Branches shine on the dark path", "An old pine shines", "Trees shine in the rain", "Roots shine in the soil", "Vines shine by the wall"}) ok &= grammar_test(text,0);
   for (int theme : {0,1,2,3}) {
     for (const char *text : {"Moonlight glows", "Sunlight burns on a tall fence", "A bright star rises", "A stream reflects stars", "A full moon fades", "A frog sings"})
       ok &= themed_test(theme,text,1);
