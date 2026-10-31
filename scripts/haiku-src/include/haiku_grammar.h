@@ -94,6 +94,7 @@ typedef struct {
 #define GX_BIG_PLACE 4    // noun: hills, shores, fields, trees, walls...: too big a place for a worm
 #define GX_SIZELESS 8     // noun: dew, rain, mist, mud, light, dust...: no "small dew", "huge stardust"
 #define GX_DROP 16        // noun: raindrop, snowflake: a plural subject holds raindrops, not "the raindrop" (2026-10-31)
+#define GX_WATERY 32      // noun: dew, rain, raindrops, water: wet already, so not "wet" or "damp" (2026-10-31)
 #define GX_SIZE 1         // adjective: small, tiny, huge, giant, large, tall (never after is/are)
 #define GX_WEAR 2         // adjective: worn, weathered, cracked; after is/are, for G_MARK_IMMOVABLE subjects
 #define GX_HUSH 4         // adjective: quiet, calm: never a plant, stone, wall or hill, "quiet trees", "a rock is quiet" (2026-10-31)
@@ -266,7 +267,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.adjectives & G_LIMIT_STONE) && (e->object & G_STONE_NOUN)) return 0;
       // Review 2026-10-31: "an old bee buzzes". Bees, crickets, beetles and worms (the hum and crawl actions) are not old.
       if ((s.adjectives & G_LIMIT_STONE) && (e->semantic & G_ACT_HUM_CRAWL)) return 0;
-      if ((s.adjectives & G_LIMIT_WET) && (e->object & (G_POOL_NOUN | G_EARTH_PHRASE))) return 0; // not "wet waves"
+      if ((s.adjectives & G_LIMIT_WET) && ((e->object & (G_POOL_NOUN | G_EARTH_PHRASE)) || (e->extra & GX_WATERY))) return 0; // not "wet waves", "damp dew"
       if ((s.object & G_SKY_THROUGH) && !(((e->semantic & G_AIRY) && !(e->semantic & G_GROUND)) ||
                                           (e->semantic & G_PLANT))) return 0;   // not "a sun fades through mud"
       const int rank = (int)(e->marks & G_ORBIT_RANK);
