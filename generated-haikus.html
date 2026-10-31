@@ -27,8 +27,11 @@
 <meta property="og:title" content="Generated Haikus - Paul Hodara">
 <meta property="og:description" content="Haiku written live by a tiny on-device language model.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="philosophy-assets/happy.png">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://vidiotbox.net/assets/haiku-matic/haiku-matic-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Haiku-Matic, hAIku Generator Toy: a robot writing haiku on a scroll beside a red sign, Mount Fuji and cherry blossoms">
+<meta name="twitter:card" content="summary_large_image">
 <style>
  :root {--cyan:#7dd3fc;--cyan-strong:#00e5ff;--line:#2a6f78;--green:#00ff66;--ink:#d7dee3;--muted:#aeb4bd;}
  * {box-sizing:border-box;}
@@ -74,7 +77,7 @@
  .is-crawl .writing {font-size:clamp(20px,3vw,34px);}
  .is-crawl .lede,.is-crawl h1 {margin-inline:auto;}
  .is-crawl .reading-only {display:none;}
- dialog {max-width:min(440px,calc(100vw - 32px));background:#101010;color:var(--ink);border:1px solid var(--cyan-strong);box-shadow:0 16px 40px rgba(0,0,0,.6);padding:26px 28px;}
+ dialog {max-width:min(760px,calc(100vw - 32px));background:#101010;color:var(--ink);border:1px solid var(--cyan-strong);box-shadow:0 16px 40px rgba(0,0,0,.6);padding:26px 28px;}
  dialog::backdrop {background:rgba(17,17,17,.8);}
  dialog h2 {color:var(--cyan);font-size:13px;letter-spacing:2px;margin:0 0 20px;}
  .facts {display:grid;gap:14px;margin:0 0 22px;}
@@ -83,6 +86,7 @@
  dialog {max-height:calc(100vh - 32px);overflow-y:auto;}
  .work {text-align:center;border-bottom:1px solid var(--line);padding-bottom:18px;margin:0 0 22px;}
  .work p {margin:0;}
+ .about-art {display:block;width:100%;height:auto;margin:0 0 20px;}
  .work-title {color:var(--cyan);font-size:24px;font-weight:900;letter-spacing:1px;}
  .work-author {color:var(--ink);font-size:15px;font-style:italic;margin-top:6px !important;}
  .work-notice {color:var(--muted);font-size:12px;margin-top:12px !important;}
@@ -93,6 +97,7 @@
   .toolbar {padding:10px;gap:8px;} .brand {width:100%;} button,select {padding:8px;font-size:12px;}
   .crawl-stage {padding:36px 16px;} .poem-grid {grid-template-columns:1fr;} .poem p {font-size:20px;}
   .is-crawl .crawl-stage {perspective:330px;perspective-origin:50% 28%;}
+  dialog {padding:20px 16px;}
   .is-crawl .crawl {width:78vw;} .is-crawl .poem p {font-size:21px;} .is-crawl .poem h3 {font-size:18px;}
  }
  @media(prefers-reduced-motion:reduce) {html {scroll-behavior:auto;} .toolbar {transition:none;}}
@@ -124,6 +129,7 @@
 </div></main>
 <dialog id="aboutDialog" aria-labelledby="aboutTitle">
  <header class="work">
+  <img class="about-art" src="assets/haiku-matic/haiku-matic-banner.webp" width="1600" height="640" alt="Haiku-Matic, hAIku Generator Toy. Imagine, generate, explore. A robot writes on a scroll: Why A.I. Haiku? Another Useless Project, by Paul Hodara.">
   <p class="work-title" id="aboutTitle">One Billion hAIkus</p>
   <p class="work-author">by Paul Hodara</p>
   <p class="work-notice">Copyright &copy; 2026 Paul Hodara. All rights reserved.</p>

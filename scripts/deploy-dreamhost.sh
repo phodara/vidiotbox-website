@@ -4,9 +4,9 @@
 #   DRY=1 scripts/deploy-dreamhost.sh    build and show what would change, upload nothing
 # Builds the site the way the Pages workflow does (scripts/build-site.py) and uploads only what
 # generated-haikus.html loads: the page (as index.html and generated-haikus.html), the generator and
-# style workers with their decoders and model, the music, the icon, and an .htaccess for the .wasm and
-# .mjs types. The key is ~/.ssh/dreamhost_ed25519 (user cosmichaiku). The page needs HTTPS: the
-# workers check the model's SHA-256 with crypto.subtle.
+# style workers with their decoders and model, the music, the icon, the About art and link preview
+# image, and an .htaccess for the .wasm and .mjs types. The key is ~/.ssh/dreamhost_ed25519 (user
+# cosmichaiku). The page needs HTTPS: the workers check the model's SHA-256 with crypto.subtle.
 set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 HOST=${DREAMHOST_HOST:-cosmichaiku@iad1-shared-b7-22.dreamhost.com}
@@ -32,6 +32,8 @@ for old, new in [(' <button id="about" type="button">About</button>\n', ''),
                   '<h1>A sky<br>without edges</h1>'),
                  ('<link rel="canonical" href="https://vidiotbox.net/generated-haikus.html">',
                   '<link rel="canonical" href="https://haiku-matic.com/">'),
+                 ('content="https://vidiotbox.net/assets/haiku-matic/haiku-matic-og.jpg',
+                  'content="https://haiku-matic.com/assets/haiku-matic/haiku-matic-og.jpg'),
                  ('<title>Vidiotbox · Generated Haikus</title>', '<title>hAIku Generator Toy - by Paul Hodara</title>')]:
     if page.count(old) != 1:
         sys.exit(f"deploy-dreamhost.sh: expected one {old!r} in generated-haikus.html")
@@ -41,7 +43,8 @@ EOF
 cp "$OUT/index.html" "$OUT/generated-haikus.html"
 cp -R "$SITE/haiku-generator" "$SITE/haiku-styles" "$OUT/"
 rm -f "$OUT/haiku-generator/index.html"   # the generator page links to the rest of vidiotbox.net
-mkdir -p "$OUT/assets/audio" "$OUT/philosophy-assets"
+mkdir -p "$OUT/assets/audio" "$OUT/assets/haiku-matic" "$OUT/philosophy-assets"
+cp "$SITE/assets/haiku-matic/haiku-matic-banner.webp" "$SITE/assets/haiku-matic/haiku-matic-og.jpg" "$OUT/assets/haiku-matic/"
 cp "$SITE/assets/audio/shika-no-toone-shakuhachi.mp3" "$OUT/assets/audio/"
 cp "$ROOT/philosophy-assets/happy.png" "$OUT/philosophy-assets/"   # build-site.py does not copy it
 cat > "$OUT/.htaccess" <<'EOF'
