@@ -98,6 +98,10 @@
  .work-author {color:var(--ink);font-size:15px;font-style:italic;margin-top:6px !important;}
  .work-notice {color:var(--muted);font-size:12px;margin-top:12px !important;}
  .credits {border-top:1px solid var(--line);padding-top:18px;margin:0 0 22px;}
+ .instructions {border-top:1px solid var(--line);padding-top:18px;margin:0 0 22px;}
+ .instructions dl {margin:0;}
+ .instructions dt {color:#fff;font-size:13px;font-weight:700;}
+ .instructions dd {margin:2px 0 12px;font-size:13px;line-height:1.55;color:var(--muted);}
  .credits p {font-size:12px;line-height:1.55;color:var(--muted);margin:0 0 10px;}
  .credits strong {color:var(--ink);}
  @media(max-width:640px) {
@@ -148,6 +152,19 @@
   <div><span>Inference</span><strong>INT4 + INT8</strong></div>
   <div><span>Styles</span><strong>Free · One-thing · Two-part · Mixed (Space)</strong></div>
  </div>
+ <section class="instructions" aria-labelledby="instructionsTitle">
+  <h2 id="instructionsTitle">INSTRUCTIONS</h2>
+  <dl>
+   <dt>Menu bar</dt><dd>The bar at the top hides after a few seconds. Move the mouse, tap or scroll to bring it back.</dd>
+   <dt>Theme</dt><dd>Space, Spring, Summer, Autumn or Winter, or All themes to take turns. Changing it starts the crawl again with the new theme.</dd>
+   <dt>Style</dt><dd><strong>Free</strong>: each line is chosen on its own. <strong>One-thing</strong>: every line stays with one idea, such as a black hole. <strong>Two-part</strong>: two images set side by side. <strong>Mixed</strong>: one of the three at random for each poem. The styles are written for Space, so choosing one sets the theme to Space, and choosing a season sets the style back to Free.</dd>
+   <dt>Reading view / Play crawl</dt><dd>Reading view stops the crawl and lists the poems so you can scroll through them, with <strong>Write another</strong> to add one more. Play crawl starts the crawl again. Esc also switches to the reading view.</dd>
+   <dt>Pause / Resume</dt><dd>Stops and restarts the crawl and the music.</dd>
+   <dt>Speed</dt><dd>How fast the crawl moves, from 0.5&times; to 4&times;.</dd>
+   <dt>Music</dt><dd>Shakuhachi music on or off. Browsers play sound only after you click or tap the page once.</dd>
+   <dt>Stars</dt><dd>The star field on or off.</dd>
+  </dl>
+ </section>
  <section class="credits" aria-labelledby="creditsTitle">
   <h2 id="creditsTitle">CREDITS AND LICENSES</h2>
   <p><strong>Invited Haiku Lab reviewers.</strong> Much of the rule development came from poems rated and annotated in the Haiku Lab by volunteer reviewers.<br>Thank you &ndash; <em>Paul Hodara</em></p>
