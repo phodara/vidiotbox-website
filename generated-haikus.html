@@ -150,14 +150,14 @@
  <div class="facts">
   <div><span>Model</span><strong>V8.22 · PLE / TinyStories</strong></div>
   <div><span>Inference</span><strong>INT4 weights · INT8 math</strong></div>
-  <div><span>Styles</span><strong>Free · One-thing · Two-part · Mixed (Space, Winter)</strong></div>
+  <div><span>Styles</span><strong>Free · One-thing · Two-part · Mixed (Space, Autumn, Winter)</strong></div>
  </div>
  <section class="instructions" aria-labelledby="instructionsTitle">
   <h2 id="instructionsTitle">INSTRUCTIONS</h2>
   <dl>
    <dt>Menu bar</dt><dd>The bar at the top hides after a few seconds. Move the mouse, tap or scroll to bring it back.</dd>
    <dt>Theme</dt><dd>Space, Spring, Summer, Autumn or Winter, or All themes to take turns. Changing it starts the crawl again with the new theme.</dd>
-   <dt>Style</dt><dd><strong>Free</strong>: each line is chosen on its own. <strong>One-thing</strong>: every line stays with one idea, such as a black hole or falling snow. <strong>Two-part</strong>: two images set side by side, such as wind in the pines and a still pond. <strong>Mixed</strong>: one of the three at random for each poem. The styles are written for Space and Winter, so choosing one with another theme sets the theme to Space, and choosing another season sets the style back to Free.</dd>
+   <dt>Style</dt><dd><strong>Free</strong>: each line is chosen on its own. <strong>One-thing</strong>: every line stays with one idea, such as a black hole, falling snow or falling leaves. <strong>Two-part</strong>: two images set side by side, such as wind in the pines and a still pond. <strong>Mixed</strong>: one of the three at random for each poem. The styles are written for Space, Autumn and Winter, so choosing one with another theme sets the theme to Space, and choosing another season sets the style back to Free.</dd>
    <dt>Reading view / Play crawl</dt><dd>Reading view stops the crawl and lists the poems so you can scroll through them, with <strong>Write another</strong> to add one more. Play crawl starts the crawl again. Esc also switches to the reading view.</dd>
    <dt>Pause / Resume</dt><dd>Stops and restarts the crawl and the music.</dd>
    <dt>Speed</dt><dd>How fast the crawl moves, from 0.5&times; to 4&times;.</dd>
@@ -194,11 +194,11 @@ let offset = 0, lastFrame = null, paused = false, readingScroll = 0, musicOn = f
 let worker, ready = false, styleWorker, styleReady = false, busy = false, failed = false, requestId = 0, pending = null, nextTheme = 0, themeEpoch = 0;
 
 // ---- Generator (same worker as /haiku-generator/, runs entirely on this device) ----
-// Free (internally "standard") poems come from that worker. The One-thing and Two-part styles (Space and Winter) come from
+// Free (internally "standard") poems come from that worker. The One-thing and Two-part styles (Space, Autumn and Winter) come from
 // haiku-styles/worker.js, started the first time one is chosen; it reads the same cached model.
-// Mixed (Space and Winter too) draws one of the three for each poem and so needs both workers.
+// Mixed (Space, Autumn and Winter too) draws one of the three for each poem and so needs both workers.
 const STYLES = ['standard', 'one-thing', 'two-part'], STYLE_NAMES = {'one-thing': 'One-thing', 'two-part': 'Two-part'};
-const STYLED_THEMES = ['space', 'winter'];
+const STYLED_THEMES = ['space', 'autumn', 'winter'];
 const styled = () => style.value !== 'standard';
 const mixed = () => style.value === 'mixed';
 const canWrite = () => mixed() ? ready && styleReady : styled() ? styleReady : ready;
@@ -370,7 +370,7 @@ function restartCrawl() {
   offset = 0; lastFrame = null;
   fillBuffer();
 }
-// The styles are written for Space and Winter: choosing one with another theme sets the theme to Space, and
+// The styles are written for Space, Autumn and Winter: choosing one with another theme sets the theme to Space, and
 // choosing another theme sets the style back to Free.
 theme.addEventListener('change', () => {
   if (styled() && !STYLED_THEMES.includes(theme.value)) style.value = 'standard';

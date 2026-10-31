@@ -54,5 +54,12 @@ static const SeasonConcept SEASON_CONCEPTS[] = {
   {"crows", 3, "Crows rest", "crow crows branch branches oak perch rest rests bare", 0},
   {"stillness", 3, "", "pond lake water still calm quiet stone stones", 2},
   {"winter light", 3, "", "sun sunlight moonlight moon light glow glows pale warm warms", 1},
+  // Autumn (2026-10-31, first draft).
+  {"falling leaves", 2, "Red leaves drift|Dry leaves fall|Leaves rustle", "leaves leaf fall falls drift red dry rustle earth path", 12},
+  {"autumn wind", 2, "Oaks sway|The wind blows", "wind winds gust gusts blow blows sway oak branch branches bare", 12},
+  {"cold rain and mist", 2, "Cold rain falls|Mist rises", "rain cold mist fog rise rises fall falls field fields hill hills", 10},
+  {"crows", 2, "Crows fly", "crow crows fly flies field fields branch branches oak", 11},
+  {"fading", 2, "Moonlight fades|Crickets chirp", "moonlight moon fade fades pale cricket crickets chirp chirps", 7},
+  {"a still pond", 2, "", "pond lake water still calm quiet stone stones", 9},
 };
 static constexpr int SEASON_N_CONCEPTS = sizeof SEASON_CONCEPTS / sizeof SEASON_CONCEPTS[0];
