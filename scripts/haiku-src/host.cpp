@@ -432,7 +432,10 @@ static int self_test() {
                            "Light glows through the leaves", "Twigs drift over the grass", "The puddles shine in the fields", "Bees float over the fence",
                            "Crickets jump over the fence", "Leaves drift across the field",
                            "Crows fly through the oaks", "The oak holds cool mist", "Branches hold rain", "The wind blows over the soil", "Rain falls on soil",
-                           "Waves on the stream wash the shore", "The stream washes a stone", "Rain washes the gate"}) ok &= grammar_test(text,1);
+                           "Waves on the stream wash the shore", "The stream washes a stone", "Rain washes the gate",
+                           "Grass grows under a bridge", "Sunlight glows through the dark reeds", "Sunlight glows in a raindrop", "The wind rises over a path",
+                           "Crickets chirp on a dark leaf", "Branches sway in the rain",
+                           "Crickets sing on the hill", "The water flows by the hills", "Air rises over a bank", "Worms crawl beneath stones", "Ducks swim under a bridge"}) ok &= grammar_test(text,1);
   for (const char *text : {"A cosmos lifts stars", "An older cosmos lifts stars", "A universe expands", "Stars cross a cosmos", "Ancient stars stay in the space", "The space is vast",
                            "A worm is tall", "A worm is small", "Worms are still", "A worm crawls on hills", "A worm rests on the shore", "A worm crawls up a tree",
                            "A worm crawls over the field", "A worm floats on streams", "A worm drifts in rain", "Worms crawl on the puddles", "A worm crawls on the pond",
@@ -464,7 +467,11 @@ static int self_test() {
                            "The puddles shine over fields", "A pond sparkles across the meadow", "Crickets float over the fence", "A beetle drifts by the wall", "The air rises through a twig",
                            "The wind rises through a branch", "Crows fly through the oak", "The air rises through a tree", "The oak holds cool mist on gates",
                            "Branches hold rain in the field", "Branches hold rain in fields", "The wind blows on soil", "A breeze stirs on the earth", "Calm waves on the stream wash gates",
-                           "The brook washes a wall"}) ok &= grammar_test(text,0);
+                           "The brook washes a wall",
+                           "Branches bloom under a field", "Branches bloom under a rock", "Branches sway in a raindrop", "Sunlight glows through a dark reed",
+                           "The wind rises through a path", "Crickets chirp in a dark leaf", "A bee rests in a petal", "A frog sings in a snowflake",
+                           "Crickets sing beneath the hill", "The water flows under hills", "The light glows beneath a hill", "A frog rests under the bank",
+                           "Bees hum beneath the ridge"}) ok &= grammar_test(text,0);
   for (int theme : {0,1,2,3}) {
     for (const char *text : {"Moonlight glows", "Sunlight burns on a tall fence", "A bright star rises", "A stream reflects stars", "A full moon fades", "A frog sings"})
       ok &= themed_test(theme,text,1);
@@ -474,8 +481,8 @@ static int self_test() {
   for (const char *text : {"Starlight burns through space", "Stars burn", "Stars glow in space", "The vast universe expands"}) ok &= themed_test(HAIKU_SEASON_SPACE,text,1);
   for (const char *text : {"Ancient stars stay in the space", "The universe falls", "Giant stardust falls away", "Tiny stardust burns"}) ok &= themed_test(HAIKU_SEASON_SPACE,text,0);
   // Review 2026-10-31: nothing blooms in winter; the other seasons keep it.
-  for (int t=0;t<3;t++) ok &= themed_test(t,"Flowers bloom in the field",1);
-  for (const char *text : {"Flowers bloom in the field", "Tall trees bloom"}) ok &= themed_test(3,text,0);
+  for (int t=0;t<2;t++) ok &= themed_test(t,"Flowers bloom in the field",1);
+  for (int t : {2,3}) for (const char *text : {"Flowers bloom in the field", "Tall trees bloom"}) ok &= themed_test(t,text,0);   // autumn too (2026-10-31)
   // Review 2026-10-31: light goes through branches, not one branch; the wind may rise through a tree.
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through a green branch", "Pale light glows through a tree", "Sunlight glows through the bare branch"}) ok &= themed_test(t,text,0);
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through the branches", "The wind rises through the trees",

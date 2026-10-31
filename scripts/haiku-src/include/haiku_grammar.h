@@ -270,6 +270,20 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       // preposition with G_NOT_SOLID and no G_NOT_SURFACE; the air rule turns it into "in" for the word "air".
       if (!subject && (s.object & G_NOT_SOLID) && (!(s.object & G_NOT_SURFACE) || ((s.marks & G_MARK_AIR) && !(s.subject & G_LIGHT))) &&
           (e->object & G_SINGLE_FOREST)) return 0;
+      // Review 2026-10-31 (autumn batch 2). "in" is G_NOT_SOLID with G_NOT_SURFACE.
+      if (!subject && (s.object & G_NOT_SOLID) && (s.object & G_NOT_SURFACE)) {
+        // "crickets chirp in a dark leaf": nothing is in a single leaf, petal, twig, flower or bud (on it is fine).
+        if (e->extra & GX_SMALL_PART) return 0;
+        // "branches sway in a raindrop": nothing but light is in a raindrop or snowflake.
+        if ((e->extra & GX_DROP) && !(s.subject & G_LIGHT)) return 0;
+      }
+      // "crickets sing beneath the hill", "the water flows under hills": nothing is under a hill, hillside, hilltop, ridge,
+      // bank or cliff (the immovable nouns with G_MARK_NOPULL). "under" sets G_NOT_SURFACE without G_NOT_SOLID; so does
+      // the air rule's "over" for the word "air", which this leaves alone.
+      if (!subject && (s.object & G_NOT_SURFACE) && !(s.object & G_NOT_SOLID) && !((s.marks & G_MARK_AIR) && !(s.subject & G_LIGHT)) &&
+          (e->marks & G_MARK_IMMOVABLE) && (e->marks & G_MARK_NOPULL)) return 0;
+      // "the wind rises through a path": wind and air go over or along a path or shore, not through it.
+      if (!subject && (s.subject & G_AIR) && (s.object & G_NOT_SOLID) && !(s.object & G_NOT_SURFACE) && (e->semantic & G_SURFACE)) return 0;
       // "the wind blows on soil": wind, breezes and air are not "on" soil, earth or mud (G_NOT_AIRY marks "on").
       if (!subject && (s.subject & G_AIR) && (s.object & G_NOT_AIRY) && (e->extra & GX_SIZELESS) && (e->semantic & G_GROUND)) return 0;
       if ((s.tail & 64) && (s.object & G_ONLY_POOL) && (e->object & G_POOL_NOUN)) return 0; // bees float over ponds
@@ -533,6 +547,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.marks & G_MARK_NOBLOOM) && (e->object & (G_BELOW | G_NOT_SURFACE))) s.object |= G_NOT_WATER;   // not "vines bloom under the water"; rain and dew are fine
       if ((s.marks & G_MARK_DEW) && (e->object & G_NOT_SURFACE)) s.object |= G_NO_POOL_NOUN;   // not "dew shines in a lake"
       if ((s.marks & G_MARK_FLYER) && (e->object & G_BELOW)) s.adjectives |= G_LIMIT_ABOVE;   // birds sing under a bridge or branches, not beneath stones
+      // Review 2026-10-31: "branches bloom under a field", "under a rock". A plant is not under the ground (a bridge is fine).
+      if ((s.subject & G_PLANT) && (e->object & G_BELOW)) s.adjectives |= G_LIMIT_ABOVE;
       if ((s.marks & G_MARK_DRIFTY) && (e->object & G_NOT_AIRY)) s.adjectives |= G_LIMIT_STONE;   // drift over stones, not "on" them
       if ((s.marks & G_MARK_WATERWORD) && (e->object & (G_NOT_SURFACE | G_NOT_AIRY))) s.adjectives |= G_LIMIT_FIELD;   // water is not "in" a field
       if ((s.marks & G_MARK_AIR) && (e->object & G_NOT_SURFACE)) s.object |= G_NOT_PLANT;   // air is over leaves, not "in" them
