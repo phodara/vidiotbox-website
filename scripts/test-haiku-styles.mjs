@@ -16,13 +16,14 @@ for (const [name, digest] of Object.entries(info.source_sha256))
 let line;
 const module = await createDecoder({wasmBinary: wasm, print: text => {line = text;}});
 module.FS.writeFile('/model.bin', model);
-assert.equal(module._haiku_styles_generate(0, 0), 2);
-assert.equal(module._haiku_styles_generate(3, 0), 2);
+assert.equal(module._haiku_styles_generate(0, 4, 0), 2);
+assert.equal(module._haiku_styles_generate(3, 4, 0), 2);
+assert.equal(module._haiku_styles_generate(1, 0, 0), 2, 'spring has no concepts yet');
 const concepts = new Set();
-for (const style of [1, 2]) {
+for (const theme of [4, 3]) for (const style of [1, 2]) {
   for (let caseNumber = 0; caseNumber < 10; caseNumber++) {
     line = null;
-    assert.equal(module._haiku_styles_generate(style, caseNumber), 0);
+    assert.equal(module._haiku_styles_generate(style, theme, caseNumber), 0);
     const poem = JSON.parse(line);
     assert.equal(poem.complete, true);
     assert.deepEqual(poem.syllables, [5, 7, 5]);
@@ -31,4 +32,4 @@ for (const style of [1, 2]) {
     concepts.add(poem.concept);
   }
 }
-console.log(`styles: 20 complete poems, ${concepts.size} concepts`);
+console.log(`styles: 40 complete poems (space and winter), ${concepts.size} concepts`);

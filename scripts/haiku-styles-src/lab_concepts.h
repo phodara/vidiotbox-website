@@ -34,3 +34,25 @@ static const LabConcept LAB_CONCEPTS[] = {
    1, "bees bee hum flowers flower petals garden"},
 };
 static constexpr int LAB_N_CONCEPTS = sizeof LAB_CONCEPTS / sizeof LAB_CONCEPTS[0];
+
+// Season styles (2026-10-31, winter first). A season poem keeps its written opener, so the opener picks
+// the concept: one-thing stays with that image in every line; two-part sets it against the partner
+// concept's image in lines 2-3, across the cut. Concepts with no openers serve only as partners.
+struct SeasonConcept {
+  const char *name;
+  int season;           // 0 spring, 1 summer, 2 autumn, 3 winter
+  const char *openers;  // the season openers (seed texts) that start this image, separated by |
+  const char *words;
+  int partner;          // two-part: the concept for lines 2-3 (index into SEASON_CONCEPTS)
+};
+
+static const SeasonConcept SEASON_CONCEPTS[] = {
+  {"falling snow", 3, "Snow falls|Snowflakes fall", "snow snowflake snowflakes fall falls softly quietly still quiet field fields hill lake cover covers", 4},
+  {"ice and frost", 3, "Ice shines|Frost sparkles|Mist freezes", "ice frost freeze freezes cold sparkle sparkles shine shines pond stone stones", 6},
+  {"winter wind", 3, "Cold wind howls|Bare trees sway|Pines sway", "wind winds gust gusts howl howls blow blows sway bare branch branches pine pines", 5},
+  {"fog", 3, "Fog drifts", "fog mist drift fade fades pale path paths field fields", 4},
+  {"crows", 3, "Crows rest", "crow crows branch branches oak perch rest rests bare", 0},
+  {"stillness", 3, "", "pond lake water still calm quiet stone stones", 2},
+  {"winter light", 3, "", "sun sunlight moonlight moon light glow glows pale warm warms", 1},
+};
+static constexpr int SEASON_N_CONCEPTS = sizeof SEASON_CONCEPTS / sizeof SEASON_CONCEPTS[0];

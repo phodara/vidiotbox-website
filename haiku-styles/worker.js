@@ -1,9 +1,9 @@
-// Style worker for generated-haikus.html: one-thing and two-part space poems from the style decoder
+// Style worker for generated-haikus.html: one-thing and two-part poems (space and winter) from the style decoder
 // (scripts/haiku-styles-src, the current host.cpp plus the styles patch) with the V8 model from
 // ../haiku-generator/. Runs entirely on the visitor's device. The Free style uses the unchanged
 // ../haiku-generator/worker.js instead.
 let runtime, info, output, loading;
-const styles = {'one-thing': 1, 'two-part': 2};
+const styles = {'one-thing': 1, 'two-part': 2}, themes = {winter: 3, space: 4};
 const progress = text => postMessage({type: 'progress', text});
 const sha256 = async bytes => [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(n => n.toString(16).padStart(2, '0')).join('');
 async function checkedFetch(url) {
@@ -43,14 +43,14 @@ self.onmessage = async ({data}) => {
   }
   if (data.type !== 'generate') return;
   try {
-    const style = styles[data.style];
-    if (!runtime || !style || !Number.isInteger(data.case) || data.case < 0 || data.case > 1e9) throw Error('Invalid generation request.');
+    const style = styles[data.style], theme = themes[data.theme];
+    if (!runtime || !style || !theme || !Number.isInteger(data.case) || data.case < 0 || data.case > 1e9) throw Error('Invalid generation request.');
     output = null;
     const started = performance.now();
-    const code = runtime._haiku_styles_generate(style, data.case);
+    const code = runtime._haiku_styles_generate(style, theme, data.case);
     if (code || !output) throw Error('The decoder could not finish this poem.');
     const result = JSON.parse(output);
-    result.theme = 'space';
+    result.theme = data.theme;
     result.browser_seconds = (performance.now() - started) / 1000;
     postMessage({type: 'result', id: data.id, result});
   } catch (error) {postMessage({type: 'error', id: data.id, error: error.message});}

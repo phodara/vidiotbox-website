@@ -150,14 +150,14 @@
  <div class="facts">
   <div><span>Model</span><strong>V8.17 · PLE / TinyStories</strong></div>
   <div><span>Inference</span><strong>INT4 weights · INT8 math</strong></div>
-  <div><span>Styles</span><strong>Free · One-thing · Two-part · Mixed (Space)</strong></div>
+  <div><span>Styles</span><strong>Free · One-thing · Two-part · Mixed (Space, Winter)</strong></div>
  </div>
  <section class="instructions" aria-labelledby="instructionsTitle">
   <h2 id="instructionsTitle">INSTRUCTIONS</h2>
   <dl>
    <dt>Menu bar</dt><dd>The bar at the top hides after a few seconds. Move the mouse, tap or scroll to bring it back.</dd>
    <dt>Theme</dt><dd>Space, Spring, Summer, Autumn or Winter, or All themes to take turns. Changing it starts the crawl again with the new theme.</dd>
-   <dt>Style</dt><dd><strong>Free</strong>: each line is chosen on its own. <strong>One-thing</strong>: every line stays with one idea, such as a black hole. <strong>Two-part</strong>: two images set side by side. <strong>Mixed</strong>: one of the three at random for each poem. The styles are written for Space, so choosing one sets the theme to Space, and choosing a season sets the style back to Free.</dd>
+   <dt>Style</dt><dd><strong>Free</strong>: each line is chosen on its own. <strong>One-thing</strong>: every line stays with one idea, such as a black hole or falling snow. <strong>Two-part</strong>: two images set side by side, such as wind in the pines and a still pond. <strong>Mixed</strong>: one of the three at random for each poem. The styles are written for Space and Winter, so choosing one with another theme sets the theme to Space, and choosing another season sets the style back to Free.</dd>
    <dt>Reading view / Play crawl</dt><dd>Reading view stops the crawl and lists the poems so you can scroll through them, with <strong>Write another</strong> to add one more. Play crawl starts the crawl again. Esc also switches to the reading view.</dd>
    <dt>Pause / Resume</dt><dd>Stops and restarts the crawl and the music.</dd>
    <dt>Speed</dt><dd>How fast the crawl moves, from 0.5&times; to 4&times;.</dd>
@@ -194,10 +194,11 @@ let offset = 0, lastFrame = null, paused = false, readingScroll = 0, musicOn = f
 let worker, ready = false, styleWorker, styleReady = false, busy = false, failed = false, requestId = 0, pending = null, nextTheme = 0, themeEpoch = 0;
 
 // ---- Generator (same worker as /haiku-generator/, runs entirely on this device) ----
-// Free (internally "standard") poems come from that worker. The One-thing and Two-part styles (Space only) come from
+// Free (internally "standard") poems come from that worker. The One-thing and Two-part styles (Space and Winter) come from
 // haiku-styles/worker.js, started the first time one is chosen; it reads the same cached model.
-// Mixed (Space only too) draws one of the three for each poem and so needs both workers.
+// Mixed (Space and Winter too) draws one of the three for each poem and so needs both workers.
 const STYLES = ['standard', 'one-thing', 'two-part'], STYLE_NAMES = {'one-thing': 'One-thing', 'two-part': 'Two-part'};
+const STYLED_THEMES = ['space', 'winter'];
 const styled = () => style.value !== 'standard';
 const mixed = () => style.value === 'mixed';
 const canWrite = () => mixed() ? ready && styleReady : styled() ? styleReady : ready;
@@ -227,7 +228,7 @@ function requestPoem(themeName) {
     // The heading names the style when it is not Free, and every style in Mixed.
     const label = kind === 'standard' ? (mixed() ? 'Free' : '') : STYLE_NAMES[kind];
     pending = {id, resolve: result => resolve({...result, label}), reject, timeout};
-    if (kind !== 'standard') styleWorker.postMessage({type: 'generate', id, style: kind, case: random[0] % 1000000000});
+    if (kind !== 'standard') styleWorker.postMessage({type: 'generate', id, style: kind, theme: themeName, case: random[0] % 1000000000});
     else worker.postMessage({type: 'generate', id, theme: themeName, case: random[0] % 1000000000});
   });
 }
@@ -369,16 +370,16 @@ function restartCrawl() {
   offset = 0; lastFrame = null;
   fillBuffer();
 }
-// The styles are written for Space: choosing one sets the theme to Space, and choosing
-// another theme sets the style back to Free.
+// The styles are written for Space and Winter: choosing one with another theme sets the theme to Space, and
+// choosing another theme sets the style back to Free.
 theme.addEventListener('change', () => {
-  if (styled() && theme.value !== 'space') style.value = 'standard';
+  if (styled() && !STYLED_THEMES.includes(theme.value)) style.value = 'standard';
   more.disabled = !canWrite();
   restartCrawl();
 });
 style.addEventListener('change', () => {
   if (styled()) {
-    theme.value = 'space';
+    if (!STYLED_THEMES.includes(theme.value)) theme.value = 'space';
     if (!styleWorker && !failed) startStyleWorker();
     else if (!styleReady && !failed) statusLine.textContent = 'Loading the style generator…';
   }
