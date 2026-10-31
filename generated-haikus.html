@@ -148,7 +148,7 @@
  <p class="about-lead">Every haiku here is one of over a billion that Haiku-Matic can generate.</p>
  <p class="about-text"><strong>How it was made.</strong> Every haiku here is written by a tiny language model, 28.9 million parameters, first trained on children's stories and small enough to run on a microcontroller, and here in your browser. On its own it wrote broken, story-like English. So it went back to school. A much larger model, Qwen, wrote 5,000 example haiku under strict rules, and later about 5,000 more, written by Claude and checked by hand, became its training set. Training works by backpropagation: each time the model guesses the next word wrongly, the error is traced back through the network and every weight is nudged so the guess is a little less wrong. The training was also quantization-aware: it simulated rounding the weights to 4 bits as it went, so the model learned to work at the tiny size it is shipped in. Even so, the model only suggests the next word. Hand-made rules decide which words are allowed, so every haiku is exactly 5-7-5, in whole sentences. Many of those rules came from volunteer reviewers in the Haiku Lab, who rated and annotated poems line by line. Each recurring complaint, such as &ldquo;sounds too much like astronomy class&rdquo;, became a new rule, tested on thousands of poems before it was released.</p>
  <div class="facts">
-  <div><span>Model</span><strong>V8.22 · PLE / TinyStories</strong></div>
+  <div><span>Model</span><strong>V8.23 · PLE / TinyStories</strong></div>
   <div><span>Inference</span><strong>INT4 weights · INT8 math</strong></div>
   <div><span>Styles</span><strong>Free · One-thing · Two-part · Mixed (Space, Autumn, Winter)</strong></div>
  </div>
