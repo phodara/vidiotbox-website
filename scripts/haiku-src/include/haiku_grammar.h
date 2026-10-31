@@ -250,6 +250,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       // Not "bees hum in the lake", nor (2026-10-25) "roots hold a wave on the stream".
       if ((s.object & G_NO_POOL_NOUN) && (e->object & (G_POOL_NOUN | G_EARTH_PHRASE))) return 0;
       if ((s.object & G_SKY_THROUGH) && (e->object & G_SINGLE_FOREST)) return 0; // use "through the trees/pines/vines/branches"
+      // Review 2026-10-31: sunlight, moonlight and starlight too, "sunlight glows through the bare branch". "through" is
+      // the one preposition with G_NOT_SOLID and no G_NOT_SURFACE; the wind may still rise through a tree.
+      if (!subject && (s.subject & G_LIGHT) && (s.object & G_NOT_SOLID) && !(s.object & G_NOT_SURFACE) && (e->object & G_SINGLE_FOREST)) return 0;
       if ((s.tail & 64) && (s.object & G_ONLY_POOL) && (e->object & G_POOL_NOUN)) return 0; // bees float over ponds
       if ((s.adjectives & G_LIMIT_MOON) && !(e->object & G_MOON_NOUN)) return 0;   // a full moon only
       if ((s.adjectives & G_LIMIT_TREE) && (e->semantic & G_PLANT) && !(e->object & G_ROOTED_NOUN)) return 0;
@@ -489,7 +492,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.marks & G_MARK_DRIFTY) && (e->object & G_NOT_AIRY)) s.adjectives |= G_LIMIT_STONE;   // drift over stones, not "on" them
       if ((s.marks & G_MARK_WATERWORD) && (e->object & (G_NOT_SURFACE | G_NOT_AIRY))) s.adjectives |= G_LIMIT_FIELD;   // water is not "in" a field
       if ((s.marks & G_MARK_AIR) && (e->object & G_NOT_SURFACE)) s.object |= G_NOT_PLANT;   // air is over leaves, not "in" them
-      if ((s.marks & G_MARK_AIR) && (e->object & G_SKYWARD)) s.object |= G_NOT_SURFACE;   // nor "air rises through a small path" (2026-10-31)
+      // Nor "air rises through a small path" (2026-10-31). The word "air" only: light, the sun, moon and stars share
+      // G_MARK_AIR, and "the moon rises over the shore" stays (V8.18 refused it by mistake).
+      if ((s.marks & G_MARK_AIR) && !(s.subject & G_LIGHT) && (e->object & G_SKYWARD)) s.object |= G_NOT_SURFACE;
       if ((s.tail & 32) && (e->object & G_NOT_AIRY) && !(s.marks & G_MARK_CREEPER)) s.adjectives |= G_LIMIT_STONE;   // not "grass sways on stones"; moss does grow on them
       if ((s.tail & 64) && (e->object & G_NOT_AIRY)) s.object |= G_NO_POOL_NOUN;   // "bees hum on the lake"
       // Review round 7: "the bird sings in a soft leaf", "birds sing on the stone".

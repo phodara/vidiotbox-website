@@ -173,7 +173,7 @@
    // The poem's palette can leave a line no way to finish; retry it with every word.
    if (!best.n && constrained && featured()) {
      palette_on=false; palette_fallbacks++;
-@@ -517,6 +601,51 @@
+@@ -525,6 +609,51 @@
    printf("{\"self_test\":%s,\"grammar_workspace_bytes\":%zu,\"grammar_table_bytes\":%zu,\"grammar_state_bytes\":%zu}\n",
           ok?"true":"false",sizeof workspace,sizeof G_ENTRIES,sizeof(GState));
    return ok?0:1;
@@ -225,7 +225,7 @@
  }
  static float *allocate(size_t count) {
    float *p=(float *)calloc(count,sizeof(float));
-@@ -524,6 +653,7 @@
+@@ -532,6 +661,7 @@
  }
  int main(int argc,char **argv) {
    if (argc==2 && !strcmp(argv[1],"--self-test")) return self_test();
@@ -233,7 +233,7 @@
    if ((argc==2 || argc==3) && !strcmp(argv[1],"--check")) {   // one clause per stdin line: does the grammar accept it?
      if (argc==3) {   // --check THEME: read the words as that theme does (no per-poem thinning)
        static const char *const names[]={"spring","summer","autumn","winter","space"}; int t=-1;
-@@ -618,6 +748,14 @@
+@@ -626,6 +756,14 @@
    }
  #endif
    if (strcmp(argv[2],"baseline") && strcmp(argv[2],"grammar")) return 2;
@@ -248,7 +248,7 @@
    // Simulator protocol: one case number per stdin line, one JSON poem per stdout line.
    // Keep the model and recent-word history alive between requests.
    bool interactive=!strcmp(argv[3],"interactive");
-@@ -657,7 +795,7 @@
+@@ -665,7 +803,7 @@
      place_seed=((uint32_t)(6001+c)*2654435761u)|1;
      select_theme(chosen);
      rng=6001+c; uint32_t initial_seed=rng; pron_class=seed.pron;
@@ -257,7 +257,7 @@
      haiku_decay_recent(fresh_decay);   // freshness carries across poems in one run
      memset(&workspace,0,sizeof workspace); forwards=rejected=attempts=grammar_filtered=palette_fallbacks=0;
      line_repeat_attempts=line_repeat_fallbacks=0;
-@@ -674,6 +812,24 @@
+@@ -682,6 +820,24 @@
      // Person poems always generate their first line; canned lines have no guaranteed voice.
      if (person_voice) { free_start="0"; free_line_one=true; }
      person_end=person_voice && (int)(((uint32_t)(c+1)*2654435761u)>>17)%100<person_end_percent;
@@ -282,7 +282,7 @@
      const char *first_prefix=free_start?"":seed.text;
      if (free_start) forward(atoi(free_start),pos++);
      else {
-@@ -682,6 +838,10 @@
+@@ -690,6 +846,10 @@
        line_syl[0]=seed.syl;
      }
      for (int line=0;line<3;line++) {
@@ -293,7 +293,7 @@
        pos=write_line(line,line==0?first_prefix:"",pos);
        if (constrained) haiku_capitalize_i(lines[line]);
        if (line==0 && free_line_one && lines[0][0]>='a' && lines[0][0]<='z') lines[0][0]-='a'-'A';
-@@ -690,8 +850,10 @@
+@@ -698,8 +858,10 @@
        if (line==2) append(lines[2],".",1);
      }
      remember_poem_lines();
