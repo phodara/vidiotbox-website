@@ -114,6 +114,14 @@ static inline float haiku_wave_fall_penalty(const GEntry &entry, const GState &s
   return (state.subject & G_WAVE_SUBJECT) && entry.tag==G_VERB && (entry.object & G_DOWNWARD) ? weight : 0.f;
 }
 
+// A sampling bias for a bee's verb (review 2026-10-31: "bees float" was most bee lines):
+// "float" loses HAIKU_BEE_FLOAT_PENALTY and "buzz", "buzzes", "swarm" gain HAIKU_BEE_VERB_BONUS.
+// The hum action bit (G_ACT_HUM_CRAWL's low bit) is carried by bees only; float carries G_ADRIFT.
+static inline float haiku_bee_verb_bias(const GEntry &entry, const GState &state, float float_penalty, float verb_bonus) {
+  if (!(state.subject & (1u << 26)) || entry.tag != G_VERB) return 0.f;
+  return (entry.object & G_ADRIFT) ? -float_penalty : (entry.extra & GX_BEE_VERB) ? verb_bonus : 0.f;
+}
+
 // A sampling bias against the seasons naming a sun, moon or star in nearly half their poems
 // (HAIKU_SEASON_SKY_PENALTY). G_ORB_NOUN marks sun, moon, star and their plurals.
 static inline float haiku_season_sky_penalty(const GEntry &entry, bool space, float weight) {

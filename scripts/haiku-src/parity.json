@@ -9,9 +9,9 @@
       "person_end": false,
       "generated_first_line": false,
       "lines": [
-        "Soft rain falls on earth...",
-        "The wind blows slowly in fog",
-        "a puddle sparkles."
+        "Soft rain falls slowly...",
+        "sunlight shines through the dark field",
+        "a bright moon rises."
       ],
       "syllables": [
         5,
@@ -20,18 +20,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 0,
-      "forwards": 78,
-      "grammar_filtered": 7385,
+      "rejected_attempts": 1,
+      "forwards": 76,
+      "grammar_filtered": 7677,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.097883,
+      "host_seconds": 0.094538,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10300,
+      "grammar_table_bytes": 10360,
       "grammar_state_bytes": 24
     },
     {
@@ -44,8 +44,8 @@
       "generated_first_line": false,
       "lines": [
         "Blossoms drift in rain...",
-        "branches shine through the cold field",
-        "air is still on grass."
+        "twigs grow gently by the fence",
+        "a dry field is cold."
       ],
       "syllables": [
         5,
@@ -54,18 +54,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 0,
-      "forwards": 83,
-      "grammar_filtered": 7089,
+      "rejected_attempts": 1,
+      "forwards": 80,
+      "grammar_filtered": 7003,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.102647,
+      "host_seconds": 0.099367,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10300,
+      "grammar_table_bytes": 10360,
       "grammar_state_bytes": 24
     }
   ],
@@ -80,7 +80,7 @@
       "generated_first_line": false,
       "lines": [
         "Hot winds blow slowly...",
-        "sunlight shines through the dark field",
+        "The wet rock stands in dark fog",
         "light burns on a hill."
       ],
       "syllables": [
@@ -90,18 +90,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 1,
-      "forwards": 76,
-      "grammar_filtered": 6847,
+      "rejected_attempts": 0,
+      "forwards": 81,
+      "grammar_filtered": 7304,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.095352,
+      "host_seconds": 0.100635,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10300,
+      "grammar_table_bytes": 10360,
       "grammar_state_bytes": 24
     },
     {
@@ -114,8 +114,8 @@
       "generated_first_line": false,
       "lines": [
         "Tall grass sways on walls...",
-        "wind blows by the summer rain",
-        "a puddle is cold."
+        "pale sunlight glows in the dew",
+        "cold air is quiet."
       ],
       "syllables": [
         5,
@@ -124,18 +124,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 1,
-      "forwards": 77,
-      "grammar_filtered": 6849,
+      "rejected_attempts": 0,
+      "forwards": 81,
+      "grammar_filtered": 7354,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.095953,
+      "host_seconds": 0.10077,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10300,
+      "grammar_table_bytes": 10360,
       "grammar_state_bytes": 24
     }
   ],
@@ -150,8 +150,8 @@
       "generated_first_line": false,
       "lines": [
         "Red leaves drift slowly...",
-        "sunlight shines through the dark field",
-        "light burns on a lake."
+        "The dark fog falls on a rock",
+        "bright light burns through fields."
       ],
       "syllables": [
         5,
@@ -162,16 +162,16 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 69,
-      "grammar_filtered": 6275,
+      "grammar_filtered": 6357,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.086552,
+      "host_seconds": 0.086019,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10300,
+      "grammar_table_bytes": 10360,
       "grammar_state_bytes": 24
     },
     {
@@ -184,8 +184,8 @@
       "generated_first_line": false,
       "lines": [
         "Dry leaves fall on grass...",
-        "The pale sun fades in cold rain",
-        "a pond is quiet."
+        "branches shine in the cold rain",
+        "a breeze is quiet."
       ],
       "syllables": [
         5,
@@ -195,17 +195,17 @@
       "complete": true,
       "attempts": 15,
       "rejected_attempts": 0,
-      "forwards": 78,
-      "grammar_filtered": 6858,
+      "forwards": 83,
+      "grammar_filtered": 7554,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.096851,
+      "host_seconds": 0.103107,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10300,
+      "grammar_table_bytes": 10360,
       "grammar_state_bytes": 24
     }
   ],
@@ -221,7 +221,7 @@
       "lines": [
         "Cold wind howls in fog...",
         "The light fades slowly on ice",
-        "snow shines through a field."
+        "bright moonlight rises."
       ],
       "syllables": [
         5,
@@ -230,18 +230,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 1,
-      "forwards": 79,
-      "grammar_filtered": 7618,
+      "rejected_attempts": 0,
+      "forwards": 77,
+      "grammar_filtered": 7452,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.098081,
+      "host_seconds": 0.096944,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10300,
+      "grammar_table_bytes": 10360,
       "grammar_state_bytes": 24
     },
     {
@@ -254,8 +254,8 @@
       "generated_first_line": false,
       "lines": [
         "Snow falls on the grass...",
-        "wind rises gently through rain",
-        "a stone is quiet."
+        "branches shine in a meadow",
+        "quiet wind stirs rain."
       ],
       "syllables": [
         5,
@@ -265,17 +265,17 @@
       "complete": true,
       "attempts": 15,
       "rejected_attempts": 0,
-      "forwards": 82,
-      "grammar_filtered": 7700,
+      "forwards": 80,
+      "grammar_filtered": 7449,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.101682,
+      "host_seconds": 0.099586,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10300,
+      "grammar_table_bytes": 10360,
       "grammar_state_bytes": 24
     }
   ],
@@ -306,12 +306,12 @@
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.132502,
+      "host_seconds": 0.133899,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10300,
+      "grammar_table_bytes": 10360,
       "grammar_state_bytes": 24
     },
     {
@@ -340,12 +340,12 @@
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.115865,
+      "host_seconds": 0.116284,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10300,
+      "grammar_table_bytes": 10360,
       "grammar_state_bytes": 24
     }
   ],

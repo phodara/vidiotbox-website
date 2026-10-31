@@ -16,7 +16,7 @@
  #ifdef HAIKU_SCENE_RESEARCH
  #include "scene_guidance.h"
  #endif
-@@ -58,6 +63,12 @@
+@@ -59,6 +64,12 @@
  static bool featured() { return season==HAIKU_SEASON_SPACE || (season>=0 && season_features); }
  
  static bool is_used(int t) { return used[t>>5] & (1u<<(t&31)); }
@@ -29,7 +29,7 @@
  static void mark_used(int t) {
    used[t>>5] |= 1u<<(t&31);
    int sibling=haiku_word_sibling(t); if (sibling>=0) used[sibling>>5] |= 1u<<(sibling&31);
-@@ -130,10 +141,17 @@
+@@ -131,10 +142,17 @@
      themed_count=haiku_thin_palette(themed,themed_count,place_seed && palette_on ? (place_seed^0x9e3779b9u)|1 : 0,
                                      adj_percent,adv_percent,person_verb_percent);
    } else if (index>=0 && season_features) {
@@ -47,7 +47,7 @@
    }
  }
  static const GEntry *grammar_entry(int token) {
-@@ -145,6 +163,54 @@
+@@ -146,6 +164,54 @@
    }
    return nullptr;
  }
@@ -102,7 +102,7 @@
  static bool parse_themed=false;   // --check THEME and the themed self-tests: read each word as select_theme() left it
  static bool parse_clause(const char *text, GState *state) {
    *state=g_start(); char copy[LINE_BYTES]; snprintf(copy,sizeof copy,"%s",text);
-@@ -239,16 +305,17 @@
+@@ -240,16 +306,17 @@
      int n=f&HAIKU_SYL_MASK,pc=HAIKU_PRON(f);
      if (is_used(word) || !fits(n,rem,f&HAIKU_NO_END) || (pc && pc!=pron_class)) continue;
      if (season>=0 && !haiku_season_allows(word,season)) continue;
@@ -118,12 +118,12 @@
          haiku_word_length(e.token)>budget || !grammar_allows(e.token,e.syl,rem,state)) continue;
      int first=haiku_word_piece(e.token,0);
      // First-piece shortlist ranking; every forced continuation is scored below.
--    sl.offer(first,e.syl,s.logits[first]-haiku_freshness_penalty(e.token,FRESHNESS)+haiku_space_vocabulary_bonus(e,season==HAIKU_SEASON_SPACE)-haiku_wave_fall_penalty(e,state,WAVE_FALL_PENALTY)-haiku_season_sky_penalty(e,season==HAIKU_SEASON_SPACE,SKY_PENALTY)+(e.token<VOCAB_N && (HAIKU_TOK[e.token]&HAIKU_NATURE)?NATURE_BOOST:0)+scene_bonus(e.token,state),e.token);
-+    sl.offer(first,e.syl,s.logits[first]-haiku_freshness_penalty(e.token,FRESHNESS)+haiku_space_vocabulary_bonus(e,season==HAIKU_SEASON_SPACE)-haiku_wave_fall_penalty(e,state,WAVE_FALL_PENALTY)-haiku_season_sky_penalty(e,season==HAIKU_SEASON_SPACE,SKY_PENALTY)+(e.token<VOCAB_N && (HAIKU_TOK[e.token]&HAIKU_NATURE)?NATURE_BOOST:0)+scene_bonus(e.token,state)+(lab_has(e.token)?lab_pick_bonus:0.f),e.token);
+-    sl.offer(first,e.syl,s.logits[first]-haiku_freshness_penalty(e.token,FRESHNESS)+haiku_space_vocabulary_bonus(e,season==HAIKU_SEASON_SPACE)-haiku_wave_fall_penalty(e,state,WAVE_FALL_PENALTY)+haiku_bee_verb_bias(e,state,BEE_FLOAT_PENALTY,BEE_VERB_BONUS)-haiku_season_sky_penalty(e,season==HAIKU_SEASON_SPACE,SKY_PENALTY)+(e.token<VOCAB_N && (HAIKU_TOK[e.token]&HAIKU_NATURE)?NATURE_BOOST:0)+scene_bonus(e.token,state),e.token);
++    sl.offer(first,e.syl,s.logits[first]-haiku_freshness_penalty(e.token,FRESHNESS)+haiku_space_vocabulary_bonus(e,season==HAIKU_SEASON_SPACE)-haiku_wave_fall_penalty(e,state,WAVE_FALL_PENALTY)+haiku_bee_verb_bias(e,state,BEE_FLOAT_PENALTY,BEE_VERB_BONUS)-haiku_season_sky_penalty(e,season==HAIKU_SEASON_SPACE,SKY_PENALTY)+(e.token<VOCAB_N && (HAIKU_TOK[e.token]&HAIKU_NATURE)?NATURE_BOOST:0)+scene_bonus(e.token,state)+(lab_has(e.token)?lab_pick_bonus:0.f),e.token);
    }
    if (!sl.k) return {-1,0,-1};
    float probabilities[TOP_K],sum=0;
-@@ -257,9 +324,9 @@
+@@ -258,9 +325,9 @@
    for (int i=0;i<sl.k;i++) { r-=probabilities[i]; if (r<=0) return sl.c[i]; }
    return sl.c[sl.k-1];
  }
@@ -135,7 +135,7 @@
    while (a->n<MAX_TOKENS) {
      bool open=!constrained && prev>=0 && (HAIKU_TOK[prev]&HAIKU_FRAG);
      if (syl>=TARGET[line] && !open) break;
-@@ -273,6 +340,9 @@
+@@ -274,6 +341,9 @@
      }
      int pieces=constrained ? haiku_word_length(pk.word) : 1;
      if (pieces<1 || a->n+pieces>MAX_TOKENS || pos+pieces>=model.c.seq_len-2) return false;
@@ -145,7 +145,7 @@
      if (pk.word>=0) mark_used(pk.word);
      if (pk.word>=0 && pk.word<VOCAB_N && (HAIKU_TOK[pk.word]&HAIKU_NATURE)) nature++;
      if (constrained && pk.word>=0) fresh+=haiku_freshness_penalty(pk.word,FRESHNESS);
-@@ -292,6 +362,11 @@
+@@ -293,6 +363,11 @@
    float end=std::max(s.logits[HAIKU_TOK_COMMA],std::max(s.logits[HAIKU_TOK_PERIOD],s.logits[HAIKU_TOK_ELLIPSIS]));
    // Freshness lowers stale words' log-probability, so best-of-five does not undo it.
    a->score=(a->n?(tok_lp-fresh+scene_score)/a->n:0.f)+HAIKU_END_WEIGHT*(end-log_norm())+NATURE_SCORE*nature;
@@ -157,7 +157,7 @@
    return true;
  }
  static bool free_line_one=false;   // the model writes line one itself (HAIKU_FREE_LINE_ONE, or the space mix)
-@@ -345,6 +420,15 @@
+@@ -346,6 +421,15 @@
      }
    };
    tries();
@@ -173,7 +173,7 @@
    // The poem's palette can leave a line no way to finish; retry it with every word.
    if (!best.n && constrained && featured()) {
      palette_on=false; palette_fallbacks++;
-@@ -492,6 +576,51 @@
+@@ -517,6 +601,51 @@
    printf("{\"self_test\":%s,\"grammar_workspace_bytes\":%zu,\"grammar_table_bytes\":%zu,\"grammar_state_bytes\":%zu}\n",
           ok?"true":"false",sizeof workspace,sizeof G_ENTRIES,sizeof(GState));
    return ok?0:1;
@@ -225,7 +225,7 @@
  }
  static float *allocate(size_t count) {
    float *p=(float *)calloc(count,sizeof(float));
-@@ -499,6 +628,7 @@
+@@ -524,6 +653,7 @@
  }
  int main(int argc,char **argv) {
    if (argc==2 && !strcmp(argv[1],"--self-test")) return self_test();
@@ -233,7 +233,7 @@
    if ((argc==2 || argc==3) && !strcmp(argv[1],"--check")) {   // one clause per stdin line: does the grammar accept it?
      if (argc==3) {   // --check THEME: read the words as that theme does (no per-poem thinning)
        static const char *const names[]={"spring","summer","autumn","winter","space"}; int t=-1;
-@@ -591,6 +721,14 @@
+@@ -618,6 +748,14 @@
    }
  #endif
    if (strcmp(argv[2],"baseline") && strcmp(argv[2],"grammar")) return 2;
@@ -248,7 +248,7 @@
    // Simulator protocol: one case number per stdin line, one JSON poem per stdout line.
    // Keep the model and recent-word history alive between requests.
    bool interactive=!strcmp(argv[3],"interactive");
-@@ -630,7 +768,7 @@
+@@ -657,7 +795,7 @@
      place_seed=((uint32_t)(6001+c)*2654435761u)|1;
      select_theme(chosen);
      rng=6001+c; uint32_t initial_seed=rng; pron_class=seed.pron;
@@ -257,7 +257,7 @@
      haiku_decay_recent(fresh_decay);   // freshness carries across poems in one run
      memset(&workspace,0,sizeof workspace); forwards=rejected=attempts=grammar_filtered=palette_fallbacks=0;
      line_repeat_attempts=line_repeat_fallbacks=0;
-@@ -647,6 +785,24 @@
+@@ -674,6 +812,24 @@
      // Person poems always generate their first line; canned lines have no guaranteed voice.
      if (person_voice) { free_start="0"; free_line_one=true; }
      person_end=person_voice && (int)(((uint32_t)(c+1)*2654435761u)>>17)%100<person_end_percent;
@@ -282,7 +282,7 @@
      const char *first_prefix=free_start?"":seed.text;
      if (free_start) forward(atoi(free_start),pos++);
      else {
-@@ -655,6 +811,10 @@
+@@ -682,6 +838,10 @@
        line_syl[0]=seed.syl;
      }
      for (int line=0;line<3;line++) {
@@ -293,7 +293,7 @@
        pos=write_line(line,line==0?first_prefix:"",pos);
        if (constrained) haiku_capitalize_i(lines[line]);
        if (line==0 && free_line_one && lines[0][0]>='a' && lines[0][0]<='z') lines[0][0]-='a'-'A';
-@@ -663,8 +823,10 @@
+@@ -690,8 +850,10 @@
        if (line==2) append(lines[2],".",1);
      }
      remember_poem_lines();

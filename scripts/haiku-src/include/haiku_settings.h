@@ -40,6 +40,9 @@
 // Review 2026-10-25: a wave on water "falls" in about a third of its lines. Logit penalty on
 // "fall"/"falls" after one; waves still fall, less often than they ripple, drift or wash.
 #define HAIKU_WAVE_FALL_PENALTY 1.0f
+// Review 2026-10-31: bees mostly "float". Logit penalty on float after a bee, and a bonus for buzz and swarm.
+#define HAIKU_BEE_FLOAT_PENALTY 2.5f
+#define HAIKU_BEE_VERB_BONUS 4.0f
 // Review 2026-10-27: too many stars, suns and moons in the seasons (about 45% of poems named one).
 // Logit penalty on sun, moon and star nouns in the four seasons; space is unchanged.
 #define HAIKU_SEASON_SKY_PENALTY 5.0f
