@@ -41,7 +41,8 @@
  .toolbar {transition:transform .4s ease,opacity .4s ease;}
  .toolbar.is-idle:not(:hover):not(:focus-within) {transform:translateY(-100%);opacity:0;pointer-events:none;}
  .brand {color:var(--cyan);font-weight:900;font-size:13px;letter-spacing:2px;margin-right:auto;text-decoration:none;}
- .button-name {display:inline-block;font:700 .8em Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:3px 8px;border-radius:3px;white-space:nowrap;vertical-align:.1em;}
+ .button-name {display:inline-block;font:700 .8em Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:3px 8px;border-radius:3px;white-space:nowrap;vertical-align:.1em;cursor:pointer;}
+ .button-name:hover {border-color:var(--cyan);}
  button,select {font:700 13px Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:10px 12px;border-radius:3px;cursor:pointer;text-decoration:none;}
  button:hover {border-color:var(--green);color:var(--green);}
  button:disabled {opacity:.5;cursor:wait;}
@@ -134,7 +135,7 @@
 <p class="eyebrow">1 BILLION HAIKUS</p>
 <div class="poem-grid" id="poems"></div>
 <p class="writing" id="writing">Writing the next haiku…</p>
-<p class="lede reading-only">Want more? Press <span class="button-name">Write another</span>, or press <span class="button-name">Play crawl</span> to return to the crawl.</p>
+<p class="lede reading-only">Want more? Press <button class="button-name" type="button" data-press="more">Write another</button>, or press <button class="button-name" type="button" data-press="mode">Play crawl</button> to return to the crawl.</p>
 </div></main>
 <dialog id="aboutDialog" aria-labelledby="aboutTitle">
  <header class="work" tabindex="-1" autofocus>
@@ -345,6 +346,8 @@ pause.addEventListener('click', () => {
   else { if (musicOn) audio.play().catch(() => {}); fillBuffer(); }
 });
 more.addEventListener('click', writeOne);
+// The button names in the reading view's last line work like the menu buttons they name.
+document.querySelectorAll('[data-press]').forEach(button => button.addEventListener('click', () => $(button.dataset.press).click()));
 // Poems are written well ahead of the crawl, so restart it to show the new theme right away.
 function restartCrawl() {
   themeEpoch++; nextTheme = 0;
