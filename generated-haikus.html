@@ -61,9 +61,6 @@
  .poem p {font-size:clamp(17px,2.1vw,23px);line-height:1.7;margin:0;}
  .poem p span {white-space:nowrap;}
  .writing {color:var(--muted);font-size:15px;}
- .audio-hint {display:none;}
- .is-crawl .audio-hint {display:block;font-size:clamp(20px,3vw,34px);letter-spacing:2px;color:var(--cyan);font-weight:800;margin:0 0 48px;visibility:hidden;}
- .is-crawl .audio-hint.is-shown {visibility:visible;}
  body.is-crawl {overflow:hidden;}
  .is-crawl .crawl-stage {position:fixed;inset:0;display:flex;justify-content:center;overflow:hidden;padding:0 18px;perspective:360px;perspective-origin:50% 16%;}
  .is-crawl .crawl-stage::before,.is-crawl .crawl-stage::after {content:"";position:fixed;left:0;right:0;z-index:1;pointer-events:none;}
@@ -126,13 +123,12 @@
  <button id="pause" type="button">Pause</button>
  <button id="more" type="button" hidden disabled>Write another</button>
  <label id="speedControl">Speed <select id="speed"><option value="0.5" selected>0.5×</option><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
- <label> Music Shakuhachi <select id="music"><option value="assets/audio/shika-no-toone-shakuhachi.mp3" selected>On</option><option value="">Off</option></select></label>
+ <label> Music Shakuhachi <select id="music" autocomplete="off"><option value="assets/audio/shika-no-toone-shakuhachi.mp3">On</option><option value="" selected>Off</option></select></label>
  <label>Stars <select id="starsOpt"><option value="on">On</option><option value="off">Off</option></select></label>
  <button id="about" type="button">About</button>
  <span id="status" role="status">Loading the haiku model…</span>
 </nav>
 <main class="crawl-stage"><div class="crawl">
-<p class="audio-hint" id="audioHint">Click on page to start audio</p>
 <h1>A sky<br>without edges</h1>
 <p class="eyebrow">1 BILLION HAIKUS</p>
 <div class="poem-grid" id="poems"></div>
@@ -163,7 +159,7 @@
    <dt>Reading view / Play crawl</dt><dd>Reading view stops the crawl and lists the poems so you can scroll through them, with <strong>Write another</strong> to add one more. Play crawl starts the crawl again. Esc also switches to the reading view.</dd>
    <dt>Pause / Resume</dt><dd>Stops and restarts the crawl and the music.</dd>
    <dt>Speed</dt><dd>How fast the crawl moves, from 0.5&times; to 4&times;.</dd>
-   <dt>Music</dt><dd>Shakuhachi music on or off. Browsers play sound only after you click or tap the page once.</dd>
+   <dt>Music</dt><dd>Shakuhachi music. It is off until you turn it on here.</dd>
    <dt>Stars</dt><dd>The star field on or off.</dd>
   </dl>
  </section>
@@ -387,23 +383,13 @@ aboutDialog.addEventListener('scroll', updateMoreBelow);
 window.addEventListener('resize', () => { if (aboutDialog.open) updateMoreBelow(); });
 moreBelow.addEventListener('click', () => aboutDialog.scrollBy({top: aboutDialog.clientHeight * 0.8, behavior: 'smooth'}));
 
-// ---- Music (browsers block audio until the visitor interacts) ----
+// ---- Music: off until the visitor turns it on in the menu ----
 function setMusic(on) { musicOn = on; if (!on) music.value = ''; }
 async function playMusic() {
   const track = new URL(music.value, location.href).href;
   if (audio.src !== track) audio.src = track;
   try { await audio.play(); setMusic(true); return true; }
-  catch { musicOn = false; return false; }
-}
-function startMusicOnGesture() {
-  const events = ['pointerdown', 'keydown'], hint = $('audioHint');
-  hint.classList.add('is-shown');
-  const start = () => {
-    events.forEach(e => document.removeEventListener(e, start, true));
-    hint.classList.remove('is-shown');
-    if (music.value && !musicOn && document.body.classList.contains('is-crawl')) playMusic();
-  };
-  events.forEach(e => document.addEventListener(e, start, true));
+  catch { setMusic(false); return false; }
 }
 music.addEventListener('change', () => { if (!music.value) { audio.pause(); setMusic(false); return; } playMusic(); });
 
@@ -437,7 +423,6 @@ function startWorker(url, onReady, showing) {
 }
 requestAnimationFrame(frame);
 keepAwake();
-playMusic().then(playing => { if (!playing) startMusicOnGesture(); });
 </script>
 <script>
 // The S3 crawl's star field (haiku-esp32-s3 include/crawl_32e.h): the same 140 stars on a 480x320 tile, repeated.
