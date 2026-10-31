@@ -349,9 +349,22 @@ more.addEventListener('click', writeOne);
 // The button names in the reading view's last line work like the menu buttons they name.
 document.querySelectorAll('[data-press]').forEach(button => button.addEventListener('click', () => $(button.dataset.press).click()));
 // Poems are written well ahead of the crawl, so restart it to show the new theme right away.
+// In the reading view, the poems are replaced with READING_POEMS new ones, written one after another.
+const READING_POEMS = 8;
+async function refillReading() {
+  const epoch = themeEpoch;
+  poems.replaceChildren();
+  window.scrollTo(0, 0);
+  for (let tries = 0; poems.children.length < READING_POEMS && tries < READING_POEMS * 3;) {
+    if (epoch !== themeEpoch || failed || document.body.classList.contains('is-crawl')) return;
+    if (busy || !canWrite()) { await new Promise(resolve => setTimeout(resolve, 200)); continue; } // a poem for the old theme, or a decoder still loading
+    tries++;
+    await writeOne();
+  }
+}
 function restartCrawl() {
   themeEpoch++; nextTheme = 0;
-  if (!document.body.classList.contains('is-crawl')) return;
+  if (!document.body.classList.contains('is-crawl')) { refillReading(); return; }
   poems.replaceChildren();
   offset = 0; lastFrame = null;
   fillBuffer();
