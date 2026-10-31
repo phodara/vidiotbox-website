@@ -422,12 +422,17 @@ static int self_test() {
                            "Soft grass sways", "Soft rain falls on the wall", "A soft breeze blows", "The moss is soft",
                            "Bees buzz in the garden", "A bee buzzes over the flowers", "Bees swarm over the field", "Bees hum",
                            "An old crow rests", "Old frogs sing", "A small bee buzzes",
-                           "Sunlight glows through the bare branches", "Moonlight shines through the pines", "The wind rises through a tree", "Sunlight glows on the bare branch",
+                           "Sunlight glows through the bare branches", "Moonlight shines through the pines", "The wind rises through the branches", "Sunlight glows on the bare branch",
                            "Branches shade a rock in a field", "Branches shade a rock in the fields", "Branches shade rocks in fields", "Crows rest in fields",
-                           "A crow rests in the fields", "A stone remains in rain", "Grass grows in fields", "Rain falls in fields", "Branches hold rain in fields",
+                           "A crow rests in the fields", "A stone remains in rain", "Grass grows in fields", "Rain falls in fields",
                            "Wet leaves shine", "Petals shine on the pond", "Branches sway on the dark path", "Ice shines on a branch",
                            "Dew coats a leaf", "Damp fog drifts", "Wet snow melts", "Wet leaves glisten", "Damp moss grows",
-                           "Hills remain in the cold rain", "A cliff remains in mist", "The wall remains by the path", "A stone remains near the pond"}) ok &= grammar_test(text,1);
+                           "Hills remain in the cold rain", "A cliff remains in mist", "The wall remains by the path", "A stone remains near the pond",
+                           "The stone stands in the rain", "Fog coats red trees", "Fog coats red trees in the field", "Branches sway over the path",
+                           "Light glows through the leaves", "Twigs drift over the grass", "The puddles shine in the fields", "Bees float over the fence",
+                           "Crickets jump over the fence", "Leaves drift across the field",
+                           "Crows fly through the oaks", "The oak holds cool mist", "Branches hold rain", "The wind blows over the soil", "Rain falls on soil",
+                           "Waves on the stream wash the shore", "The stream washes a stone", "Rain washes the gate"}) ok &= grammar_test(text,1);
   for (const char *text : {"A cosmos lifts stars", "An older cosmos lifts stars", "A universe expands", "Stars cross a cosmos", "Ancient stars stay in the space", "The space is vast",
                            "A worm is tall", "A worm is small", "Worms are still", "A worm crawls on hills", "A worm rests on the shore", "A worm crawls up a tree",
                            "A worm crawls over the field", "A worm floats on streams", "A worm drifts in rain", "Worms crawl on the puddles", "A worm crawls on the pond",
@@ -453,7 +458,13 @@ static int self_test() {
                            "Branches shade a rock in fields", "A crow rests in fields", "A stone remains in fields", "Oaks shade the rock in dark fields",
                            "Branches shine on the dark path", "An old pine shines", "Trees shine in the rain", "Roots shine in the soil", "Vines shine by the wall",
                            "Damp dew coats a leaf", "Wet rain falls", "The wet raindrops fall", "Damp water shines",
-                           "Hills remain by a soft branch", "A hill remains by the lake", "Cliffs remain near the trees", "The ridge remains along the path", "Banks remain beside a stone"}) ok &= grammar_test(text,0);
+                           "Hills remain by a soft branch", "A hill remains by the lake", "Cliffs remain near the trees", "The ridge remains along the path", "Banks remain beside a stone",
+                           "The dry stone stands around earth", "A wall stands by earth", "Fog coats red trees across rocks", "Snow covers the field across stones",
+                           "Branches grow through a cold field", "Pines sway through the mist", "Twigs drift through a green petal", "Light shines through a leaf",
+                           "The puddles shine over fields", "A pond sparkles across the meadow", "Crickets float over the fence", "A beetle drifts by the wall", "The air rises through a twig",
+                           "The wind rises through a branch", "Crows fly through the oak", "The air rises through a tree", "The oak holds cool mist on gates",
+                           "Branches hold rain in the field", "Branches hold rain in fields", "The wind blows on soil", "A breeze stirs on the earth", "Calm waves on the stream wash gates",
+                           "The brook washes a wall"}) ok &= grammar_test(text,0);
   for (int theme : {0,1,2,3}) {
     for (const char *text : {"Moonlight glows", "Sunlight burns on a tall fence", "A bright star rises", "A stream reflects stars", "A full moon fades", "A frog sings"})
       ok &= themed_test(theme,text,1);
@@ -467,7 +478,7 @@ static int self_test() {
   for (const char *text : {"Flowers bloom in the field", "Tall trees bloom"}) ok &= themed_test(3,text,0);
   // Review 2026-10-31: light goes through branches, not one branch; the wind may rise through a tree.
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through a green branch", "Pale light glows through a tree", "Sunlight glows through the bare branch"}) ok &= themed_test(t,text,0);
-  for (int t=0;t<4;t++) for (const char *text : {"The light shines through the branches", "The wind rises through a tree",
+  for (int t=0;t<4;t++) for (const char *text : {"The light shines through the branches", "The wind rises through the trees",
                                                     // V8.18 refused these by mistake (the air rule caught light, the moon and the stars).
                                                     "The moon rises over the shore", "A full moon glows over the path", "Stars shine over the shore", "The light shines over the path"}) ok &= themed_test(t,text,1);
   for (int t=0;t<4;t++) ok &= themed_test(t,"Air rises through a small path",0);
