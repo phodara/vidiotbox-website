@@ -56,6 +56,7 @@
  .poem {border-top:1px solid #29383d;padding:24px 0 28px;break-inside:avoid;}
  .poem h3 {font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);font-weight:700;margin:0 0 16px;}
  .poem p {font-size:clamp(17px,2.1vw,23px);line-height:1.7;margin:0;}
+ .poem p span {white-space:nowrap;}
  .writing {color:var(--muted);font-size:15px;}
  .audio-hint {display:none;}
  .is-crawl .audio-hint {display:block;font-size:clamp(20px,3vw,34px);letter-spacing:2px;color:var(--cyan);font-weight:800;margin:0 0 48px;visibility:hidden;}
@@ -211,9 +212,13 @@ function addPoem(result) {
   const article = document.createElement('article'), h3 = document.createElement('h3'), p = document.createElement('p');
   article.className = 'poem';
   h3.textContent = `${title(result.theme)}${result.label ? ` · ${result.label}` : ''} · No. ${result.case}`;
-  result.lines.forEach((line, i) => { if (i) p.append(document.createElement('br')); p.append(line); });
+  result.lines.forEach((line, i) => {
+    if (i) p.append(document.createElement('br'));
+    const span = document.createElement('span'); span.textContent = line; p.append(span);
+  });
   article.append(h3, p);
   poems.append(article);
+  fitPoem(p);
   // Keep the page bounded on long visits; shift the crawl so nothing visible jumps.
   while (poems.children.length > MAX_POEMS) {
     const first = poems.firstElementChild, height = first.offsetHeight;
@@ -221,6 +226,15 @@ function addPoem(result) {
     if (document.body.classList.contains('is-crawl')) offset = Math.max(0, offset - height);
   }
 }
+// A line never wraps: a poem whose longest line is wider than the column (a long 7-syllable line on a
+// phone) gets a smaller font, just enough to fit. Refit when the column or the view changes.
+function fitPoem(p) {
+  p.style.fontSize = '';
+  const widest = Math.max(...[...p.querySelectorAll('span')].map(span => span.offsetWidth));
+  if (widest > p.clientWidth) p.style.fontSize = `${parseFloat(getComputedStyle(p).fontSize) * p.clientWidth / widest * 0.98}px`;
+}
+function fitPoems() { poems.querySelectorAll('.poem p').forEach(fitPoem); }
+window.addEventListener('resize', fitPoems);
 async function writeOne() {
   if (busy || !canWrite()) return;
   busy = true; more.disabled = true;
@@ -262,6 +276,7 @@ function showReading() {
   mode.textContent = 'Play crawl';
   pause.hidden = true; $('speedControl').hidden = true; more.hidden = false;
   writing.hidden = true;
+  fitPoems();
   audio.pause(); setMusic(false);
   window.scrollTo(0, readingScroll);
 }
@@ -272,6 +287,7 @@ function showCrawl() {
   paused = false; pause.textContent = 'Pause';
   pause.hidden = false; $('speedControl').hidden = false; more.hidden = true;
   writing.hidden = false;
+  fitPoems();
   offset = 0; lastFrame = null;
   fillBuffer();
 }
