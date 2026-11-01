@@ -61,5 +61,12 @@ static const SeasonConcept SEASON_CONCEPTS[] = {
   {"crows", 2, "Crows fly", "crow crows fly flies field fields branch branches oak", 11},
   {"fading", 2, "Moonlight fades|Crickets chirp", "moonlight moon fade fades pale cricket crickets chirp chirps", 7},
   {"a still pond", 2, "", "pond lake water still calm quiet stone stones", 9},
+  // Summer (2026-11-01, first draft).
+  {"summer wind", 1, "Hot winds blow|Tall grass sways", "wind winds breeze breezes gust gusts blow blows sway hot tall grass meadow meadows field fields", 18},
+  {"summer light", 1, "Sunlight burns|Dew shines", "sun sunlight light burn burns shine shines glisten sparkle sparkles glow glows bright hot warm warms dew", 18},
+  {"night song", 1, "Crickets sing|Frogs sing", "cricket crickets frog frogs sing sings chirp chirps reed reeds pond moon moonlight stars dark", 13},
+  {"bees and beetles", 1, "Bees hum|Beetles crawl", "bee bees hum buzz buzzes swarm beetle beetles crawl crawls flower flowers petal petals garden gardens bloom blooms", 14},
+  {"water birds", 1, "Ducks swim|Gulls perch", "duck ducks gulls swim swims float floats perch lake pond shore shores water ripple ripples", 13},
+  {"a cool shade", 1, "", "shade shades cool tree trees oak branch branches leaves rest rests still quiet", 14},
 };
 static constexpr int SEASON_N_CONCEPTS = sizeof SEASON_CONCEPTS / sizeof SEASON_CONCEPTS[0];

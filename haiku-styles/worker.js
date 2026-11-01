@@ -1,9 +1,9 @@
-// Style worker for generated-haikus.html: one-thing and two-part poems (space, autumn and winter) from the style decoder
+// Style worker for generated-haikus.html: one-thing and two-part poems (space, summer, autumn and winter) from the style decoder
 // (scripts/haiku-styles-src, the current host.cpp plus the styles patch) with the V8 model from
 // ../haiku-generator/. Runs entirely on the visitor's device. The Free style uses the unchanged
 // ../haiku-generator/worker.js instead.
 let runtime, info, output, loading;
-const styles = {'one-thing': 1, 'two-part': 2}, themes = {autumn: 2, winter: 3, space: 4};
+const styles = {'one-thing': 1, 'two-part': 2}, themes = {summer: 1, autumn: 2, winter: 3, space: 4};
 const progress = text => postMessage({type: 'progress', text});
 const sha256 = async bytes => [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(n => n.toString(16).padStart(2, '0')).join('');
 async function checkedFetch(url) {
