@@ -2,6 +2,7 @@
 # Publish the Generated Haikus page to haiku-matic.com (DreamHost), as the site's home page.
 #   scripts/deploy-dreamhost.sh          build and upload
 #   DRY=1 scripts/deploy-dreamhost.sh    build and show what would change, upload nothing
+#   LOCAL=DIR scripts/deploy-dreamhost.sh  build into DIR to look at or serve; no login, upload nothing
 # Builds the site the way the Pages workflow does (scripts/build-site.py) and uploads only what
 # generated-haikus.html loads: the page (as index.html and generated-haikus.html), the generator and
 # style workers with their decoders and model, the music, the icon, the About art and link preview
@@ -59,8 +60,27 @@ AddType text/javascript .mjs
 </FilesMatch>
 EOF
 
+# Search engines (2026-11-01): crawl everything, with no crawl delay (DreamHost's default robots.txt asked for 10 s,
+# which Bing honours), and find the page through the sitemap. Both replace whatever is on the server.
+cat > "$OUT/robots.txt" <<'EOF'
+User-agent: *
+Allow: /
+
+Sitemap: https://haiku-matic.com/sitemap.xml
+EOF
+cat > "$OUT/sitemap.xml" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://haiku-matic.com/</loc>
+    <lastmod>$(date -u +%Y-%m-%d)</lastmod>
+  </url>
+</urlset>
+EOF
+
 # Web permissions, whatever the local ones are (mktemp makes its folder private; macOS rsync has no --chmod).
 find "$OUT" -type d -exec chmod 755 {} + && find "$OUT" -type f -exec chmod 644 {} +
+if [ -n "${LOCAL:-}" ]; then mkdir -p "$LOCAL" && cp -R "$OUT/." "$LOCAL/" && echo "Built into $LOCAL; nothing uploaded"; exit 0; fi
 $SSH "$HOST" true || { echo "cannot log in to $HOST with $KEY" >&2; exit 1; }
 # --delete only inside the folders this script owns, so other files in $DEST are left alone.
 for dir in haiku-generator haiku-styles; do
