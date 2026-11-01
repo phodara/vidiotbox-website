@@ -20,7 +20,8 @@ trap 'rm -rf "$SITE" "$OUT"' EXIT
 python3 "$ROOT/scripts/build-site.py" --output "$SITE" >/dev/null
 
 # haiku-matic.com puts its own name on the crawl's first line instead of the top bar, and in the tab
-# title, and is its own canonical address; vidiotbox.net keeps "VIDIOTBOX / GENERATED hAIkus" in its top bar.
+# title; vidiotbox.net keeps "VIDIOTBOX / GENERATED hAIkus" in its top bar.
+# Both copies name https://haiku-matic.com/ as the canonical address: it is the original (2026-11-01).
 python3 - "$SITE/generated-haikus.html" "$OUT/index.html" <<'EOF'
 import sys
 page = open(sys.argv[1]).read()
@@ -30,8 +31,6 @@ for old, new in [(' <button id="about" type="button">About</button>\n', ''),
                  ('<h1>A sky<br>without edges</h1>',
                   '<p class="eyebrow" style="font-size:18px;letter-spacing:2px">hAIku Generator Toy <span style="white-space:nowrap">- by Paul Hodara</span></p>\n'
                   '<h1>A sky<br>without edges</h1>'),
-                 ('<link rel="canonical" href="https://vidiotbox.net/generated-haikus.html">',
-                  '<link rel="canonical" href="https://haiku-matic.com/">'),
                  ('content="https://vidiotbox.net/assets/haiku-matic/haiku-matic-og.jpg',
                   'content="https://haiku-matic.com/assets/haiku-matic/haiku-matic-og.jpg'),
                  ('<title>Vidiotbox · Generated Haikus</title>', '<title>hAIku Generator Toy - by Paul Hodara</title>')]:
