@@ -81,6 +81,12 @@ static inline bool haiku_theme_entry(const GEntry &in, bool space_theme, GEntry 
   return true;
 }
 
+// Review 2026-11-01: "warm" is the sun's in autumn (2) and winter (3), "the warm sun", "warm light"; spring and
+// summer also have warm air, water and ground: "a warm breeze", "warm rain", "warm stones".
+static inline void haiku_season_entry(GEntry *e, int season) {
+  if (e->tag == G_ADJ && (e->extra & GX_WARM) && (season == 2 || season == 3)) e->semantic &= G_LIGHT;
+}
+
 // Virtual word IDs are never fed to the model. Each expands atomically into
 // a bounded sequence; grammar and syllable counts advance once per word.
 #ifdef G_MULTI_COUNT
