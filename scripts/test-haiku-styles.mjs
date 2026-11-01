@@ -18,9 +18,9 @@ const module = await createDecoder({wasmBinary: wasm, print: text => {line = tex
 module.FS.writeFile('/model.bin', model);
 assert.equal(module._haiku_styles_generate(0, 4, 0), 2);
 assert.equal(module._haiku_styles_generate(3, 4, 0), 2);
-assert.equal(module._haiku_styles_generate(1, 0, 0), 2, 'spring has no concepts yet');
+assert.equal(module._haiku_styles_generate(1, 5, 0), 2, 'no theme 5');
 const concepts = new Set();
-for (const theme of [4, 3, 2, 1]) for (const style of [1, 2]) {
+for (const theme of [4, 3, 2, 1, 0]) for (const style of [1, 2]) {
   for (let caseNumber = 0; caseNumber < 10; caseNumber++) {
     line = null;
     assert.equal(module._haiku_styles_generate(style, theme, caseNumber), 0);
@@ -29,7 +29,8 @@ for (const theme of [4, 3, 2, 1]) for (const style of [1, 2]) {
     assert.deepEqual(poem.syllables, [5, 7, 5]);
     assert.equal(poem.style, style);
     assert.ok(poem.concept, 'every styled poem names its concept');
+    if (theme === 0) assert.equal(poem.generated_first_line, true, 'spring styles write their own line one');
     concepts.add(poem.concept);
   }
 }
-console.log(`styles: 80 complete poems (space, winter, autumn and summer), ${concepts.size} concepts`);
+console.log(`styles: 100 complete poems (space, winter, autumn, summer and spring), ${concepts.size} concepts`);

@@ -4,7 +4,7 @@ The Style menu on `generated-haikus.html` offers three kinds of poem (and Mixed,
 
 - **Free** (value `standard`): the unchanged main decoder, `haiku-generator/worker.js` (built from `../haiku-src/`),
   the same poems as the boards.
-- **One-thing** and **Two-part** (Space, Summer, Autumn and Winter): this decoder, `haiku-styles/worker.js`. One-thing keeps
+- **One-thing** and **Two-part** (Space, Spring, Summer, Autumn and Winter): this decoder, `haiku-styles/worker.js`. One-thing keeps
   every line to one concept's space words; two-part writes line one from them and lines 2-3 from the
   concept's earthly image, across the cut. These are the haiku lab's styles, on the current rules.
   Since V8.17 (2026-10-30) both leave technical words (fusion, atoms, density, radio waves...) out of their space
@@ -25,7 +25,11 @@ Files:
   two-part partner; winter: falling snow, ice and frost, winter wind, fog, crows, with stillness and winter light as
   two-part partners). One-thing stays with that image; two-part sets it against the partner in lines 2-3. The
   concept's words survive the per-poem palette (`lab_keep`). `--lab-check` checks every word is in its season and
-  every opener of a season with concepts has one. A theme without concepts (spring) is refused.
+  every opener of a season with concepts has one. A theme without concepts is refused.
+  Spring (2026-11-01, first draft, branch `spring-styles`) has concepts but no openers: blossoms, new growth, spring
+  rain, the stream and birdsong, each the two-part partner of another. A season none of whose concepts names an
+  opener draws its concept per case as space does, and the model writes line one, which must name one of the
+  concept's nouns (`lab_name_cut()`, tuned by LAB_NAME_MISS). The Free style in spring keeps its openers.
 - `browser_styles.cpp`: the browser adapter, exporting `haiku_styles_generate(style, case)`.
 
 The haiku lab (`haiku-lab.html`, `../haiku-lab-src/`, `haiku-lab/`) is separate and unchanged.

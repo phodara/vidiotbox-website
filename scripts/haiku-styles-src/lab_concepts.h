@@ -38,12 +38,16 @@ static constexpr int LAB_N_CONCEPTS = sizeof LAB_CONCEPTS / sizeof LAB_CONCEPTS[
 // Season styles (2026-10-31, winter first). A season poem keeps its written opener, so the opener picks
 // the concept: one-thing stays with that image in every line; two-part sets it against the partner
 // concept's image in lines 2-3, across the cut. Concepts with no openers serve only as partners.
+// A season none of whose concepts names an opener (spring) draws the concept for each poem instead, and the
+// model writes line one, which must name one of the concept's names: spring's words are mostly shared with
+// the other seasons, and a free line one with no concept named a spring thing in only 58 of 200 poems.
 struct SeasonConcept {
   const char *name;
   int season;           // 0 spring, 1 summer, 2 autumn, 3 winter
   const char *openers;  // the season openers (seed texts) that start this image, separated by |
   const char *words;
   int partner;          // two-part: the concept for lines 2-3 (index into SEASON_CONCEPTS)
+  const char *names=nullptr;   // drawn concepts: the nouns line one must name, ones that read as spring
 };
 
 static const SeasonConcept SEASON_CONCEPTS[] = {
@@ -71,5 +75,17 @@ static const SeasonConcept SEASON_CONCEPTS[] = {
   // V8.27 (2026-11-01): the five added summer openers, summer's own insects in the Japanese almanac.
   {"cicadas and fireflies", 1, "A cicada sings|A firefly glows|A cicada calls|A cicada molts|A firefly floats",
    "cicada cicadas firefly fireflies sing sings call calls glow glows float floats drift pine pines reed reeds moonlight stars dark", 13},
+  // Spring (2026-11-01, first draft): no openers, so the concept is drawn and the model writes line one, which names
+  // one of the concept's names (never moss, leaves, roots, stones or fog). The words also give lines 2-3 a setting.
+  {"blossoms", 0, "", "blossom blossoms petal petals flower flowers bloom blooms drift fall falls soft warm sway branch branches tree trees garden gardens", 24,
+   "blossom blossoms petal petals flower flowers"},
+  {"new growth", 0, "", "bud buds grass vine vines green grow grows tall soft sway rise rises meadow meadows field fields root roots soil", 22,
+   "bud buds grass vine vines"},
+  {"spring rain", 0, "", "rain raindrop raindrops puddle puddles soft wet warm fall falls wash washes coat coats mud soil path paths", 20,
+   "rain raindrop raindrops puddle puddles"},
+  {"the stream", 0, "", "stream streams flow flows ripple ripples rise rises glisten sparkle sparkles water cool shore shores bank banks reed reeds", 21,
+   "stream streams"},   // spring has no bare "brook", only "waves on the brook"
+  {"birdsong", 0, "", "bird birds sing sings chirp chirps call calls fly flies perch rest rests branch branches tree trees pine pines oak", 23,
+   "bird birds"},
 };
 static constexpr int SEASON_N_CONCEPTS = sizeof SEASON_CONCEPTS / sizeof SEASON_CONCEPTS[0];

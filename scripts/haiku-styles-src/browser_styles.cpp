@@ -1,6 +1,6 @@
 // Browser adapter around the styles decoder (styles_host.cpp), the same way browser.cpp wraps host.cpp.
-// Space, or a season with concepts (summer, autumn, winter). Each style and theme keeps its own recent-word and recent-line
-// history; in space the concept is picked per case, in a season by the poem's opener.
+// Space, or a season with concepts (spring, summer, autumn, winter). Each style and theme keeps its own recent-word and recent-line
+// history; in space and spring the concept is picked per case, in the other seasons by the poem's opener.
 #define main haiku_styles_main
 #include "styles_host.cpp"
 #undef main

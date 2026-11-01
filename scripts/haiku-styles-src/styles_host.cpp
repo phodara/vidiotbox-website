@@ -213,6 +213,13 @@ static void lab_rules_init() {
 static bool lab_technical_word(int token) { return lab_style && season==HAIKU_SEASON_SPACE && lab_in(lab_technical,token); }
 // Two-part space poems: line one must name something in space. Season poems keep their written opener.
 static bool lab_space_cut(int line) { return lab_style==2 && line==0 && season==HAIKU_SEASON_SPACE; }
+// A season whose concept is drawn (spring, 2026-11-01): the model's line one, in both styles, names one of the
+// concept's nouns ("Blossoms drift through mist", not "Crows float on the pond").
+static bool lab_drawn=false, lab_naming=false;   // lab_naming: the line being written must name the concept
+static uint32_t lab_names[(G_WORD_CAPACITY+31)/32];   // the drawn concept's names (SeasonConcept::names)
+static float lab_name_miss=20.f, lab_name_bonus=6.f;   // tuned on 200 poems per style, 2026-11-01
+static bool lab_name_cut(int line) { return lab_style && line==0 && lab_drawn; }
+static float lab_name_pick(int t) { return lab_naming && lab_in(lab_names,t) ? lab_name_bonus : 0.f; }
 static bool parse_themed=false;   // --check THEME and the themed self-tests: read each word as select_theme() left it
 static bool parse_clause(const char *text, GState *state) {
   *state=g_start(); char copy[LINE_BYTES]; snprintf(copy,sizeof copy,"%s",text);
@@ -309,7 +316,7 @@ static Pick pick(int rem,int prev,bool sentence_start,GState state,int budget) {
     if (season>=0 && !haiku_season_allows(word,season)) continue;
     if (lab_technical_word(word)) continue;
     if (!grammar_allows(word,n,rem,state)) continue;
-    sl.offer(HAIKU_CAPS[i].cap,n,s.logits[HAIKU_CAPS[i].cap]+scene_bonus(word,state)+(lab_has(word)?lab_pick_bonus:0.f),word);
+    sl.offer(HAIKU_CAPS[i].cap,n,s.logits[HAIKU_CAPS[i].cap]+scene_bonus(word,state)+(lab_has(word)?lab_pick_bonus:0.f)+lab_name_pick(word),word);
   }
   if (constrained) for (int i=0;i<themed_count;i++) {
     const GEntry &e=themed[i];
@@ -317,7 +324,7 @@ static Pick pick(int rem,int prev,bool sentence_start,GState state,int budget) {
         haiku_word_length(e.token)>budget || !grammar_allows(e.token,e.syl,rem,state)) continue;
     int first=haiku_word_piece(e.token,0);
     // First-piece shortlist ranking; every forced continuation is scored below.
-    sl.offer(first,e.syl,s.logits[first]-haiku_freshness_penalty(e.token,FRESHNESS)+haiku_space_vocabulary_bonus(e,season==HAIKU_SEASON_SPACE)-haiku_wave_fall_penalty(e,state,WAVE_FALL_PENALTY)+haiku_bee_verb_bias(e,state,BEE_FLOAT_PENALTY,BEE_VERB_BONUS)-haiku_season_sky_penalty(e,season==HAIKU_SEASON_SPACE,SKY_PENALTY)+(e.token<VOCAB_N && (HAIKU_TOK[e.token]&HAIKU_NATURE)?NATURE_BOOST:0)+scene_bonus(e.token,state)+(lab_has(e.token)?lab_pick_bonus:0.f),e.token);
+    sl.offer(first,e.syl,s.logits[first]-haiku_freshness_penalty(e.token,FRESHNESS)+haiku_space_vocabulary_bonus(e,season==HAIKU_SEASON_SPACE)-haiku_wave_fall_penalty(e,state,WAVE_FALL_PENALTY)+haiku_bee_verb_bias(e,state,BEE_FLOAT_PENALTY,BEE_VERB_BONUS)-haiku_season_sky_penalty(e,season==HAIKU_SEASON_SPACE,SKY_PENALTY)+(e.token<VOCAB_N && (HAIKU_TOK[e.token]&HAIKU_NATURE)?NATURE_BOOST:0)+scene_bonus(e.token,state)+(lab_has(e.token)?lab_pick_bonus:0.f)+lab_name_pick(e.token),e.token);
   }
   if (!sl.k) return {-1,0,-1};
   float probabilities[TOP_K],sum=0;
@@ -326,9 +333,9 @@ static Pick pick(int rem,int prev,bool sentence_start,GState state,int budget) {
   for (int i=0;i<sl.k;i++) { r-=probabilities[i]; if (r<=0) return sl.c[i]; }
   return sl.c[sl.k-1];
 }
-struct Attempt { int ids[MAX_TOKENS],cost[MAX_TOKENS],word[MAX_TOKENS],n,space,copula; float score; };
+struct Attempt { int ids[MAX_TOKENS],cost[MAX_TOKENS],word[MAX_TOKENS],n,space,copula,named; float score; };
 static bool attempt_line(int line,int syl,int pos,GState grammar,Attempt *a) {
-  a->n=0; float tok_lp=0,fresh=0,scene_score=0; int nature=0,prev=-1,lab_hits=0,space_hits=0,copula=0;
+  a->n=0; float tok_lp=0,fresh=0,scene_score=0; int nature=0,prev=-1,lab_hits=0,space_hits=0,copula=0,named=0;
   while (a->n<MAX_TOKENS) {
     bool open=!constrained && prev>=0 && (HAIKU_TOK[prev]&HAIKU_FRAG);
     if (syl>=TARGET[line] && !open) break;
@@ -344,6 +351,7 @@ static bool attempt_line(int line,int syl,int pos,GState grammar,Attempt *a) {
     if (pieces<1 || a->n+pieces>MAX_TOKENS || pos+pieces>=model.c.seq_len-2) return false;
     if (lab_has(pk.word)) lab_hits++;
     if (lab_in(lab_space,pk.word)) space_hits++;
+    if (lab_in(lab_names,pk.word)) named++;
     if (pk.word>=0) { const GEntry *entry=grammar_entry(pk.word); if (entry && entry->tag==G_COPULA) copula=1; }
     if (pk.word>=0) mark_used(pk.word);
     if (pk.word>=0 && pk.word<VOCAB_N && (HAIKU_TOK[pk.word]&HAIKU_NATURE)) nature++;
@@ -366,9 +374,10 @@ static bool attempt_line(int line,int syl,int pos,GState grammar,Attempt *a) {
   a->score=(a->n?(tok_lp-fresh+scene_score)/a->n:0.f)+HAIKU_END_WEIGHT*(end-log_norm())+NATURE_SCORE*nature;
   // Lab: a line that names the concept beats one that does not.
   if (lab_style) a->score+=lab_word_score*lab_hits-(lab_hits ? 0.f : lab_miss);
-  a->space=space_hits; a->copula=copula;
+  a->space=space_hits; a->copula=copula; a->named=named;
   if (lab_style && copula) a->score-=lab_copula_penalty;               // "a stone is quiet" loses to an action
   if (lab_space_cut(line) && !space_hits) a->score-=lab_space_miss;   // two-part line one names space
+  if (lab_name_cut(line) && !named) a->score-=lab_name_miss;          // a drawn concept's line one names it
   return true;
 }
 static bool free_line_one=false;   // the model writes line one itself (HAIKU_FREE_LINE_ONE, or the space mix)
@@ -403,6 +412,7 @@ static int write_line(int line,const char *prefix,int pos) {
   }
   if (line==0 && free_line_one && featured()) grammar=haiku_voice_start(person_voice);
   if (line==2 && person_end) grammar=haiku_voice_start_as(haiku_voice_of(lines[0]));   // same voice as line one
+  lab_naming=lab_name_cut(line);
   Attempt best={},best_repeat={},cur; best.score=best_repeat.score=-1e30f;
   auto tries=[&]() {
     for (int t=0;t<TRIES;t++) {
@@ -423,7 +433,8 @@ static int write_line(int line,const char *prefix,int pos) {
   };
   tries();
   // Lab: a two-part line one with no space word, or any line on is/are, gets more tries; a line one that
-  // still names nothing in space is written without the person's voice.
+  // still names nothing in space is written without the person's voice. A drawn concept's line one that
+  // names none of its nouns gets more tries too.
   for (int r=0;r<lab_retry_rounds && lab_space_cut(line) && best.n && !best.space;r++) tries();
   for (int r=0;r<lab_retry_rounds && lab_style && best.n && best.copula;r++) tries();
   if (lab_space_cut(line) && best.n && !best.space) {
@@ -431,6 +442,7 @@ static int write_line(int line,const char *prefix,int pos) {
     for (int r=0;r<lab_retry_rounds && !(best.n && best.space);r++) tries();
     if (!best.n) best=keep;
   }
+  for (int r=0;r<lab_retry_rounds && lab_name_cut(line) && best.n && !best.named;r++) tries();
   // The poem's palette can leave a line no way to finish; retry it with every word.
   if (!best.n && constrained && featured()) {
     palette_on=false; palette_fallbacks++;
@@ -712,6 +724,18 @@ static bool season_styled(int theme) {
   for (const SeasonConcept &k:SEASON_CONCEPTS) if (k.season==theme) return true;
   return false;
 }
+// A styled season none of whose concepts names an opener (spring) draws the concept for each poem.
+static bool season_drawn(int theme) {
+  for (const SeasonConcept &k:SEASON_CONCEPTS) if (k.season==theme && *k.openers) return false;
+  return season_styled(theme);
+}
+// The drawn concept for a case: the theme's concepts in table order, picked as space picks its concept.
+static int season_concept_drawn(int theme,int c) {
+  int n=0; for (const SeasonConcept &k:SEASON_CONCEPTS) n+=k.season==theme;
+  int pick=(int)((((uint32_t)(c+1)*2654435769u)>>8)%n);
+  for (int i=0;i<SEASON_N_CONCEPTS;i++) if (SEASON_CONCEPTS[i].season==theme && pick--==0) return i;
+  return -1;
+}
 // Every concept word must be in the grammar and allowed in its part's theme.
 static int lab_check() {
   int bad=0; lab_style=1;
@@ -731,10 +755,20 @@ static int lab_check() {
       if (lab_has(t) && !grammar_entry(t)) { fprintf(stderr,"lab: %s: %s is outside its theme\n",k.name,G_WORDS[i]); bad++; }
     }
     if (k.partner<0 || k.partner>=SEASON_N_CONCEPTS || SEASON_CONCEPTS[k.partner].season!=k.season) { fprintf(stderr,"lab: %s: bad partner\n",k.name); bad++; }
+    // A drawn concept's line one must name one of its nouns, so it needs at least one.
+    if (season_drawn(k.season)) {
+      if (!k.names || !*k.names) { fprintf(stderr,"lab: %s: no names for line one\n",k.name); bad++; continue; }
+      bad+=lab_set_words(k.names,true);
+      for (int i=0;i<G_ENTRY_COUNT;i++) {
+        int t=G_ENTRIES[i].token;
+        if (lab_has(t) && (!grammar_entry(t) || G_ENTRIES[i].tag!=G_NOUN)) { fprintf(stderr,"lab: %s: name %s is not a noun in its theme\n",k.name,G_WORDS[i]); bad++; }
+      }
+    } else if (k.names) { fprintf(stderr,"lab: %s: names are for drawn concepts only\n",k.name); bad++; }
   }
   for (const HaikuSeed &seed:HAIKU_SEEDS) {
-    bool styled=false; for (const SeasonConcept &k:SEASON_CONCEPTS) styled |= k.season==seed.season;
-    if (styled && season_concept_for(seed)<0) { fprintf(stderr,"lab: no concept for opener %s\n",seed.text); bad++; }
+    if (season_styled(seed.season) && !season_drawn(seed.season) && season_concept_for(seed)<0) {
+      fprintf(stderr,"lab: no concept for opener %s\n",seed.text); bad++;
+    }
   }
   select_theme(-1); lab_style=0;
   printf("{\"lab_check\":%s,\"concepts\":%d,\"season_concepts\":%d}\n",bad?"false":"true",LAB_N_CONCEPTS,SEASON_N_CONCEPTS);
@@ -845,6 +879,7 @@ int main(int argc,char **argv) {
   if (const char *value=getenv("LAB_CONCEPT")) lab_concept=atoi(value);
   read_tuning("LAB_PICK_BONUS",&lab_pick_bonus); read_tuning("LAB_WORD_SCORE",&lab_word_score); read_tuning("LAB_MISS",&lab_miss);
   read_tuning("LAB_SPACE_MISS",&lab_space_miss); read_tuning("LAB_COPULA_PENALTY",&lab_copula_penalty);
+  read_tuning("LAB_NAME_MISS",&lab_name_miss); read_tuning("LAB_NAME_BONUS",&lab_name_bonus);
   lab_rules_init();
   if (lab_style<0 || lab_style>2 || lab_concept<-1 || lab_concept>=LAB_N_CONCEPTS || (lab_style && chosen!=HAIKU_SEASON_SPACE && !season_styled(chosen))) {
     fprintf(stderr,"LAB_STYLE 1-2 needs space or a season with concepts; LAB_CONCEPT is -1 or 0-%d\n",LAB_N_CONCEPTS-1); return 2;
@@ -905,14 +940,18 @@ int main(int argc,char **argv) {
     // Person poems always generate their first line; canned lines have no guaranteed voice.
     if (person_voice) { free_start="0"; free_line_one=true; }
     person_end=person_voice && (int)(((uint32_t)(c+1)*2654435761u)>>17)%100<person_end_percent;
-    // Lab: the poem's concept; in space the model always writes line one, in a season the opener picks the concept.
+    // Lab: the poem's concept; in space the model always writes line one, in a season the opener picks the concept,
+    // and in a season with no openers (spring) the concept is drawn and the model writes line one.
     int concept=-1, season_concept=-1;
+    lab_drawn=lab_style && chosen!=HAIKU_SEASON_SPACE && season_drawn(chosen);
     if (lab_style && chosen!=HAIKU_SEASON_SPACE) {
-      season_concept=season_concept_for(seed);
+      season_concept=lab_drawn ? season_concept_drawn(chosen,c) : season_concept_for(seed);
+      if (lab_drawn) { free_start="0"; free_line_one=true; }
       const SeasonConcept &k=SEASON_CONCEPTS[season_concept];
       // The palette keeps this concept's words and, for two-part, the partner's for lines 2-3.
       lab_set_words(lab_style==2 ? SEASON_CONCEPTS[k.partner].words : k.words);
       memcpy(lab_keep,lab_words,sizeof lab_keep);
+      if (lab_drawn) { lab_set_words(k.names); memcpy(lab_names,lab_words,sizeof lab_names); }
       lab_set_words(k.words);
       for (size_t i=0;i<sizeof lab_keep/sizeof lab_keep[0];i++) lab_keep[i]|=lab_words[i];
       select_theme(chosen);
