@@ -495,6 +495,11 @@ static int self_test() {
   for (int t=0;t<4;t++) ok &= themed_test(t,"Cold air rises",t!=1);
   ok &= themed_test(1,"A cool breeze rises",1);
   ok &= themed_test(HAIKU_SEASON_SPACE,"The warm sun rises",0);
+  // Summer batch 1 (2026-11-01): no bird or bee under grass, moss or ivy; roots make no sound; a stone is not by stones.
+  for (const char *text : {"Gulls perch under moss", "Birds chirp under grass", "Roots rustle in a dark field", "Roots whisper",
+                           "A stone stands by rocks", "Rocks stand by stones", "A stone stands near rocks", "A rock remains by stones"}) ok &= grammar_test(text,0);
+  for (const char *text : {"Worms rest under moss", "Crickets chirp under grass", "Birds sing under a bridge", "Leaves rustle in a dark field",
+                           "A wall stands by rocks", "A stone stands by the path", "Gulls perch under a branch"}) ok &= grammar_test(text,1);
   // Review 2026-10-31: light goes through branches, not one branch; the wind may rise through a tree.
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through a green branch", "Pale light glows through a tree", "Sunlight glows through the bare branch"}) ok &= themed_test(t,text,0);
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through the branches", "The wind rises through the trees",

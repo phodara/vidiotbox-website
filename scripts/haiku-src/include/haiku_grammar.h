@@ -146,6 +146,7 @@ typedef struct {
 #define G_MARK_FOREVER 0x8000      // photon, photons, faint, fade, fades: a photon never fades or grows faint (shares G_MARK_STILLNOW's state-only bit)
 #define G_MARK_NOMERGE 0x20000000  // fusion, hydrogen, helium, deuterium: atoms and particles merge, these do not
 #define G_MARK_NOGRASP 0x40000000  // neutrino, proton, photon...: nothing subatomic is grasped
+#define G_MARK_STONY 0x40000000    // state: a stone or rock subject, never by, near or in stones or rocks (shares NOGRASP's noun-only bit; 2026-11-01)
 #define G_MARK_GRASPY 0x80000000u  // grasp, grasps, hold, holds (carried to the object; after a plant's hold, no place phrase)
 #define G_MARK_ICE 0x4000000      // ice: not on or in grass, moss or ivy (frost is)
 #define G_MARK_IMMOVABLE 0x8000000 // still, and bridges, walls, stones, hills...: "a bridge is still" says nothing
@@ -317,6 +318,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if (!subject && (s.marks & G_MARK_FLYER) && (e->marks & G_MARK_ROOT)) return 0;   // not "birds sing on roots", "the birds float across a root" (2026-10-31)
       if (!subject && (s.marks & G_MARK_DUCK) && rank == G_SHADE_RANK && (s.object & (G_NOT_AIRY | G_NOT_SURFACE))) return 0;   // not "ducks rest on a pine"
       if ((s.adjectives & G_LIMIT_ABOVE) && (e->semantic & G_GROUND) && !(e->marks & G_MARK_OVERPASS)) return 0;   // not "a crow flies beneath stones"
+      // 2026-11-01: nor under grass, moss or ivy, which are too low for a bird or bee ("gulls perch under moss").
+      if ((s.adjectives & G_LIMIT_ABOVE) && (s.marks & G_MARK_FLYER) && (e->semantic & G_PLANT) && !(e->object & G_LOW_PLANT_BIT)) return 0;
+      if (!subject && (s.marks & G_MARK_STONY) && (e->object & G_STONE_NOUN)) return 0;   // not "a stone stands by rocks" (2026-11-01)
       if ((s.adjectives & G_LIMIT_FIELD) && (e->semantic & G_AIRY) && (e->semantic & G_GROUND)) return 0;   // not "water shines in a field"
       if (!subject && (s.marks & G_MARK_JUMPY) && rank == G_SHADE_RANK) return 0;   // not "frogs jump over a tree"
       if (!subject && (s.marks & G_MARK_GRASPY) && (e->marks & G_MARK_NOGRASP)) return 0;   // not "I grasp the neutrino"
@@ -332,6 +336,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         if (s.marks & e->marks & G_MARK_FOREVER) return 0;   // not "a faint photon"
         s.marks &= ~(uint32_t)G_MARK_FOREVER;   // the adjective's mark ends with its noun: "faint light fades" is fine
         s.marks |= e->marks & (G_PAIR_MARKS | G_MARK_WATERWORD | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE | G_MARK_ROOT);
+        if (e->object & G_STONE_NOUN) s.marks |= G_MARK_STONY;
         // "Space and time bend": a second subject noun makes the clause plural. A mass noun (singular, no article
         // needed: grass, rain, snow) is number 0 until the verb, which agrees with it as singular (2026-10-31).
         s.number = s.conj ? 2 : (e->number == 1 && e->bare) ? 0 : e->number;
@@ -410,7 +415,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     // Review 2026-10-31: "crickets float over the fence". Crawlers (crickets, beetles: the crawl action, bit 30) do not
     // float or drift on the air; bees, birds and leaves may.
     if (e->tag == G_VERB && (e->object & G_ADRIFT) && (s.subject & (1u << 30))) return 0;
-    if ((e->tag == G_VERB || e->tag == G_TRANSITIVE) && (e->extra & GX_SOUND) && (s.marks & G_MARK_HUSHED)) return 0;   // not "quiet birds sing"   // walls, gates, stones... crumble, lean, remain, stand
+    if ((e->tag == G_VERB || e->tag == G_TRANSITIVE) && (e->extra & GX_SOUND) && (s.marks & G_MARK_HUSHED)) return 0;   // not "quiet birds sing"
+    if ((e->tag == G_VERB || e->tag == G_TRANSITIVE) && (e->extra & GX_SOUND) && (s.marks & G_MARK_ROOT)) return 0;   // roots are underground: not "roots rustle" (2026-11-01)   // walls, gates, stones... crumble, lean, remain, stand
     // Moonlight and starlight are G_AIRY on earth only: "starlight burns through space" stays.
     if (e->tag == G_VERB && (e->extra & GX_BURN) && (s.marks & G_MARK_COLD) && (s.subject & G_AIRY)) return 0;   // not "moonlight burns"
     const int shade = (e->marks & (G_ORBIT_VERB | G_ORBIT_RANK)) == G_SHADE_RANK;
@@ -421,7 +427,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if ((e->extra & GX_SHINE) && (tree || (s.marks & G_MARK_ROOT))) return 0;
     s.marks = (uint32_t)((s.marks & G_MARK_DRY) | (shade ? G_SHADE_RANK : 0) | (e->marks & (G_MARK_DRIFTY | G_MARK_JUMPY | G_MARK_GRASPY | G_MARK_NOBLOOM | G_MARK_NEEDS_PLACE)) |
                          (s.marks & (G_MARK_WATERWORD | G_MARK_AIR | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE)) |
-                         (s.marks & (G_MARK_TINY | G_MARK_ROOT | G_MARK_IMMOVABLE)) |   // where a worm, a root or a wall may be (V8.17)
+                         (s.marks & (G_MARK_TINY | G_MARK_ROOT | G_MARK_IMMOVABLE | G_MARK_STONY)) |   // where a worm, a root, a wall or a stone may be (V8.17)
                          // A hill, cliff, ridge or bank (immovable and G_MARK_NOPULL) keeps that mark for its place phrase (2026-10-31).
                          ((s.marks & G_MARK_IMMOVABLE) ? (s.marks & G_MARK_NOPULL) : 0) |
                          (creeper ? G_MARK_CREEPER : 0) | (tree ? G_MARK_TREE : 0) |
