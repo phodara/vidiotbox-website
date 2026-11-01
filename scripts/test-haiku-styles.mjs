@@ -20,7 +20,7 @@ assert.equal(module._haiku_styles_generate(0, 4, 0), 2);
 assert.equal(module._haiku_styles_generate(3, 4, 0), 2);
 assert.equal(module._haiku_styles_generate(1, 0, 0), 2, 'spring has no concepts yet');
 const concepts = new Set();
-for (const theme of [4, 3, 2]) for (const style of [1, 2]) {
+for (const theme of [4, 3, 2, 1]) for (const style of [1, 2]) {
   for (let caseNumber = 0; caseNumber < 10; caseNumber++) {
     line = null;
     assert.equal(module._haiku_styles_generate(style, theme, caseNumber), 0);
@@ -32,4 +32,4 @@ for (const theme of [4, 3, 2]) for (const style of [1, 2]) {
     concepts.add(poem.concept);
   }
 }
-console.log(`styles: 60 complete poems (space, winter and autumn), ${concepts.size} concepts`);
+console.log(`styles: 80 complete poems (space, winter, autumn and summer), ${concepts.size} concepts`);
