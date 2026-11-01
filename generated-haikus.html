@@ -99,6 +99,12 @@
  .work-notice {color:var(--muted);font-size:12px;margin-top:12px !important;}
  .credits {border-top:1px solid var(--line);padding-top:18px;margin:0 0 22px;}
  .instructions {border-top:1px solid var(--line);padding-top:18px;margin:0 0 22px;}
+ .version {border-bottom:1px solid var(--line);padding-bottom:6px;margin:0 0 22px;}
+ .version p {font-size:13px;line-height:1.55;color:var(--muted);margin:0 0 8px;}
+ .version .version-lead {color:#fff;font-size:15px;font-weight:700;}
+ .version strong {color:#fff;}
+ .version ul {margin:0 0 14px;padding-left:18px;font-size:13px;line-height:1.55;color:var(--muted);}
+ .version li {margin:0 0 6px;}
  .instructions dl {margin:0;}
  .instructions dt {color:#fff;font-size:13px;font-weight:700;}
  .instructions dd {margin:2px 0 12px;font-size:13px;line-height:1.55;color:var(--muted);}
@@ -144,11 +150,34 @@
   <p class="work-author">by Paul Hodara</p>
   <p class="work-notice">Copyright &copy; 2026 Paul Hodara. All rights reserved.</p>
  </header>
+ <section class="version" aria-labelledby="versionTitle">
+  <h2 id="versionTitle">VERSION</h2>
+  <p class="version-lead">V8.27 &middot; Changes:</p>
+  <p>Summer openers: the cicada and the firefly, summer's own insects in the Japanese almanac, join the original ten as whole five-syllable first lines: "A cicada sings", "A cicada calls", "A cicada molts", "A firefly glows", "A firefly floats" (fifteen in all).</p>
+  <ul>
+   <li>Cicadas (summer only) sing, call, fly, leap, crawl and burrow. "Cicada" is split by the tokenizer; G_MULTI_SEASONS now gives split words their seasons (they had skipped the season filter), and the new split words take the last IDs so space poems do not change.</li>
+   <li>Fireflies (summer only) are animals and lights: they glow, shine, fly, float and drift, a pond reflects them, they are never warm, and never on water.</li>
+   <li>"Molts" is not in CMU; both table generators give it M OW1 L T S. "Molt" is split, so it is only an opener (the opener parser reads every word).</li>
+  </ul>
+  <p><strong>New for every season:</strong></p>
+  <ul>
+   <li>call (the song), leap (the jump), burrow (the crawl; in or under the ground only), settle (what flies, and snow, dew, mist and fog; never over or through; ponds and water do not settle).</li>
+   <li>Crawling and burrowing go in or through soil and earth (G_IN_SOIL); nothing else does.</li>
+   <li>Birds, bees, gulls and fireflies drift; crawlers neither float nor drift; a duck floats or drifts on water only ("a duck floats over the garden").</li>
+  </ul>
+  <p><strong>Corrections:</strong></p>
+  <ul>
+   <li>"Remain" and "stand" take no "slowly" ("stones remain slowly in fog").</li>
+   <li>Only crawlers are under grass, moss or ivy ("frogs call under grass"); a bird in a plant is in trees or reeds, never grass ("crows are still in grass").</li>
+   <li>A wall, stone or hill takes no hot, warm, cold or cool after is/are ("an old bridge is hot").</li>
+   <li>Nothing is by, near, beside, along or around earth or soil ("an oak grows near earth").</li>
+  </ul>
+ </section>
  <h2>ABOUT THESE HAIKU</h2>
  <p class="about-lead">Every haiku here is one of over a billion that Haiku-Matic can generate.</p>
  <p class="about-text"><strong>How it was made.</strong> Every haiku here is written by a tiny language model, 28.9 million parameters, first trained on children's stories and small enough to run on a microcontroller, and here in your browser. On its own it wrote broken, story-like English. So it went back to school. A much larger model, Qwen, wrote 5,000 example haiku under strict rules, and later about 5,000 more, written by Claude and checked by hand, became its training set. Training works by backpropagation: each time the model guesses the next word wrongly, the error is traced back through the network and every weight is nudged so the guess is a little less wrong. The training was also quantization-aware: it simulated rounding the weights to 4 bits as it went, so the model learned to work at the tiny size it is shipped in. Even so, the model only suggests the next word. Hand-made rules decide which words are allowed, so every haiku is exactly 5-7-5, in whole sentences. Many of those rules came from volunteer reviewers in the Haiku Lab, who rated and annotated poems line by line. Each recurring complaint, such as &ldquo;sounds too much like astronomy class&rdquo;, became a new rule, tested on thousands of poems before it was released.</p>
  <div class="facts">
-  <div><span>Model</span><strong>V8.27 · PLE / TinyStories</strong></div>
+  <div><span>Model</span><strong>PLE / TinyStories</strong></div>
   <div><span>Inference</span><strong>INT4 weights · INT8 math</strong></div>
   <div><span>Styles</span><strong>Free · One-thing · Two-part · Mixed (Space, Summer, Autumn, Winter)</strong></div>
  </div>
