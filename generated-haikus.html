@@ -140,6 +140,18 @@
 <main class="crawl-stage"><div class="crawl">
 <h1>A sky<br>without edges</h1>
 <p class="eyebrow">1 BILLION HAIKU</p>
+<div id="samples">
+<div class="poem-grid">
+<!-- samples: start (scripts/write-sample-haiku.py) -->
+<article class="poem"><h3>Space · No. 790634759</h3><p><span>I watch the dark stars...</span><br><span>planets orbit a bright sun</span><br><span>now my eyes wonder.</span></p></article>
+<article class="poem"><h3>Space · No. 97737913</h3><p><span>Starlight glows in space...</span><br><span>I wait under the planet</span><br><span>a signal now bends.</span></p></article>
+<article class="poem"><h3>Space · No. 124315722</h3><p><span>Density grows fast...</span><br><span>lights fade in the black shadows</span><br><span>a galaxy turns.</span></p></article>
+<article class="poem"><h3>Space · No. 423143134</h3><p><span>Meteors turn fast...</span><br><span>I watch the comet past stars</span><br><span>a planet now glows.</span></p></article>
+<article class="poem"><h3>Space · No. 64137498</h3><p><span>I gently watch light...</span><br><span>density in a flash shifts</span><br><span>my eyes now seek gas.</span></p></article>
+<article class="poem"><h3>Space · No. 46602918</h3><p><span>I wait under stars...</span><br><span>density and the time shift</span><br><span>my hands open here.</span></p></article>
+<!-- samples: end -->
+</div>
+</div>
 <div class="poem-grid" id="poems"></div>
 <p class="writing" id="writing">Writing the next haiku…</p>
 <p class="lede reading-only">Want more? Press <button class="button-name" type="button" data-press="more">Write another</button>, or press <button class="button-name" type="button" data-press="mode">Play crawl</button> to return to the crawl.</p>
@@ -208,6 +220,9 @@
 <script>
 const $ = id => document.getElementById(id);
 const crawl = document.querySelector('.crawl'), poems = $('poems'), writing = $('writing');
+// A few Space, Free haiku written into the page (scripts/write-sample-haiku.py), so a visitor whose model is still
+// loading, and a search engine, see real ones. The live poems follow them; another theme or style removes them.
+const samples = $('samples');
 const mode = $('mode'), pause = $('pause'), more = $('more'), speed = $('speed'), theme = $('theme'), style = $('style');
 const audio = $('crawlMusic'), music = $('music'), statusLine = $('status');
 const THEMES = ['spring', 'summer', 'autumn', 'winter', 'space'];
@@ -294,7 +309,7 @@ function fitPoem(p) {
   const widest = Math.max(...[...p.querySelectorAll('span')].map(span => span.offsetWidth));
   if (widest > p.clientWidth) p.style.fontSize = `${parseFloat(getComputedStyle(p).fontSize) * p.clientWidth / widest * 0.98}px`;
 }
-function fitPoems() { poems.querySelectorAll('.poem p').forEach(fitPoem); }
+function fitPoems() { crawl.querySelectorAll('.poem p').forEach(fitPoem); }
 window.addEventListener('resize', fitPoems);
 async function writeOne() {
   if (busy || !canWrite()) return;
@@ -393,6 +408,7 @@ async function refillReading() {
 }
 function restartCrawl() {
   themeEpoch++; nextTheme = 0;
+  samples.remove();
   if (!document.body.classList.contains('is-crawl')) { refillReading(); return; }
   poems.replaceChildren();
   offset = 0; lastFrame = null;
@@ -456,6 +472,8 @@ function updateLink() {
 }
 theme.addEventListener('change', updateLink); style.addEventListener('change', updateLink);
 updateLink();
+if (theme.value !== 'space' || style.value !== 'standard') samples.remove();   // the samples are Space, Free
+fitPoems();
 
 // ---- Start ----
 try {

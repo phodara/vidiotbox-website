@@ -50,4 +50,19 @@ for (const [caseNumber, expected] of fixture.space_sequence.entries()) {
 }
 assert.ok(guarded > 0, 'the repeat guard never fired');
 console.log(`space sequence: ${fixture.space_sequence.length} poems, ${guarded} repeated lines rejected`);
+// The sample haiku written into generated-haikus.html (scripts/write-sample-haiku.py) are each the first Space poem of a
+// fresh decoder for their number; after updating scripts/haiku-src, rerun that script.
+const page = readFileSync(new URL('../generated-haikus.html', import.meta.url), 'utf8');
+const samples = [...page.matchAll(/<article class="poem"><h3>Space · No\. (\d+)<\/h3><p>(.*?)<\/p><\/article>/g)];
+assert.ok(samples.length >= 6, 'sample haiku missing from generated-haikus.html');
+const unescape = text => text.replace(/&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+for (const [, caseNumber, body] of samples) {
+  const first = await createDecoder({wasmBinary: wasm, print: text => {line = text;}});
+  first.FS.writeFile('/model.bin', model);
+  line = null;
+  assert.equal(first._haiku_generate(4, Number(caseNumber)), 0);
+  assert.deepEqual(JSON.parse(line).lines, [...body.matchAll(/<span>(.*?)<\/span>/g)].map(m => unescape(m[1])),
+                   `sample No. ${caseNumber} is stale: run python3 scripts/write-sample-haiku.py`);
+}
+console.log(`samples: ${samples.length} sample haiku in generated-haikus.html match the WASM`);
 console.log('Model hashes, invalid inputs, all themes, history, theme switching, and the line repeat guard passed.');

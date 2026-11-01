@@ -25,6 +25,8 @@ python3 scripts/test-build-site.py
 ```
 
 Commit both `haiku-generator/decoder.mjs` and `decoder.wasm` after rebuilding.
+Then rewrite the sample haiku in `generated-haikus.html` (six Space poems shown before the model loads, and read by
+search engines): `python3 scripts/write-sample-haiku.py`. `test-haiku.mjs` fails while they are stale.
 Then rebuild the Style menu's decoder, which applies its patch to this `host.cpp`:
 `python3 scripts/build-haiku-styles.py && node scripts/test-haiku-styles.mjs` (see `../haiku-styles-src/README.md`).
 The Pages workflow serves the checked-in binaries, so deployment needs no C++
