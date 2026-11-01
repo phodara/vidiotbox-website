@@ -12,6 +12,26 @@ spec.loader.exec_module(build_site)
 
 
 class AssetVersions(unittest.TestCase):
+    def test_haiku_about_is_generated_from_the_dialog_without_runtime(self):
+        page = (build_site.ROOT / 'generated-haikus.html').read_text()
+        about = build_site.render_haiku_about(page, staging=False)
+        self.assertNotIn('<script', about)
+        self.assertNotIn('model.bin', about)
+        self.assertNotIn('<dialog', about)
+        self.assertNotIn('noindex', about)
+        self.assertIn('href="https://haiku-matic.com/haiku-matic-about.html"', about)
+        self.assertIn('href="./"', about)
+        content = page.split('<dialog id="aboutDialog"', 1)[1].split('>', 1)[1].split('<form method="dialog">', 1)[0]
+        self.assertIn(content, about, 'all About information must be reused verbatim')
+        changed = page.replace('How it was made.', 'Updated source history.')
+        self.assertIn('Updated source history.', build_site.render_haiku_about(changed))
+        self.assertIn('content="noindex"', build_site.render_haiku_about(page))
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            (root / 'generated-haikus.html').write_text(page)
+            build_site.build(root, root / '_site')
+            self.assertTrue((root / '_site/haiku-matic-about.html').is_file())
+
     def test_changed_asset_only_and_idempotence(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder).resolve()

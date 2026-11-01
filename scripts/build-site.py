@@ -14,6 +14,50 @@ ASSET_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico', '.
 QUOTED_URL = re.compile(r'''(?P<quote>['"])(?P<url>[^'"<>\r\n]+)(?P=quote)''')
 
 
+def render_haiku_about(page, *, staging=True):
+    """Reuse the dialog verbatim; never maintain a second copy of its content."""
+    dialog = re.search(r'<dialog id="aboutDialog"[^>]*>(.*?)</dialog>', page, re.S)
+    if not dialog:
+        raise ValueError('Missing Haiku-Matic About dialog')
+    content, separator, _ = dialog[1].partition('<form method="dialog">')
+    if not separator:
+        raise ValueError('Missing About dialog close form')
+    styles = re.search(r'<style>(.*?)</style>', page, re.S)[1]
+    home = 'generated-haikus.html' if staging else './'
+    robots = '<meta name="robots" content="noindex">' if staging else ''
+    return f'''<!DOCTYPE html>
+<!-- Generated from generated-haikus.html by scripts/build-site.py. Edit the dialog there. -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About Haiku-Matic | How the AI Haiku Generator Works</title>
+<meta name="description" content="Learn how Paul Hodara built Haiku-Matic: a browser-based neural network for 5-7-5 haiku. Explore its themes, poetic styles, training history, and credits.">
+<meta name="author" content="Paul Hodara">
+<link rel="canonical" href="https://haiku-matic.com/haiku-matic-about.html">
+<link rel="icon" type="image/png" href="philosophy-assets/happy.png">
+{robots}
+<style>{styles}
+/* This document has no animation, scripts, workers or model download. */
+.about-page main {{max-width:760px;margin:auto;padding:26px 28px;}}
+.about-page nav {{max-width:760px;margin:auto;padding:20px 28px 0;}}
+.about-page h1 {{font-size:28px;line-height:1.2;text-transform:none;margin:0 0 24px;}}
+.about-page h3 {{color:var(--cyan);font-size:13px;letter-spacing:2px;margin:0 0 20px;}}
+@media(max-width:640px) {{.about-page main {{padding:20px 16px;}} .about-page nav {{padding:20px 16px 0;}}}}
+</style>
+</head>
+<body class="about-page">
+<nav aria-label="Haiku-Matic navigation"><a href="{home}">Open the haiku generator</a> · <a href="#instructionsTitle">Instructions</a> · <a href="#creditsTitle">Credits</a></nav>
+<main>
+<h1>About Haiku-Matic</h1>
+{content}
+<p><a href="{home}">Return to Haiku-Matic</a></p>
+</main>
+</body>
+</html>
+'''
+
+
 def version_urls(text, page, root):
     """Version complete quoted URLs, including literal URLs in inline scripts."""
     def replace(match):
@@ -68,6 +112,9 @@ def build(root, output):
         destination = output / source.relative_to(root)
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
+    haiku_page = output / 'generated-haikus.html'
+    if haiku_page.is_file():
+        (output / 'haiku-matic-about.html').write_text(render_haiku_about(haiku_page.read_text()))
     pages = list(output.rglob('*.html'))
     for page in pages:
         page.write_text(version_urls(page.read_text(), page, output))

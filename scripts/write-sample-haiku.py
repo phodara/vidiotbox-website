@@ -42,7 +42,7 @@ with tempfile.TemporaryDirectory() as work:
     assert len(poems) == COUNT, 'not enough samples without a repeated line'
 
 # The same markup as addPoem() in the page.
-articles = ''.join(f'<article class="poem"><h3>Space · No. {p["case"]}</h3><p>'
+articles = ''.join(f'<article class="poem"><h2>Space · No. {p["case"]}</h2><p>'
                    + '<br>'.join(f'<span>{html.escape(line)}</span>' for line in p['lines']) + '</p></article>\n'
                    for p in poems)
 page = PAGE.read_text()

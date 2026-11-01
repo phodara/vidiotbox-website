@@ -20,17 +20,20 @@ SITE=$(mktemp -d); OUT=$(mktemp -d)
 trap 'rm -rf "$SITE" "$OUT"' EXIT
 python3 "$ROOT/scripts/build-site.py" --output "$SITE" >/dev/null
 
-# haiku-matic.com puts its own name on the crawl's first line instead of the top bar, and in the tab
-# title; vidiotbox.net keeps "VIDIOTBOX / GENERATED hAIkus" in its top bar.
+# haiku-matic.com puts its own name in the crawl heading instead of the top bar;
+# vidiotbox.net keeps "VIDIOTBOX / GENERATED hAIkus" in its top bar.
+# SEO metadata is authored in generated-haikus.html and shared by both copies.
 # Both copies name https://haiku-matic.com/ as the canonical address: it is the original (2026-11-01). The
 # vidiotbox.net copy is only for staging and tells search engines not to index it; haiku-matic.com must not.
-python3 - "$SITE/generated-haikus.html" "$OUT/index.html" <<'EOF'
+python3 - "$SITE/generated-haikus.html" "$OUT/index.html" "$ROOT/scripts/build-site.py" <<'EOF'
 import sys
+from pathlib import Path
+from runpy import run_path
 page = open(sys.argv[1]).read()
-for old, new in [(' <button id="about" type="button">About</button>\n', ''),
+for old, new in [(' <a id="about" class="about-button" href="haiku-matic-about.html" aria-haspopup="dialog" aria-controls="aboutDialog">About</a>\n', ''),
                  ('<meta name="robots" content="noindex">   <!-- staging copy; deploy-dreamhost.sh removes this for haiku-matic.com -->\n', ''),
                  ('<a class="brand" href="/">VIDIOTBOX / GENERATED hAIkus</a>',   # About first, the bar left-justified
-                  '<button id="about" type="button">About hAIku Toy</button>'),
+                  '<a id="about" class="about-button" href="haiku-matic-about.html" aria-haspopup="dialog" aria-controls="aboutDialog">About hAIku Toy</a>'),
                  # The page's main heading names it (2026-11-01, for search engines), in the eyebrow's look; the
                  # poem line keeps the big heading's look (.sky-title).
                  ('<h1>A sky<br>without edges</h1>',
@@ -38,14 +41,15 @@ for old, new in [(' <button id="about" type="button">About</button>\n', ''),
                   '<span style="white-space:nowrap">- by Paul Hodara</span></h1>\n'
                   '<p class="sky-title">A sky<br>without edges</p>'),
                  ('content="https://vidiotbox.net/assets/haiku-matic/haiku-matic-og.jpg',
-                  'content="https://haiku-matic.com/assets/haiku-matic/haiku-matic-og.jpg'),
-                 ('<title>Vidiotbox · Generated Haikus</title>', '<title>Haiku-Matic: AI Haiku Generator Toy by Paul Hodara</title>')]:
+                  'content="https://haiku-matic.com/assets/haiku-matic/haiku-matic-og.jpg')]:
     if page.count(old) != 1:
         sys.exit(f"deploy-dreamhost.sh: expected one {old!r} in generated-haikus.html")
     page = page.replace(old, new)
 if 'noindex' in page:
     sys.exit('deploy-dreamhost.sh: haiku-matic.com would tell search engines not to index it')
 open(sys.argv[2], 'w').write(page)
+render_about = run_path(sys.argv[3])['render_haiku_about']
+Path(sys.argv[2]).with_name('haiku-matic-about.html').write_text(render_about(page, staging=False))
 EOF
 cp "$OUT/index.html" "$OUT/generated-haikus.html"
 cp -R "$SITE/haiku-generator" "$SITE/haiku-styles" "$OUT/"
@@ -80,6 +84,10 @@ cat > "$OUT/sitemap.xml" <<EOF
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://haiku-matic.com/</loc>
+    <lastmod>$(date -u +%Y-%m-%d)</lastmod>
+  </url>
+  <url>
+    <loc>https://haiku-matic.com/haiku-matic-about.html</loc>
     <lastmod>$(date -u +%Y-%m-%d)</lastmod>
   </url>
 </urlset>

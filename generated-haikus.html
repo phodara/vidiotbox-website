@@ -21,16 +21,16 @@
 <meta name="author" content="Paul Hodara">
 <meta name="copyright" content="Copyright © 2026 Paul Hodara. All rights reserved.">
 <link rel="icon" type="image/png" href="philosophy-assets/happy.png">
-<title>Vidiotbox · Generated Haikus</title>
-<meta name="description" content="Haiku-Matic writes endless 5-7-5 haiku with a tiny AI language model that runs in your browser: space and the four seasons, free, with no sign-up.">
+<title>Free AI Haiku Generator | Haiku-Matic by Paul Hodara</title>
+<meta name="description" content="Generate original 5-7-5 haiku with Haiku-Matic, a free AI haiku generator powered by a tiny neural network running in your browser. No sign-up required.">
 <link rel="canonical" href="https://haiku-matic.com/">
 <meta name="robots" content="noindex">   <!-- staging copy; deploy-dreamhost.sh removes this for haiku-matic.com -->
-<meta property="og:title" content="Haiku-Matic: AI Haiku Generator Toy by Paul Hodara">
-<meta property="og:description" content="Endless 5-7-5 haiku from a tiny AI language model that runs in your browser.">
+<meta property="og:title" content="Free AI Haiku Generator | Haiku-Matic by Paul Hodara">
+<meta property="og:description" content="Generate original 5-7-5 haiku with Haiku-Matic, a free AI haiku generator powered by a tiny neural network running in your browser. No sign-up required.">
 <meta property="og:url" content="https://haiku-matic.com/">
 <meta property="og:site_name" content="Haiku-Matic">
 <meta property="og:type" content="website">
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Haiku-Matic", "alternateName": "hAIku Generator Toy", "url": "https://haiku-matic.com/", "description": "Haiku-Matic writes endless 5-7-5 haiku with a tiny AI language model that runs in your browser: space and the four seasons, free, with no sign-up.", "applicationCategory": "EntertainmentApplication", "operatingSystem": "Any (runs in a web browser)", "browserRequirements": "Requires JavaScript and WebAssembly", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Paul Hodara"}, "inLanguage": "en"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Haiku-Matic", "alternateName": "hAIku Generator Toy", "url": "https://haiku-matic.com/", "description": "Generate original 5-7-5 haiku with Haiku-Matic, a free AI haiku generator powered by a tiny neural network running in your browser. No sign-up required.", "applicationCategory": "EntertainmentApplication", "operatingSystem": "Any (runs in a web browser)", "browserRequirements": "Requires JavaScript and WebAssembly", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "author": {"@type": "Person", "name": "Paul Hodara"}, "inLanguage": "en"}</script>
 <meta property="og:image" content="https://vidiotbox.net/assets/haiku-matic/haiku-matic-og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -47,8 +47,9 @@
  .brand {color:var(--cyan);font-weight:900;font-size:13px;letter-spacing:2px;margin-right:auto;text-decoration:none;}
  .button-name {display:inline-block;font:700 .8em Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:3px 8px;border-radius:3px;white-space:nowrap;vertical-align:.1em;cursor:pointer;}
  .button-name:hover {border-color:var(--cyan);}
- button,select {font:700 13px Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:10px 12px;border-radius:3px;cursor:pointer;text-decoration:none;}
- button:hover {border-color:var(--green);color:var(--green);}
+ button,select,.about-button {font:700 13px Arial,sans-serif;color:var(--cyan);background:#171d20;border:1px solid var(--line);padding:10px 12px;border-radius:3px;cursor:pointer;text-decoration:none;}
+ button:hover,.about-button:hover {border-color:var(--green);color:var(--green);}
+ .about-button {display:inline-block;text-align:center;}
  button:disabled {opacity:.5;cursor:wait;}
  :focus-visible {outline:2px solid var(--green);outline-offset:4px;}
  label {font-size:12px;color:var(--muted);display:flex;gap:7px;align-items:center;}
@@ -63,7 +64,7 @@
  .crawl {width:min(1120px,100%);margin:auto;text-align:left;}
  .poem-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:40px;}
  .poem {border-top:1px solid #29383d;padding:24px 0 28px;break-inside:avoid;}
- .poem h3 {font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);font-weight:700;margin:0 0 16px;}
+ .poem h2 {font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);font-weight:700;margin:0 0 16px;}
  .poem p {font-size:clamp(17px,2.1vw,23px);line-height:1.7;margin:0;}
  .poem p span {white-space:nowrap;}
  .writing {color:var(--muted);font-size:15px;}
@@ -76,13 +77,13 @@
  .is-crawl .poem-grid {display:block;}
  .is-crawl .poem {border:0;padding:32px 0 50px;}
  .is-crawl .poem p {font-size:clamp(25px,4.2vw,50px);font-weight:700;line-height:1.45;}
- .is-crawl .poem h3 {font-size:24px;}
+ .is-crawl .poem h2 {font-size:24px;}
  .is-crawl .writing {font-size:clamp(20px,3vw,34px);}
  .is-crawl .lede,.is-crawl h1,.is-crawl .sky-title {margin-inline:auto;}
  .is-crawl .reading-only {display:none;}
  dialog {max-width:min(760px,calc(100vw - 32px));background:#101010;color:var(--ink);border:1px solid var(--cyan-strong);box-shadow:0 16px 40px rgba(0,0,0,.6);padding:26px 28px;}
  dialog::backdrop {background:rgba(17,17,17,.8);}
- dialog h2 {color:var(--cyan);font-size:13px;letter-spacing:2px;margin:0 0 20px;}
+ dialog h2,dialog h3 {color:var(--cyan);font-size:13px;letter-spacing:2px;margin:0 0 20px;}
  .about-lead {font-size:15px;font-style:italic;color:var(--ink);margin:0 0 14px;}
  .about-text {font-size:14px;line-height:1.6;color:var(--ink);margin:0 0 22px;}
  .facts {display:grid;gap:14px;margin:0 0 22px;}
@@ -96,7 +97,7 @@
  .more-below[hidden] {display:none;}
  @keyframes bob {50% {transform:translate(-50%,4px);}}
  .work {text-align:center;border-bottom:1px solid var(--line);padding-bottom:18px;margin:0 0 22px;}
- .work p {margin:0;}
+ .work p,.work .work-title {margin:0;}
  .about-art {display:block;width:100%;height:auto;margin:0 0 20px;}
  .work-title {color:var(--cyan);font-size:24px;font-weight:900;letter-spacing:1px;}
  .work-author {color:var(--ink);font-size:15px;font-style:italic;margin-top:6px !important;}
@@ -115,11 +116,11 @@
  .credits p {font-size:12px;line-height:1.55;color:var(--muted);margin:0 0 10px;}
  .credits strong {color:var(--ink);}
  @media(max-width:640px) {
-  .toolbar {padding:10px;gap:8px;} .brand {width:100%;} button,select {padding:8px;font-size:12px;}
+  .toolbar {padding:10px;gap:8px;} .brand {width:100%;} button,select,.about-button {padding:8px;font-size:12px;}
   .crawl-stage {padding:36px 16px;} .poem-grid {grid-template-columns:1fr;} .poem p {font-size:20px;}
   .is-crawl .crawl-stage {perspective:330px;perspective-origin:50% 28%;}
   dialog {padding:20px 16px;}
-  .is-crawl .crawl {width:78vw;} .is-crawl .poem p {font-size:21px;} .is-crawl .poem h3 {font-size:18px;}
+  .is-crawl .crawl {width:78vw;} .is-crawl .poem p {font-size:21px;} .is-crawl .poem h2 {font-size:18px;}
  }
  @media(prefers-reduced-motion:reduce) {html {scroll-behavior:auto;} .toolbar {transition:none;} .more-below {animation:none;}}
  #stars{position:fixed;inset:0;z-index:30;pointer-events:none;mix-blend-mode:lighten;background-repeat:repeat;image-rendering:pixelated}#stars canvas{position:absolute;inset:0;width:100%;height:100%}
@@ -137,21 +138,21 @@
  <label id="speedControl">Speed <select id="speed"><option value="0.5" selected>0.5×</option><option value="1">1×</option><option value="2">2×</option><option value="4">4×</option></select></label>
  <label> Music Shakuhachi <select id="music" autocomplete="off"><option value="assets/audio/shika-no-toone-shakuhachi.mp3">On</option><option value="" selected>Off</option></select></label>
  <label>Stars <select id="starsOpt"><option value="on">On</option><option value="off">Off</option></select></label>
- <button id="about" type="button">About</button>
+ <a id="about" class="about-button" href="haiku-matic-about.html" aria-haspopup="dialog" aria-controls="aboutDialog">About</a>
  <span id="status" role="status">Loading the haiku model…</span>
 </nav>
 <main class="crawl-stage"><div class="crawl">
 <h1>A sky<br>without edges</h1>
 <p class="eyebrow">1 BILLION HAIKU</p>
-<div id="samples">
+<div id="samples" role="region" aria-label="Example haiku generated by Haiku-Matic">
 <div class="poem-grid">
 <!-- samples: start (scripts/write-sample-haiku.py) -->
-<article class="poem"><h3>Space · No. 790634759</h3><p><span>I watch the dark stars...</span><br><span>planets orbit a bright sun</span><br><span>now my eyes wonder.</span></p></article>
-<article class="poem"><h3>Space · No. 97737913</h3><p><span>Starlight glows in space...</span><br><span>I wait under the planet</span><br><span>a signal now bends.</span></p></article>
-<article class="poem"><h3>Space · No. 124315722</h3><p><span>Density grows fast...</span><br><span>lights fade in the black shadows</span><br><span>a galaxy turns.</span></p></article>
-<article class="poem"><h3>Space · No. 423143134</h3><p><span>Meteors turn fast...</span><br><span>I watch the comet past stars</span><br><span>a planet now glows.</span></p></article>
-<article class="poem"><h3>Space · No. 64137498</h3><p><span>I gently watch light...</span><br><span>density in a flash shifts</span><br><span>my eyes now seek gas.</span></p></article>
-<article class="poem"><h3>Space · No. 46602918</h3><p><span>I wait under stars...</span><br><span>density and the time shift</span><br><span>my hands open here.</span></p></article>
+<article class="poem"><h2>Space · No. 790634759</h2><p><span>I watch the dark stars...</span><br><span>planets orbit a bright sun</span><br><span>now my eyes wonder.</span></p></article>
+<article class="poem"><h2>Space · No. 97737913</h2><p><span>Starlight glows in space...</span><br><span>I wait under the planet</span><br><span>a signal now bends.</span></p></article>
+<article class="poem"><h2>Space · No. 124315722</h2><p><span>Density grows fast...</span><br><span>lights fade in the black shadows</span><br><span>a galaxy turns.</span></p></article>
+<article class="poem"><h2>Space · No. 423143134</h2><p><span>Meteors turn fast...</span><br><span>I watch the comet past stars</span><br><span>a planet now glows.</span></p></article>
+<article class="poem"><h2>Space · No. 64137498</h2><p><span>I gently watch light...</span><br><span>density in a flash shifts</span><br><span>my eyes now seek gas.</span></p></article>
+<article class="poem"><h2>Space · No. 46602918</h2><p><span>I wait under stars...</span><br><span>density and the time shift</span><br><span>my hands open here.</span></p></article>
 <!-- samples: end -->
 </div>
 </div>
@@ -162,12 +163,13 @@
 <dialog id="aboutDialog" aria-labelledby="aboutTitle">
  <header class="work" tabindex="-1" autofocus>
   <img class="about-art" src="assets/haiku-matic/haiku-matic-banner.webp" width="1600" height="640" alt="Haiku-Matic, hAIku Generator Toy. Imagine, generate, explore. A robot writes on a scroll: Why A.I. Haiku? Another Useless Project, by Paul Hodara.">
-  <p class="work-title" id="aboutTitle">One Billion hAIku</p>
+  <h2 class="work-title" id="aboutTitle">One Billion hAIku</h2>
   <p class="work-author">by Paul Hodara</p>
   <p class="work-notice">Copyright &copy; 2026 Paul Hodara. All rights reserved.</p>
  </header>
+ <p class="about-text">Haiku-Matic is a free AI haiku generator by Paul Hodara. A compact neural network runs in your browser to create original 5-7-5 haiku, with Space, Spring, Summer, Autumn, and Winter themes and Free, One-thing, Two-part, and Mixed styles.</p>
  <section class="version" aria-labelledby="versionTitle">
-  <h2 id="versionTitle">VERSION</h2>
+  <h3 id="versionTitle">VERSION</h3>
   <p class="version-lead">V8.29 &middot; Changes:</p>
   <p>Corrections from reading the spring Two-part poems and the live site. Each became a grammar rule, and none changes a Free or One-thing space poem.</p>
   <p><strong>Water and growing things:</strong></p>
@@ -186,7 +188,7 @@
   </ul>
   <p><strong>Spring styles</strong> (since V8.28): One-thing and Two-part poems in Spring have generated first lines, which name one of five spring ideas. On V8.29 the first line named its idea in 187 of 200 poems in each style.</p>
  </section>
- <h2>ABOUT THESE HAIKU</h2>
+ <h3>ABOUT THESE HAIKU</h3>
  <p class="about-lead">Every haiku here is one of over a billion that Haiku-Matic can generate. Its home is <a href="https://haiku-matic.com/">haiku-matic.com</a>.</p>
  <p class="about-text"><strong>How it was made.</strong> Every haiku here is written by a tiny language model, 28.9 million parameters, first trained on children's stories and small enough to run on a microcontroller, and here in your browser. On its own it wrote broken, story-like English. So it went back to school. A much larger model, Qwen, wrote 5,000 example haiku under strict rules, and later about 5,000 more, written by Claude and checked by hand, became its training set. Training works by backpropagation: each time the model guesses the next word wrongly, the error is traced back through the network and every weight is nudged so the guess is a little less wrong. The training was also quantization-aware: it simulated rounding the weights to 4 bits as it went, so the model learned to work at the tiny size it is shipped in. Even so, the model only suggests the next word. Hand-made rules decide which words are allowed, so every haiku is exactly 5-7-5, in whole sentences. Many of those rules came from volunteer reviewers in the Haiku Lab, who rated and annotated poems line by line. Each recurring complaint, such as &ldquo;sounds too much like astronomy class&rdquo;, became a new rule, tested on thousands of poems before it was released.</p>
  <div class="facts">
@@ -195,7 +197,7 @@
   <div><span>Styles</span><strong>Free · One-thing · Two-part · Mixed (Space, Spring, Summer, Autumn, Winter)</strong></div>
  </div>
  <section class="instructions" aria-labelledby="instructionsTitle">
-  <h2 id="instructionsTitle">INSTRUCTIONS</h2>
+  <h3 id="instructionsTitle">INSTRUCTIONS</h3>
   <dl>
    <dt>Menu bar</dt><dd>The bar at the top hides after a few seconds. Move the mouse, tap or scroll to bring it back.</dd>
    <dt>Theme</dt><dd>Space, Spring, Summer, Autumn or Winter, or All themes to take turns. Changing it starts the crawl again with the new theme.</dd>
@@ -209,7 +211,7 @@
   </dl>
  </section>
  <section class="credits" aria-labelledby="creditsTitle">
-  <h2 id="creditsTitle">CREDITS AND LICENSES</h2>
+  <h3 id="creditsTitle">CREDITS AND LICENSES</h3>
   <p><strong>Invited Haiku Lab reviewers.</strong> Much of the rule development came from poems rated and annotated in the Haiku Lab by volunteer reviewers.<br>Thank you &ndash; <em>Paul Hodara</em></p>
   <p>Third-party components are used under their own licenses, listed below. They are not covered by the reservation of rights above.</p>
   <p><strong>Base language model and tokenizer.</strong> <a href="https://huggingface.co/slvDev/esp32-ai-tinystories">esp32-ai-tinystories</a>, Copyright &copy; 2026 Viacheslav Sierbov. Used and modified under the <a href="haiku-generator/LICENSE.txt">MIT License</a>.</p>
@@ -288,14 +290,14 @@ function trackHaikuGenerated(theme, style) {
 }
 function addPoem(result) {
   trackHaikuGenerated(result.theme, result.label || 'Free');
-  const article = document.createElement('article'), h3 = document.createElement('h3'), p = document.createElement('p');
+  const article = document.createElement('article'), heading = document.createElement('h2'), p = document.createElement('p');
   article.className = 'poem';
-  h3.textContent = `${title(result.theme)}${result.label ? ` · ${result.label}` : ''} · No. ${result.case}`;
+  heading.textContent = `${title(result.theme)}${result.label ? ` · ${result.label}` : ''} · No. ${result.case}`;
   result.lines.forEach((line, i) => {
     if (i) p.append(document.createElement('br'));
     const span = document.createElement('span'); span.textContent = line; p.append(span);
   });
-  article.append(h3, p);
+  article.append(heading, p);
   poems.append(article);
   fitPoem(p);
   // Keep the page bounded on long visits; shift the crawl so nothing visible jumps.
@@ -439,10 +441,17 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.b
 // arrow while there is more below.
 const aboutDialog = $('aboutDialog'), moreBelow = $('moreBelow');
 function updateMoreBelow() { moreBelow.hidden = aboutDialog.scrollTop + aboutDialog.clientHeight >= aboutDialog.scrollHeight - 40; }
-$('about').addEventListener('click', () => {
+$('about').addEventListener('click', event => {
+  // Keep the ordinary link for no-JavaScript visits, new tabs and modified clicks.
+  if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
   aboutDialog.showModal();
   const toTop = () => { aboutDialog.scrollTop = 0; updateMoreBelow(); };
   toTop(); requestAnimationFrame(toTop); setTimeout(toTop, 150);
+});
+// Preserve the original button's Space-key activation as well as the link's Enter key.
+$('about').addEventListener('keydown', event => {
+  if (event.key === ' ') { event.preventDefault(); $('about').click(); }
 });
 aboutDialog.addEventListener('scroll', updateMoreBelow);
 window.addEventListener('resize', () => { if (aboutDialog.open) updateMoreBelow(); });

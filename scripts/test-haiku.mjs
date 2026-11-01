@@ -53,7 +53,7 @@ console.log(`space sequence: ${fixture.space_sequence.length} poems, ${guarded} 
 // The sample haiku written into generated-haikus.html (scripts/write-sample-haiku.py) are each the first Space poem of a
 // fresh decoder for their number; after updating scripts/haiku-src, rerun that script.
 const page = readFileSync(new URL('../generated-haikus.html', import.meta.url), 'utf8');
-const samples = [...page.matchAll(/<article class="poem"><h3>Space · No\. (\d+)<\/h3><p>(.*?)<\/p><\/article>/g)];
+const samples = [...page.matchAll(/<article class="poem"><h2>Space · No\. (\d+)<\/h2><p>(.*?)<\/p><\/article>/g)];
 assert.ok(samples.length >= 6, 'sample haiku missing from generated-haikus.html');
 const unescape = text => text.replace(/&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 for (const [, caseNumber, body] of samples) {
