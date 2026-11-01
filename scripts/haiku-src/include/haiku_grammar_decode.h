@@ -62,7 +62,7 @@ static inline void haiku_decay_recent(float decay = HAIKU_FRESH_DECAY) {
 // entries that are only space classes and lose those bits on shared ones, so
 // their grammar is exactly what it was before the theme existed.
 static inline bool haiku_theme_entry(const GEntry &in, bool space_theme, GEntry *out) {
-  const uint32_t space_bits = G_SPACE | G_ABSTRACT | G_BODY | G_CELESTIAL | G_CRAFT | G_SIGNAL | G_OBSERVER | G_TERRAIN | G_CLOCK | G_MUSIC | G_HUMAN | G_INNER | G_HAND | G_ME | G_WE;
+  const uint32_t space_bits = G_SPACE_CLASSES;
   *out = in;
   // "Not on fog" is an earth-season rule (2026-10-22); space keeps "shines on light".
   if (space_theme) {

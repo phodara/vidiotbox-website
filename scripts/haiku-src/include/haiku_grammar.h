@@ -80,6 +80,9 @@ enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPA
 // soil, which are everywhere ("an oak grows near earth").
 #define G_UNDER_LOW G_ME
 #define G_BESIDE G_WE
+// The space theme's classes: the seasons strip them from every word, and every space word has one (haiku_theme_entry).
+#define G_SPACE_CLASSES (G_SPACE | G_ABSTRACT | G_BODY | G_CELESTIAL | G_CRAFT | G_SIGNAL | G_OBSERVER | G_TERRAIN | G_CLOCK | \
+                         G_MUSIC | G_HUMAN | G_INNER | G_HAND | G_ME | G_WE)
 // Semantic bits outside G_ALL (the object field uses these values for G_NO_PLACE and
 // G_STILL): a solid thing ("stone", "fence") nothing goes into, and a thing with no
 // surface to be on: airy ("fog", "wind", "light") or an area one is in ("field").
@@ -236,7 +239,12 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       // place needs a plural thing in it: "a rock in a field", "a rock in the fields", "rocks in fields", and mass
       // things fill one: "grass grows in fields" (number 0). s.number is the subject's until an object noun replaces it
       // (below); after the verb only these two rules read it.
-      if ((s.phase == G_PP || s.phase == G_PP_NOUN) && (s.object & G_NOT_SOLID) && (s.object & G_NOT_SURFACE) &&
+      // 2026-11-01: "a tree blooms on hills" should be "trees bloom on a hill"; "on" and "upon" (G_NOT_AIRY) too. A wall
+      // or stone is never on anything, and carries G_NOT_AIRY for "by" and "along" ("a wall stands by rocks"). The seasons
+      // only: every space noun keeps a space class (haiku_theme_entry), and space poems stay as they were.
+      if ((s.phase == G_PP || s.phase == G_PP_NOUN) &&
+          (((s.object & G_NOT_SOLID) && (s.object & G_NOT_SURFACE)) ||
+           ((s.object & G_NOT_AIRY) && !(s.marks & G_MARK_IMMOVABLE) && !(e->semantic & G_SPACE_CLASSES))) &&
           !s.determiner && e->number == 2 && s.number == 1) return 0;
       if (!subject && (s.tail & 2)) {
         if ((s.object & G_UNDER_LOW) && (e->semantic & G_PLANT) && !(e->object & G_LOW_PLANT_BIT)) return 0;   // not "frogs call under grass"

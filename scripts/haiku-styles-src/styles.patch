@@ -193,7 +193,7 @@
    // The poem's palette can leave a line no way to finish; retry it with every word.
    if (!best.n && constrained && featured()) {
      palette_on=false; palette_fallbacks++;
-@@ -611,12 +707,80 @@
+@@ -617,12 +713,80 @@
           ok?"true":"false",sizeof workspace,sizeof G_ENTRIES,sizeof(GState));
    return ok?0:1;
  }
@@ -274,7 +274,7 @@
    if ((argc==2 || argc==3) && !strcmp(argv[1],"--check")) {   // one clause per stdin line: does the grammar accept it?
      if (argc==3) {   // --check THEME: read the words as that theme does (no per-poem thinning)
        static const char *const names[]={"spring","summer","autumn","winter","space"}; int t=-1;
-@@ -711,6 +875,15 @@
+@@ -717,6 +881,15 @@
    }
  #endif
    if (strcmp(argv[2],"baseline") && strcmp(argv[2],"grammar")) return 2;
@@ -290,7 +290,7 @@
    // Simulator protocol: one case number per stdin line, one JSON poem per stdout line.
    // Keep the model and recent-word history alive between requests.
    bool interactive=!strcmp(argv[3],"interactive");
-@@ -750,7 +923,7 @@
+@@ -756,7 +929,7 @@
      place_seed=((uint32_t)(6001+c)*2654435761u)|1;
      select_theme(chosen);
      rng=6001+c; uint32_t initial_seed=rng; pron_class=seed.pron;
@@ -299,7 +299,7 @@
      haiku_decay_recent(fresh_decay);   // freshness carries across poems in one run
      memset(&workspace,0,sizeof workspace); forwards=rejected=attempts=grammar_filtered=palette_fallbacks=0;
      line_repeat_attempts=line_repeat_fallbacks=0;
-@@ -767,6 +940,28 @@
+@@ -773,6 +946,28 @@
      // Person poems always generate their first line; canned lines have no guaranteed voice.
      if (person_voice) { free_start="0"; free_line_one=true; }
      person_end=person_voice && (int)(((uint32_t)(c+1)*2654435761u)>>17)%100<person_end_percent;
@@ -328,7 +328,7 @@
      const char *first_prefix=free_start?"":seed.text;
      if (free_start) forward(atoi(free_start),pos++);
      else {
-@@ -775,6 +970,10 @@
+@@ -781,6 +976,10 @@
        line_syl[0]=seed.syl;
      }
      for (int line=0;line<3;line++) {
@@ -339,7 +339,7 @@
        pos=write_line(line,line==0?first_prefix:"",pos);
        if (constrained) haiku_capitalize_i(lines[line]);
        if (line==0 && free_line_one && lines[0][0]>='a' && lines[0][0]<='z') lines[0][0]-='a'-'A';
-@@ -783,8 +982,10 @@
+@@ -789,8 +988,10 @@
        if (line==2) append(lines[2],".",1);
      }
      remember_poem_lines();

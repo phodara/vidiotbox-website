@@ -541,6 +541,12 @@ static int self_test() {
                            "An oak grows near earth", "Grass grows by the soil", "A frog sings by the earth"}) ok &= themed_test(1,text,0);
   for (const char *text : {"Frogs rest under a stone", "Crickets chirp under grass", "Worms rest under moss", "Frogs sing under the trees",
                            "The air is hot", "A warm stone remains", "The path is hot", "An oak grows on the earth", "An oak grows by the path"}) ok &= themed_test(1,text,1);
+  // 2026-11-01 (V8.27 site): "a tree blooms on hills" should be "trees bloom on a hill". One thing is not on many places,
+  // as it is not in them ("a rock in fields"); "the hills" and mass subjects stay, and a wall may still be by rocks.
+  for (const char *text : {"A tree blooms on hills", "A crow perches on branches", "A frog rests upon stones", "A duck floats on ponds",
+                           "Snow covers a stone on hills"}) ok &= grammar_test(text,0);
+  for (const char *text : {"Trees bloom on a hill", "Trees bloom on hills", "A tree blooms on a hill", "A tree blooms on the hills",
+                           "Snow falls on hills", "Crows perch on the branches", "A wall stands by rocks"}) ok &= grammar_test(text,1);
   // Review 2026-10-31: light goes through branches, not one branch; the wind may rise through a tree.
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through a green branch", "Pale light glows through a tree", "Sunlight glows through the bare branch"}) ok &= themed_test(t,text,0);
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through the branches", "The wind rises through the trees",

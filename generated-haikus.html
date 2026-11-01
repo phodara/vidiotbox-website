@@ -152,25 +152,19 @@
  </header>
  <section class="version" aria-labelledby="versionTitle">
   <h2 id="versionTitle">VERSION</h2>
-  <p class="version-lead">V8.27 &middot; Changes:</p>
-  <p>Summer openers: the cicada and the firefly, summer's own insects in the Japanese almanac, join the original ten as whole five-syllable first lines: "A cicada sings", "A cicada calls", "A cicada molts", "A firefly glows", "A firefly floats" (fifteen in all).</p>
+  <p class="version-lead">V8.28 &middot; Changes:</p>
+  <p>Spring styles: One-thing and Two-part now work in Spring too, and their first lines are generated. In the other seasons a styled poem opens with one of the season's written first lines; in Spring nothing is written in advance. The generator draws one of five spring ideas for each poem (blossoms, new growth, spring rain, the stream, birdsong) and writes the whole first line itself, and that line must name the idea: blossoms, petals or flowers; buds, grass or vines; rain, raindrops or puddles; streams; or birds. The Free style in Spring still opens with one of its ten written first lines.</p>
   <ul>
-   <li>Cicadas (summer only) sing, call, fly, leap, crawl and burrow. "Cicada" is split by the tokenizer; G_MULTI_SEASONS now gives split words their seasons (they had skipped the season filter), and the new split words take the last IDs so space poems do not change.</li>
-   <li>Fireflies (summer only) are animals and lights: they glow, shine, fly, float and drift, a pond reflects them, they are never warm, and never on water.</li>
-   <li>"Molts" is not in CMU; both table generators give it M OW1 L T S. "Molt" is split, so it is only an opener (the opener parser reads every word).</li>
+   <li>One-thing stays with the idea in every line. Two-part sets it against a second spring idea after the cut, such as blossoms against birdsong, or the stream against new growth.</li>
+   <li>In 200 poems per style, the first line named its idea in 190 One-thing and 185 Two-part poems.</li>
   </ul>
-  <p><strong>New for every season:</strong></p>
+  <p><strong>Links:</strong></p>
   <ul>
-   <li>call (the song), leap (the jump), burrow (the crawl; in or under the ground only), settle (what flies, and snow, dew, mist and fog; never over or through; ponds and water do not settle).</li>
-   <li>Crawling and burrowing go in or through soil and earth (G_IN_SOIL); nothing else does.</li>
-   <li>Birds, bees, gulls and fireflies drift; crawlers neither float nor drift; a duck floats or drifts on water only ("a duck floats over the garden").</li>
+   <li>The address now keeps the theme and style, such as ?theme=spring&amp;style=two-part at its end, so a copied link opens the page the same way.</li>
   </ul>
-  <p><strong>Corrections:</strong></p>
+  <p><strong>Correction:</strong></p>
   <ul>
-   <li>"Remain" and "stand" take no "slowly" ("stones remain slowly in fog").</li>
-   <li>Only crawlers are under grass, moss or ivy ("frogs call under grass"); a bird in a plant is in trees or reeds, never grass ("crows are still in grass").</li>
-   <li>A wall, stone or hill takes no hot, warm, cold or cool after is/are ("an old bridge is hot").</li>
-   <li>Nothing is by, near, beside, along or around earth or soil ("an oak grows near earth").</li>
+   <li>One thing is not on many places ("a tree blooms on hills"): it is "trees bloom on a hill" or "a tree blooms on the hills". Space poems are unchanged, apart from the earthly second half of Two-part space poems.</li>
   </ul>
  </section>
  <h2>ABOUT THESE HAIKU</h2>
@@ -186,7 +180,8 @@
   <dl>
    <dt>Menu bar</dt><dd>The bar at the top hides after a few seconds. Move the mouse, tap or scroll to bring it back.</dd>
    <dt>Theme</dt><dd>Space, Spring, Summer, Autumn or Winter, or All themes to take turns. Changing it starts the crawl again with the new theme.</dd>
-   <dt>Style</dt><dd><strong>Free</strong>: each line is chosen on its own. <strong>One-thing</strong>: every line stays with one idea, such as a black hole, falling snow, falling leaves, blossoms or bees in a garden. <strong>Two-part</strong>: two images set side by side, such as wind in the pines and a still pond. <strong>Mixed</strong>: one of the three at random for each poem. The styles are written for one theme at a time, so choosing one with All themes sets the theme to Space. In Spring the first line is written by the generator too, from the poem's idea.</dd>
+   <dt>Style</dt><dd><strong>Free</strong>: each line is chosen on its own. <strong>One-thing</strong>: every line stays with one idea, such as a black hole, falling snow, falling leaves, blossoms or bees in a garden. <strong>Two-part</strong>: two images set side by side, such as wind in the pines and a still pond. <strong>Mixed</strong>: one of the three at random for each poem. The styles are written for one theme at a time, so choosing one with All themes sets the theme to Space. In Spring, One-thing and Two-part poems have no written first line: the generator writes it, naming the poem's idea (blossoms, buds, rain, streams or birds).</dd>
+   <dt>Link</dt><dd>The address keeps the theme and style, so a copied link opens the page the same way: <strong>?theme=spring&amp;style=two-part</strong> at the end of the address, for example. The theme is all, space, spring, summer, autumn or winter, and the style is free, one-thing, two-part or mixed.</dd>
    <dt>Reading view / Play crawl</dt><dd>Reading view stops the crawl and lists the poems so you can scroll through them, with <strong>Write another</strong> to add one more. Play crawl starts the crawl again. Esc also switches to the reading view.</dd>
    <dt>Pause / Resume</dt><dd>Stops and restarts the crawl and the music.</dd>
    <dt>Speed</dt><dd>How fast the crawl moves, from 0.5&times; to 4&times;.</dd>
@@ -440,10 +435,29 @@ async function playMusic() {
 }
 music.addEventListener('change', () => { if (!music.value) { audio.pause(); setMusic(false); return; } playMusic(); });
 
+// ---- Link: ?theme=spring&style=two-part opens the page on that theme and style, and the address follows the menus ----
+// Theme: all, space, spring, summer, autumn or winter; style: free, one-thing, two-part or mixed. The defaults (Space and
+// Free) are left out of the address, other parameters (?stars=) are kept, and an unknown value is ignored.
+const LINK = [['theme', theme, 'space'], ['style', style, 'standard']];
+const linkValue = value => value === 'standard' ? 'free' : value, menuValue = value => value === 'free' ? 'standard' : value;
+for (const [key, select] of LINK) {
+  const value = menuValue(new URLSearchParams(location.search).get(key) || '');
+  if ([...select.options].some(option => option.value === value)) select.value = value;
+}
+if (styled() && !STYLED_THEMES.includes(theme.value)) theme.value = 'space';
+function updateLink() {
+  const url = new URL(location.href);
+  for (const [key, select, plain] of LINK) select.value === plain ? url.searchParams.delete(key) : url.searchParams.set(key, linkValue(select.value));
+  try { history.replaceState(history.state, '', url); } catch {}
+}
+theme.addEventListener('change', updateLink); style.addEventListener('change', updateLink);
+updateLink();
+
 // ---- Start ----
 try {
   if (!globalThis.Worker || !globalThis.WebAssembly || !crypto.subtle) throw Error('The haiku generator needs a modern browser and HTTPS.');
   worker = startWorker('haiku-generator/worker.js', () => { ready = true; }, () => !styled() || mixed());
+  if (styled()) startStyleWorker();   // a link that names a style
 } catch (error) { fail(error.message); }
 function startStyleWorker() {
   styleWorker = startWorker('haiku-styles/worker.js', () => { styleReady = true; }, styled);
