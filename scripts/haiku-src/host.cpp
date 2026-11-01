@@ -123,6 +123,7 @@ static void select_theme(int index) {
 #ifdef HAIKU_SCENE_RESEARCH
       if (index==HAIKU_SEASON_SPACE) out=research_ancient_light(out,research_word(entry.token));
 #endif
+      haiku_season_entry(&out,index);   // "warm" is the sun's in autumn and winter (2026-11-01)
       themed[themed_count++]=out;
     }
   }
@@ -483,6 +484,17 @@ static int self_test() {
   // Review 2026-10-31: nothing blooms in winter; the other seasons keep it.
   for (int t=0;t<2;t++) ok &= themed_test(t,"Flowers bloom in the field",1);
   for (int t : {2,3}) for (const char *text : {"Flowers bloom in the field", "Tall trees bloom"}) ok &= themed_test(t,text,0);   // autumn too (2026-10-31)
+  // 2026-11-01: "warm" is an adjective. The sun's and light's in every season, never the moon's or a star's; the air,
+  // water and ground are warm only in spring and summer. Summer has no "cold" (spring keeps it); space has no "warm".
+  for (int t=0;t<4;t++) for (const char *text : {"The warm sun rises", "Warm light shines through the trees", "Warm sunlight glows on the grass",
+                                                    "Sunlight warms the stones", "The sun is warm"}) ok &= themed_test(t,text,1);
+  for (int t=0;t<4;t++) for (const char *text : {"Warm moonlight glows", "The warm moon rises", "Warm stars shine", "Rain falls in the warm moonlight",
+                                                    "The moon is warm", "Moonlight warms the stones", "An oak holds warm fog", "Warm mist rises"}) ok &= themed_test(t,text,0);
+  for (int t=0;t<4;t++) for (const char *text : {"A warm breeze stirs the reeds", "Warm rain falls on the path", "Warm stones remain", "A frog rests on a warm stone"})
+    ok &= themed_test(t,text,t<2);
+  for (int t=0;t<4;t++) ok &= themed_test(t,"Cold air rises",t!=1);
+  ok &= themed_test(1,"A cool breeze rises",1);
+  ok &= themed_test(HAIKU_SEASON_SPACE,"The warm sun rises",0);
   // Review 2026-10-31: light goes through branches, not one branch; the wind may rise through a tree.
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through a green branch", "Pale light glows through a tree", "Sunlight glows through the bare branch"}) ok &= themed_test(t,text,0);
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through the branches", "The wind rises through the trees",

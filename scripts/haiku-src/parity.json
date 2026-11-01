@@ -81,7 +81,7 @@
       "lines": [
         "Hot winds blow slowly...",
         "The wet wall stands in dark fog",
-        "a lake shines softly."
+        "a warm breeze whispers."
       ],
       "syllables": [
         5,
@@ -92,11 +92,11 @@
       "attempts": 15,
       "rejected_attempts": 3,
       "forwards": 71,
-      "grammar_filtered": 6835,
+      "grammar_filtered": 6801,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.088661,
+      "host_seconds": 0.08888,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -114,8 +114,8 @@
       "generated_first_line": false,
       "lines": [
         "Tall grass sways on hills...",
-        "sunlight glows through the cold field",
-        "a shore is quiet."
+        "wind stirs the summer puddle",
+        "stones are cool in rain."
       ],
       "syllables": [
         5,
@@ -124,13 +124,13 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 2,
-      "forwards": 77,
-      "grammar_filtered": 7108,
+      "rejected_attempts": 0,
+      "forwards": 82,
+      "grammar_filtered": 7063,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.095547,
+      "host_seconds": 0.102355,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -221,7 +221,7 @@
       "lines": [
         "Cold wind howls in fog...",
         "The light fades slowly on ice",
-        "bright moonlight rises."
+        "soft snow falls through fields."
       ],
       "syllables": [
         5,
@@ -230,13 +230,13 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 0,
-      "forwards": 77,
-      "grammar_filtered": 7448,
+      "rejected_attempts": 3,
+      "forwards": 73,
+      "grammar_filtered": 7040,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.097191,
+      "host_seconds": 0.092245,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
@@ -266,11 +266,11 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 83,
-      "grammar_filtered": 7655,
+      "grammar_filtered": 7590,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.10319,
+      "host_seconds": 0.103018,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,

@@ -101,6 +101,7 @@ typedef struct {
 #define GX_WEAR 2         // adjective: worn, weathered, cracked; after is/are, for G_MARK_IMMOVABLE subjects
 #define GX_HUSH 4         // adjective: quiet, calm: never a plant, stone, wall or hill, "quiet trees", "a rock is quiet" (2026-10-31)
 #define GX_BARE 8         // adjective: bare: its subject does not bloom, "bare trees bloom" (2026-10-31)
+#define GX_WARM 16        // adjective: warm: light and the sun only in autumn and winter (haiku_season_entry, 2026-11-01)
 #define GX_STILL_VERB 1   // verb: crumble, lean, remain, stand; G_MARK_IMMOVABLE subjects only
 #define GX_BURN 2         // verb: burn, burns (not "moonlight burns" on earth)
 #define GX_SOUND 4        // verb: sing, chirp, hum, howl, whisper, rustle: not after a quiet or calm subject (2026-10-31)
@@ -138,6 +139,7 @@ typedef struct {
 #define G_MARK_WATERWORD 0x10000 // the word "water": not "in" a field, meadow or garden (rain and mist are)
 #define G_MARK_JUMPY 0x20000     // jump, jumps: not over a tree
 #define G_MARK_OVERPASS 0x80000   // bridge, bridges: the one ground noun a bird flies under
+#define G_MARK_WARMED 0x80000     // state: "warm" before its noun: not the moon, a star, fog, mist, dew, snow or ice (shares OVERPASS's noun-only bit; 2026-11-01)
 #define G_MARK_NEEDS_PLACE 0x2000  // stay, stays: "a universe stays" is unfinished without a place (shares EARTH_WORD's bit; nouns only carry that one)
 #define G_MARK_NOPULL 0x10000000   // vacuum, moon, moons: they pull nothing
 #define G_MARK_ALL 0x4000          // universe, cosmos, stay, stays: everything cannot stay in anything (shares G_MARK_TREE's state-only bit)
@@ -206,6 +208,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if (e->object & G_WET_ADJ) s.adjectives |= G_LIMIT_WET;
       if (subject && (e->marks & G_MARK_DRY)) s.marks |= G_MARK_DRY;
       if (subject && (e->marks & G_MARK_FOREVER)) s.marks |= G_MARK_FOREVER;   // "faint": not before "photon"
+      if (e->marks & G_MARK_COLD) s.marks |= G_MARK_WARMED;   // "warm", in any noun phrase
       if (!subject && (s.marks & G_MARK_DRIFTY) && (e->marks & G_MARK_DRY)) return 0;   // not "twigs drift through a dry meadow"
       if (e->object & G_OLD_ADJ) s.adjectives |= G_LIMIT_STONE;   // all stones are old: not "an old stone"
       if (e->marks & G_MARK_AIR) s.adjectives |= G_LIMIT_NOAIR;    // soft air is always wrong
@@ -308,6 +311,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.adjectives & G_LIMIT_NOTINY) && (e->marks & G_MARK_TINY)) return 0;    // not "a small worm"
       if ((s.adjectives & G_LIMIT_NOTINY) && (e->extra & GX_SIZELESS)) return 0;    // not "small dew", "huge stardust"
       if ((s.adjectives & G_LIMIT_DARK) && (e->marks & G_MARK_BRIGHT)) return 0;     // not "dark sunlight"
+      if ((s.marks & G_MARK_WARMED) && (e->marks & (G_MARK_COLD | G_MARK_FROZEN))) return 0;   // not "warm moonlight", "warm stars", "warm fog" (2026-11-01)
+      s.marks &= ~(uint32_t)G_MARK_WARMED;
       if (!subject && (s.marks & G_MARK_ICE) && (s.object & (G_NOT_AIRY | G_NOT_SURFACE)) && (e->semantic & G_PLANT) && !(e->object & G_LOW_PLANT_BIT)) return 0;   // not "ice shines on the grass"
       if (!subject && (s.marks & G_MARK_FLYER) && (e->marks & G_MARK_ROOT)) return 0;   // not "birds sing on roots", "the birds float across a root" (2026-10-31)
       if (!subject && (s.marks & G_MARK_DUCK) && rank == G_SHADE_RANK && (s.object & (G_NOT_AIRY | G_NOT_SURFACE))) return 0;   // not "ducks rest on a pine"
