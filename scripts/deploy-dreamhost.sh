@@ -21,11 +21,13 @@ python3 "$ROOT/scripts/build-site.py" --output "$SITE" >/dev/null
 
 # haiku-matic.com puts its own name on the crawl's first line instead of the top bar, and in the tab
 # title; vidiotbox.net keeps "VIDIOTBOX / GENERATED hAIkus" in its top bar.
-# Both copies name https://haiku-matic.com/ as the canonical address: it is the original (2026-11-01).
+# Both copies name https://haiku-matic.com/ as the canonical address: it is the original (2026-11-01). The
+# vidiotbox.net copy is only for staging and tells search engines not to index it; haiku-matic.com must not.
 python3 - "$SITE/generated-haikus.html" "$OUT/index.html" <<'EOF'
 import sys
 page = open(sys.argv[1]).read()
 for old, new in [(' <button id="about" type="button">About</button>\n', ''),
+                 ('<meta name="robots" content="noindex">   <!-- staging copy; deploy-dreamhost.sh removes this for haiku-matic.com -->\n', ''),
                  ('<a class="brand" href="/">VIDIOTBOX / GENERATED hAIkus</a>',   # About first, the bar left-justified
                   '<button id="about" type="button">About hAIku Toy</button>'),
                  ('<h1>A sky<br>without edges</h1>',
@@ -37,6 +39,8 @@ for old, new in [(' <button id="about" type="button">About</button>\n', ''),
     if page.count(old) != 1:
         sys.exit(f"deploy-dreamhost.sh: expected one {old!r} in generated-haikus.html")
     page = page.replace(old, new)
+if 'noindex' in page:
+    sys.exit('deploy-dreamhost.sh: haiku-matic.com would tell search engines not to index it')
 open(sys.argv[2], 'w').write(page)
 EOF
 cp "$OUT/index.html" "$OUT/generated-haikus.html"
