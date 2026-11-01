@@ -72,6 +72,14 @@ enum { G_AIR=1, G_LIGHT=2, G_WATER=4, G_PLANT=8, G_ANIMAL=16, G_GROUND=32, G_SPA
 // PP state bit 31 (outside the enum): the sky's bodies go "through" only weather or
 // foliage, not "through mud" or "through streams" (season review round 5).
 #define G_SKY_THROUGH 0x80000000u
+// PP state flag (2026-11-01): after crawling or burrowing "in" or "through", soil and earth are not solid. It shares
+// G_HUMAN's bit, which a place noun never has: a person is only ever a subject.
+#define G_IN_SOIL G_HUMAN
+// PP state flags (2026-11-01) on the bits of "I" and "we", which are never places either. Under or beneath, for an animal
+// that does not crawl: no grass, moss or ivy ("frogs call under grass"). By, near, beside, along or around: not earth or
+// soil, which are everywhere ("an oak grows near earth").
+#define G_UNDER_LOW G_ME
+#define G_BESIDE G_WE
 // Semantic bits outside G_ALL (the object field uses these values for G_NO_PLACE and
 // G_STILL): a solid thing ("stone", "fence") nothing goes into, and a thing with no
 // surface to be on: airy ("fog", "wind", "light") or an area one is in ("field").
@@ -102,6 +110,7 @@ typedef struct {
 #define GX_HUSH 4         // adjective: quiet, calm: never a plant, stone, wall or hill, "quiet trees", "a rock is quiet" (2026-10-31)
 #define GX_BARE 8         // adjective: bare: its subject does not bloom, "bare trees bloom" (2026-10-31)
 #define GX_WARM 16        // adjective: warm: light and the sun only in autumn and winter (haiku_season_entry, 2026-11-01)
+#define GX_TEMP 32        // adjective: hot, warm, cold, cool: never after is/are for a wall, stone or hill (2026-11-01)
 #define GX_STILL_VERB 1   // verb: crumble, lean, remain, stand; G_MARK_IMMOVABLE subjects only
 #define GX_BURN 2         // verb: burn, burns (not "moonlight burns" on earth)
 #define GX_SOUND 4        // verb: sing, chirp, hum, howl, whisper, rustle: not after a quiet or calm subject (2026-10-31)
@@ -230,6 +239,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.phase == G_PP || s.phase == G_PP_NOUN) && (s.object & G_NOT_SOLID) && (s.object & G_NOT_SURFACE) &&
           !s.determiner && e->number == 2 && s.number == 1) return 0;
       if (!subject && (s.tail & 2)) {
+        if ((s.object & G_UNDER_LOW) && (e->semantic & G_PLANT) && !(e->object & G_LOW_PLANT_BIT)) return 0;   // not "frogs call under grass"
+        if ((s.object & G_BESIDE) && (e->semantic & G_SOLID) && (e->extra & GX_SIZELESS)) return 0;   // not "an oak grows near earth"
         // Nothing sings, rests or grows "in", "under" or "through" ice.
         if ((s.subject & (G_ANIMAL | G_PLANT)) && (s.object & (G_NOT_SURFACE | G_NOT_SOLID)) && (e->marks & G_MARK_ICE)) return 0;
         // A worm keeps to small places: soil, mud, a stone or leaf, grass, a path; not hills, shores or trees.
@@ -251,7 +262,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if (s.determiner == 4 && !e->bare) return 0;
       // Classes only: rule bits above G_ALL (G_NOT_SOLID...) must not match animal-action bits.
       if (!subject && !(s.object & e->semantic & G_ALL)) return 0;
-      if ((s.object & G_NOT_SOLID) && (e->semantic & G_SOLID)) return 0;   // not "through a stone"
+      // Not "through a stone". Crawling and burrowing go in or through soil and earth, though (G_IN_SOIL, 2026-11-01:
+      // "cicadas burrow in the soil"); stones stay solid, and nothing else is in the soil ("the cicada leaps in earth").
+      if ((s.object & G_NOT_SOLID) && (e->semantic & G_SOLID) && !((s.object & G_IN_SOIL) && (e->extra & GX_SIZELESS))) return 0;
       if ((s.object & G_NOT_AIRY) && (e->semantic & G_AIRY)) return 0;     // not "fades on fog"
       if ((s.object & G_NOT_SURFACE) && (e->semantic & G_SURFACE)) return 0; // not "shines in the path"
       if ((s.object & G_NO_POOL) && (e->semantic & G_WATER) && !(e->semantic & G_AIRY)) return 0; // not "fly in the pond"
@@ -293,6 +306,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.tail & 64) && (s.object & G_ONLY_POOL) && (e->object & G_POOL_NOUN)) return 0; // bees float over ponds
       if ((s.adjectives & G_LIMIT_MOON) && !(e->object & G_MOON_NOUN)) return 0;   // a full moon only
       if ((s.adjectives & G_LIMIT_TREE) && (e->semantic & G_PLANT) && !(e->object & G_ROOTED_NOUN)) return 0;
+      // ...nor in grass, moss or ivy: "crows are still in grass" is better "in trees" (2026-11-01); on the grass is fine.
+      if ((s.adjectives & G_LIMIT_TREE) && (e->semantic & G_PLANT) && !(e->object & G_LOW_PLANT_BIT)) return 0;
       if ((s.adjectives & G_LIMIT_STONE) && (e->object & G_STONE_NOUN)) return 0;
       // Review 2026-10-31: "an old bee buzzes". Bees, crickets, beetles and worms (the hum and crawl actions) are not old.
       if ((s.adjectives & G_LIMIT_STONE) && (e->semantic & G_ACT_HUM_CRAWL)) return 0;
@@ -412,9 +427,9 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if ((s.subject & G_WAVE_SUBJECT) && e->tag == G_VERB && (e->object & G_DOWNWARD)) return 0;   // not "a wave on the pond falls"
     if (s.marks & e->marks & G_PAIR_MARKS) return 0;   // not "air blows", "snow flows", "snow rises", "dew ripples"
     if (e->tag == G_VERB && (e->extra & GX_STILL_VERB) && !(s.marks & G_MARK_IMMOVABLE)) return 0;
-    // Review 2026-10-31: "crickets float over the fence". Crawlers (crickets, beetles: the crawl action, bit 30) do not
-    // float or drift on the air; bees, birds and leaves may.
-    if (e->tag == G_VERB && (e->object & G_ADRIFT) && (s.subject & (1u << 30))) return 0;
+    // Review 2026-10-31: "crickets float over the fence". Crawlers (crickets, beetles, cicadas: the crawl action, bit 30)
+    // do not float or drift on the air; bees, birds, fireflies and leaves may (drift too since 2026-11-01).
+    if (e->tag == G_VERB && (e->marks & G_MARK_DRIFTY) && (s.subject & (1u << 30))) return 0;
     if ((e->tag == G_VERB || e->tag == G_TRANSITIVE) && (e->extra & GX_SOUND) && (s.marks & G_MARK_HUSHED)) return 0;   // not "quiet birds sing"
     if ((e->tag == G_VERB || e->tag == G_TRANSITIVE) && (e->extra & GX_SOUND) && (s.marks & G_MARK_ROOT)) return 0;   // roots are underground: not "roots rustle" (2026-11-01)   // walls, gates, stones... crumble, lean, remain, stand
     // Moonlight and starlight are G_AIRY on earth only: "starlight burns through space" stays.
@@ -459,6 +474,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if ((s.marks & G_MARK_DRY) && (e->object & G_WET_ADJ)) return 0;   // not "dry fields are wet"
     if (s.marks & e->marks & G_PAIR_MARKS) return 0;   // not "a pond is soft"
     if ((e->extra & GX_HUSH) && ((s.subject & G_PLANT) || (s.marks & G_MARK_IMMOVABLE))) return 0;   // a rock is always quiet (2026-10-31)
+    if ((e->extra & GX_TEMP) && (s.marks & G_MARK_IMMOVABLE)) return 0;   // "an old bridge is hot" measures it; "a warm stone" is fine (2026-11-01)
     if ((e->marks & G_MARK_AIR) && (s.marks & G_MARK_IMMOVABLE)) return 0;   // "soft" (the one adjective with this mark): not "the wall is soft"
     s.phase = G_DONE;
     s.tail |= 4; // after a predicate adjective, no directional adverb
@@ -514,7 +530,16 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       s.object = G_PLANT | G_GROUND | G_WATER |
         (e->object & (G_SPACE | G_CELESTIAL | G_BODY | G_TERRAIN));
       if (verb_object & G_WET) s.object &= G_WATER;   // not "ducks swim in the fence"
-      if ((verb_object & G_WET) && (e->object & G_BELOW)) { s.object |= G_GROUND; s.adjectives |= G_LIMIT_ABOVE; }   // "ducks swim under a bridge": water below it; not under a stone
+      if ((verb_object & G_WET) && (e->object & G_BELOW)) { s.object |= G_GROUND; s.adjectives |= G_LIMIT_ABOVE; }
+      if ((verb_object & G_GROUNDED) && (e->object & G_NOT_SOLID)) s.object |= G_IN_SOIL;   // crawl or burrow in the soil
+      if ((s.subject & G_ANIMAL) && !(s.subject & (1u << 30)) && (e->object & G_BELOW)) s.object |= G_UNDER_LOW;   // only crawlers under grass
+      if (e->number == 0 && !(e->object & (G_NOT_SOLID | G_NOT_AIRY | G_NOT_SURFACE | G_BELOW | G_SKYWARD))) s.object |= G_BESIDE;   // by, near...
+      // A burrow (crawling and still: G_GROUNDED with G_STILL) is in or under the ground only: not "worms burrow on a
+      // wet branch" or "in a branch" (2026-11-01).
+      if ((verb_object & G_GROUNDED) && (verb_object & G_STILL)) {
+        if (!(e->object & (G_NOT_SURFACE | G_BELOW))) return 0;
+        s.object &= ~(uint32_t)(G_PLANT | G_WATER);
+      }   // "ducks swim under a bridge": water below it; not under a stone
       // A person is placed by bodies, not in substances: "I tremble by moons",
       // never "we wait in dust" or "I wait in soft waves".
       if (s.subject & (G_HUMAN | G_INNER | G_HAND)) s.object &= e->object & (G_CELESTIAL | G_BODY);
@@ -546,6 +571,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.subject & (G_PLANT | G_LIGHT)) && (e->object & G_NOT_SURFACE)) s.object |= G_NOT_PLANT;
       if ((s.subject & G_AIR) && (e->object & (G_NOT_SOLID | G_BELOW))) s.object |= G_NOT_WATER;
       if ((verb_object & G_ADRIFT) && (e->object & G_NOT_AIRY)) s.object |= G_ONLY_POOL;   // on/upon
+      if ((s.marks & G_MARK_DUCK) && (s.marks & G_MARK_DRIFTY)) s.object |= G_ONLY_POOL;   // a duck floats on water, not over a garden (2026-11-01)
       // Round 4: "bees hum in the lake". Bit 27 is the "swim" action (ducks, frogs, gulls).
       if ((s.subject & G_ANIMAL) && !(s.subject & (1u << 27)) && (e->object & G_NOT_SURFACE))
         s.object |= G_NO_POOL_NOUN;   // "in"
@@ -560,6 +586,8 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if ((s.marks & G_MARK_FLYER) && (e->object & G_BELOW)) s.adjectives |= G_LIMIT_ABOVE;   // birds sing under a bridge or branches, not beneath stones
       // Review 2026-10-31: "branches bloom under a field", "under a rock". A plant is not under the ground (a bridge is fine).
       if ((s.subject & G_PLANT) && (e->object & G_BELOW)) s.adjectives |= G_LIMIT_ABOVE;
+      // 2026-11-01: a firefly (an animal and a light) floats or drifts over water, never on it.
+      if ((s.subject & G_ANIMAL) && (s.subject & G_LIGHT) && (e->object & G_NOT_AIRY)) s.object |= G_NOT_WATER;
       if ((s.marks & G_MARK_DRIFTY) && (e->object & G_NOT_AIRY)) s.adjectives |= G_LIMIT_STONE;   // drift over stones, not "on" them
       if ((s.marks & G_MARK_WATERWORD) && (e->object & (G_NOT_SURFACE | G_NOT_AIRY))) s.adjectives |= G_LIMIT_FIELD;   // water is not "in" a field
       if ((s.marks & G_MARK_AIR) && (e->object & G_NOT_SURFACE)) s.object |= G_NOT_PLANT;   // air is over leaves, not "in" them

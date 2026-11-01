@@ -117,7 +117,7 @@ static void select_theme(int index) {
   for (const GEntry &entry:G_ENTRIES) {
     GEntry out;
     if (index<0) { themed[themed_count++]=entry; continue; }
-    if (entry.token!=UINT16_MAX && (entry.token>=VOCAB_N ? index==HAIKU_SEASON_SPACE || (entry.tag==G_NOUN && ((entry.object & G_EARTH_PHRASE) || (entry.marks & G_MARK_EARTH_WORD))) ||
+    if (entry.token!=UINT16_MAX && (entry.token>=VOCAB_N ? index==HAIKU_SEASON_SPACE || (entry.tag==G_NOUN && ((entry.object & G_EARTH_PHRASE) || (entry.marks & G_MARK_EARTH_WORD)) && haiku_multi_season_allows(entry.token,index)) ||
                                    (entry.tag==G_VERB && (entry.extra & GX_STILL_VERB)) : haiku_season_allows(entry.token,index)) &&   // "crumbles" (V8.17)
         haiku_theme_entry(entry,index==HAIKU_SEASON_SPACE,&out)) {
 #ifdef HAIKU_SCENE_RESEARCH
@@ -410,7 +410,7 @@ static int self_test() {
                            "A worm crawls silently", "A worm crawls under a stone", "A worm crawls in the mud", "A worm rests under a leaf", "A worm crawls in rain",
                            "Ducks swim under a bridge", "Frogs rest under a leaf", "Mist drifts over the lake", "Rain falls in the pond", "Snow coats a field in the rain",
                            "Flowers bloom on walls", "Grass grows in fields", "Pines sway", "Roots hold rain", "Snow falls softly", "Leaves fall", "Dust falls",
-                           "An oak holds dew", "A small stone is cool", "Small bees fly in rain", "Tall reeds sway", "A huge cloud drifts", "Giant planets glow",
+                           "An oak holds dew", "A small stone is wet", "Small bees fly in rain", "Tall reeds sway", "A huge cloud drifts", "Giant planets glow",
                            "An old wall crumbles", "The bridge crumbles slowly", "A fence leans", "An old gate leans by the path", "A gate stands", "The old bridge stands",
                            "A stone stands", "A stone remains", "A hill remains", "An old wall is worn", "The gate is weathered", "The stone is cracked",
                            "A rock stands in mist", "A stone remains in the rain", "A fence stands along the path", "An old wall crumbles slowly", "A full moon fades",
@@ -500,6 +500,47 @@ static int self_test() {
                            "A stone stands by rocks", "Rocks stand by stones", "A stone stands near rocks", "A rock remains by stones"}) ok &= grammar_test(text,0);
   for (const char *text : {"Worms rest under moss", "Crickets chirp under grass", "Birds sing under a bridge", "Leaves rustle in a dark field",
                            "A wall stands by rocks", "A stone stands by the path", "Gulls perch under a branch"}) ok &= grammar_test(text,1);
+  // 2026-11-01: remaining and standing are states, never slow; crumbling may be.
+  for (const char *text : {"Stones remain slowly in fog", "A stone stands slowly"}) ok &= grammar_test(text,0);
+  for (const char *text : {"An old wall crumbles slowly", "Stones remain quietly in fog", "A rock stands silently", "Stones remain in fog"}) ok &= grammar_test(text,1);
+  // 2026-11-01: summer's traditional insects. Cicadas sing and fly; a firefly is an animal and a light, and never warm.
+  // "Cicada" is split by the tokenizer, so its season comes from G_MULTI_SEASONS.
+  for (const char *text : {"A cicada sings", "A firefly glows", "Cicadas sing in the pines", "The pond reflects fireflies", "Bright fireflies shine"})
+    ok &= themed_test(1,text,1);
+  for (const char *text : {"A firefly sings", "Cicadas glow", "Fireflies warm the stones", "Warm fireflies glow", "Cicadas swim in the pond"})
+    ok &= themed_test(1,text,0);
+  for (int t : {0,2,3}) for (const char *text : {"A cicada sings", "A firefly glows"}) ok &= themed_test(t,text,0);
+  // More openers: "A cicada calls", "A firefly floats", and "A cicada molts", whose verb the tokenizer splits, so it is only
+  // ever an opener (parsed against every word, not the season's).
+  for (const char *text : {"A cicada calls", "A firefly floats"}) ok &= themed_test(1,text,1);
+  ok &= grammar_test("A cicada molts",1);
+  // 2026-11-01: a duck floats or drifts on water only ("a duck floats over the garden"); what flies settles, and so do snow,
+  // dew, mist and fog, never over or through, and never a pond or water.
+  for (const char *text : {"A duck floats over the garden", "Ducks drift over the garden", "A pond settles", "Water settles in the field",
+                           "Worms settle in the mud", "Ducks settle over the field"}) ok &= themed_test(1,text,0);
+  for (const char *text : {"Ducks float on the pond", "Ducks float across the lake", "A duck rests in the garden", "A duck settles on the path",
+                           "Bees settle on the flowers", "A cicada settles on the pine", "Dew settles on the grass"}) ok &= themed_test(1,text,1);
+  ok &= themed_test(3,"Snow settles on the fence",1);
+  // 2026-11-01: a bird is in trees or reeds, not in grass ("crows are still in grass"); insects may be.
+  for (const char *text : {"Crows are still in grass", "Crows rest in the grass", "Birds sing in the grass"}) ok &= themed_test(1,text,0);
+  for (const char *text : {"Crows are still in the trees", "Crows rest on the grass", "Birds sing in the reeds", "Bees hum in the grass",
+                           "Crickets sing in the grass"}) ok &= themed_test(1,text,1);
+  // Cicadas also call, leap and burrow (the song, jump and crawl actions); crawlers may be in soil and earth, nothing
+  // else may; fireflies float and drift over water, never on it, and crawlers neither float nor drift.
+  for (const char *text : {"A cicada calls", "Cicadas call in the pines", "Cicadas leap over the grass", "A cicada burrows in the mud",
+                           "Cicadas burrow in the soil", "Worms crawl in the soil", "Birds call in the trees", "A firefly floats",
+                           "Fireflies drift over the pond", "Fireflies float over the water"}) ok &= themed_test(1,text,1);
+  for (const char *text : {"Bees call", "Fireflies call", "Ducks burrow in the soil", "A cicada burrows over the grass",
+                           "Cicadas burrow in the pond", "Cicadas burrow in a rock", "Sunlight shines in the soil", "Crows fly in the soil",
+                           "Fireflies float on the water", "Cicadas drift", "Crickets drift over the fence",
+                           "Worms burrow on a wet branch", "A worm burrows in a branch", "The cicada leaps in earth", "Crickets sing in soil"}) ok &= themed_test(1,text,0);
+  for (const char *text : {"Worms burrow in the soil", "Worms burrow under a stone", "Worms crawl through the earth"}) ok &= themed_test(1,text,1);
+  // Summer trial notes (2026-11-01): only crawlers under grass, moss or ivy; no temperature after is/are for a wall, stone
+  // or hill; nothing by, near, beside, along or around earth or soil.
+  for (const char *text : {"Frogs call under grass", "Ducks rest under the moss", "An old bridge is hot", "An old fence is hot", "A stone is warm",
+                           "An oak grows near earth", "Grass grows by the soil", "A frog sings by the earth"}) ok &= themed_test(1,text,0);
+  for (const char *text : {"Frogs rest under a stone", "Crickets chirp under grass", "Worms rest under moss", "Frogs sing under the trees",
+                           "The air is hot", "A warm stone remains", "The path is hot", "An oak grows on the earth", "An oak grows by the path"}) ok &= themed_test(1,text,1);
   // Review 2026-10-31: light goes through branches, not one branch; the wind may rise through a tree.
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through a green branch", "Pale light glows through a tree", "Sunlight glows through the bare branch"}) ok &= themed_test(t,text,0);
   for (int t=0;t<4;t++) for (const char *text : {"The light shines through the branches", "The wind rises through the trees",

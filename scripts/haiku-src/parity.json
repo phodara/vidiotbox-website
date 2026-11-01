@@ -10,8 +10,8 @@
       "generated_first_line": false,
       "lines": [
         "Soft rain falls slowly...",
-        "sunlight shines through the dark field",
-        "a bright moon rises."
+        "sunlight glows in the dark fog",
+        "a warm breeze rises."
       ],
       "syllables": [
         5,
@@ -20,18 +20,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 1,
-      "forwards": 76,
-      "grammar_filtered": 7690,
+      "rejected_attempts": 0,
+      "forwards": 75,
+      "grammar_filtered": 7621,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.094425,
+      "host_seconds": 0.094655,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10360,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     },
     {
@@ -44,8 +44,8 @@
       "generated_first_line": false,
       "lines": [
         "Blossoms drift in rain...",
-        "twigs grow gently by the fence",
-        "a dry field is cold."
+        "ducks float on the quiet lake",
+        "a cold ridge is dry."
       ],
       "syllables": [
         5,
@@ -54,18 +54,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 1,
-      "forwards": 80,
-      "grammar_filtered": 7004,
+      "rejected_attempts": 2,
+      "forwards": 78,
+      "grammar_filtered": 6826,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.09998,
+      "host_seconds": 0.097763,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10360,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     }
   ],
@@ -80,8 +80,8 @@
       "generated_first_line": false,
       "lines": [
         "Hot winds blow slowly...",
-        "The wet wall stands in dark fog",
-        "a warm breeze whispers."
+        "The light fades in dark gardens",
+        "a rock stands near leaves."
       ],
       "syllables": [
         5,
@@ -90,18 +90,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 3,
-      "forwards": 71,
-      "grammar_filtered": 6801,
+      "rejected_attempts": 0,
+      "forwards": 76,
+      "grammar_filtered": 7248,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.08888,
+      "host_seconds": 0.097085,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10360,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     },
     {
@@ -113,9 +113,9 @@
       "person_end": false,
       "generated_first_line": false,
       "lines": [
-        "Tall grass sways on hills...",
-        "wind stirs the summer puddle",
-        "stones are cool in rain."
+        "Tall grass sways on soil...",
+        "fog shines in the summer rain",
+        "a lake is quiet."
       ],
       "syllables": [
         5,
@@ -125,17 +125,17 @@
       "complete": true,
       "attempts": 15,
       "rejected_attempts": 0,
-      "forwards": 82,
-      "grammar_filtered": 7063,
+      "forwards": 85,
+      "grammar_filtered": 7814,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.102355,
+      "host_seconds": 0.105145,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10360,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     }
   ],
@@ -150,8 +150,8 @@
       "generated_first_line": false,
       "lines": [
         "Red leaves drift slowly...",
-        "The rock remains in dark fog",
-        "a bright moon rises."
+        "The light shines in a meadow",
+        "an autumn breeze blows."
       ],
       "syllables": [
         5,
@@ -160,18 +160,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 1,
-      "forwards": 68,
-      "grammar_filtered": 6501,
+      "rejected_attempts": 0,
+      "forwards": 67,
+      "grammar_filtered": 6519,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.086115,
+      "host_seconds": 0.084486,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10360,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     },
     {
@@ -184,8 +184,8 @@
       "generated_first_line": false,
       "lines": [
         "Dry leaves fall on grass...",
-        "wind stirs the cold pond in rain",
-        "a field is quiet."
+        "wind stirs the cold rain in fog",
+        "a red sun is pale."
       ],
       "syllables": [
         5,
@@ -194,18 +194,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 2,
-      "forwards": 80,
-      "grammar_filtered": 7373,
+      "rejected_attempts": 0,
+      "forwards": 84,
+      "grammar_filtered": 7545,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.099627,
+      "host_seconds": 0.10375,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10360,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     }
   ],
@@ -220,8 +220,8 @@
       "generated_first_line": false,
       "lines": [
         "Cold wind howls in fog...",
-        "The light fades slowly on ice",
-        "soft snow falls through fields."
+        "The light glows slowly on snow",
+        "a pond shines gently."
       ],
       "syllables": [
         5,
@@ -230,18 +230,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 3,
-      "forwards": 73,
-      "grammar_filtered": 7040,
+      "rejected_attempts": 2,
+      "forwards": 75,
+      "grammar_filtered": 7552,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.092245,
+      "host_seconds": 0.0958,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10360,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     },
     {
@@ -253,9 +253,9 @@
       "person_end": false,
       "generated_first_line": false,
       "lines": [
-        "Snow falls on the grass...",
-        "branches grow gently by rain",
-        "a sun glows in fog."
+        "Snow falls on the hill...",
+        "quiet birds float over leaves",
+        "a sun burns through rain."
       ],
       "syllables": [
         5,
@@ -264,18 +264,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 0,
-      "forwards": 83,
-      "grammar_filtered": 7590,
+      "rejected_attempts": 2,
+      "forwards": 79,
+      "grammar_filtered": 7864,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.103018,
+      "host_seconds": 0.097932,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10360,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     }
   ],

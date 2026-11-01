@@ -20,8 +20,8 @@ Files:
 - `lab_concepts.h`: the ten concepts, copied from `../haiku-lab-src/` so the lab and this page do not
   affect each other.
   Since 2026-10-31 it also holds SEASON_CONCEPTS: a season poem keeps its written opener, which picks the
-  concept (summer, 2026-11-01: summer wind, summer light, night song, bees and beetles, water birds, with a cool
-  shade as a two-part partner; autumn, 2026-10-31: falling leaves, autumn wind, cold rain and mist, crows, fading, with a still pond as a
+  concept (summer, 2026-11-01: summer wind, summer light, night song, bees and beetles, water birds, and since V8.27
+  cicadas and fireflies for its five added openers, with a cool shade as a two-part partner; autumn, 2026-10-31: falling leaves, autumn wind, cold rain and mist, crows, fading, with a still pond as a
   two-part partner; winter: falling snow, ice and frost, winter wind, fog, crows, with stillness and winter light as
   two-part partners). One-thing stays with that image; two-part sets it against the partner in lines 2-3. The
   concept's words survive the per-poem palette (`lab_keep`). `--lab-check` checks every word is in its season and

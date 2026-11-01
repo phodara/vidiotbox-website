@@ -68,5 +68,8 @@ static const SeasonConcept SEASON_CONCEPTS[] = {
   {"bees and beetles", 1, "Bees hum|Beetles crawl", "bee bees hum buzz buzzes swarm beetle beetles crawl crawls flower flowers petal petals garden gardens bloom blooms", 14},
   {"water birds", 1, "Ducks swim|Gulls perch", "duck ducks gulls swim swims float floats perch lake pond shore shores water ripple ripples", 13},
   {"a cool shade", 1, "", "shade shades cool tree trees oak branch branches leaves rest rests still quiet", 14},
+  // V8.27 (2026-11-01): the five added summer openers, summer's own insects in the Japanese almanac.
+  {"cicadas and fireflies", 1, "A cicada sings|A firefly glows|A cicada calls|A cicada molts|A firefly floats",
+   "cicada cicadas firefly fireflies sing sings call calls glow glows float floats drift pine pines reed reeds moonlight stars dark", 13},
 };
 static constexpr int SEASON_N_CONCEPTS = sizeof SEASON_CONCEPTS / sizeof SEASON_CONCEPTS[0];

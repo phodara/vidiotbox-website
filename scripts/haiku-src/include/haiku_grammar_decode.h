@@ -98,6 +98,11 @@ static inline int haiku_word_length(int word) {
 static inline int haiku_word_piece(int word, int piece) {
   return word < G_TOKENIZER_VOCAB ? word : G_MULTI_IDS[word - G_TOKENIZER_VOCAB][piece];
 }
+// The seasons a split word belongs to, as haiku_season_allows() gives them for single tokens (2026-11-01: "cicada").
+static inline bool haiku_multi_season_allows(int word, int season) {
+  const int i = word - G_TOKENIZER_VOCAB;
+  return i < 0 || i >= G_MULTI_COUNT || season < 0 || (G_MULTI_SEASONS[i] & (1u << season));
+}
 #endif
 
 // The token or virtual word ID of a grammar word, or -1.

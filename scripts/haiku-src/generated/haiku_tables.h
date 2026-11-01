@@ -1133,7 +1133,7 @@ static const uint16_t HAIKU_NO_START[34] = {265,266,344,348,354,359,370,416,422,
 #define HAIKU_SEASON_SPACE 4
 static const char *const HAIKU_SEASONS[] = {"spring", "summer", "autumn", "winter", "space"};
 struct HaikuSeed { uint8_t season; uint8_t syl; uint8_t n; uint16_t ids[8]; const char *text; uint8_t pron; };
-#define HAIKU_N_SEEDS 74
+#define HAIKU_N_SEEDS 79
 static const HaikuSeed HAIKU_SEEDS[] = {
   {0, 3, 3, {17257, 1088, 2985}, "Soft rain falls", 1},
   {0, 3, 3, {18868, 83, 5584}, "Blossoms drift", 2},
@@ -1155,6 +1155,11 @@ static const HaikuSeed HAIKU_SEEDS[] = {
   {1, 3, 4, {34, 1013, 992, 2871}, "Beetles crawl", 2},
   {1, 3, 3, {10640, 2704, 8360}, "Sunlight burns", 1},
   {1, 2, 3, {36, 9231, 8731}, "Dew shines", 1},
+  {1, 5, 6, {33, 276, 475, 357, 65, 4795}, "A cicada sings", 1},
+  {1, 5, 3, {33, 7026, 10538}, "A firefly glows", 1},
+  {1, 5, 6, {33, 276, 475, 357, 65, 4938}, "A cicada calls", 1},
+  {1, 5, 7, {33, 276, 475, 357, 65, 740, 15681}, "A cicada molts", 1},
+  {1, 5, 3, {33, 7026, 8467}, "A firefly floats", 1},
   {2, 3, 3, {8229, 1486, 5584}, "Red leaves drift", 2},
   {2, 3, 4, {36, 423, 1486, 1531}, "Dry leaves fall", 2},
   {2, 2, 3, {19908, 83, 6137}, "Oaks sway", 2},
