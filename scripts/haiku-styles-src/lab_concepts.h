@@ -83,8 +83,8 @@ static const SeasonConcept SEASON_CONCEPTS[] = {
    "bud buds grass vine vines"},
   {"spring rain", 0, "", "rain raindrop raindrops puddle puddles soft wet warm fall falls wash washes coat coats mud soil path paths", 20,
    "rain raindrop raindrops puddle puddles"},
-  {"the stream", 0, "", "stream streams flow flows ripple ripples rise rises glisten sparkle sparkles water cool shore shores bank banks reed reeds", 21,
-   "stream streams"},   // spring has no bare "brook", only "waves on the brook"
+  {"the stream", 0, "", "stream streams flow flows ripple ripples rise rises glisten sparkle sparkles water cool shore shores reed reeds field fields grass", 21,
+   "stream streams"},   // spring has no bare "brook", only "waves on the brook"; since V8.29 no "bank", and streams run through fields
   {"birdsong", 0, "", "bird birds sing sings chirp chirps call calls fly flies perch rest rests branch branches tree trees pine pines oak", 23,
    "bird birds"},
 };
