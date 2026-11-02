@@ -21,17 +21,17 @@
       "complete": true,
       "attempts": 15,
       "rejected_attempts": 0,
-      "forwards": 74,
-      "grammar_filtered": 7644,
+      "forwards": 75,
+      "grammar_filtered": 7714,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.093901,
+      "host_seconds": 0.095611,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10600,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     },
     {
@@ -44,8 +44,8 @@
       "generated_first_line": false,
       "lines": [
         "Blossoms drift by hills...",
-        "worms rest in the cold garden",
-        "a bee is quiet."
+        "bridges remain in the rain",
+        "a red sun is pale."
       ],
       "syllables": [
         5,
@@ -55,17 +55,17 @@
       "complete": true,
       "attempts": 15,
       "rejected_attempts": 0,
-      "forwards": 78,
-      "grammar_filtered": 7289,
+      "forwards": 80,
+      "grammar_filtered": 7199,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.099205,
+      "host_seconds": 0.099493,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10600,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     }
   ],
@@ -92,16 +92,16 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 76,
-      "grammar_filtered": 7069,
+      "grammar_filtered": 7159,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.097175,
+      "host_seconds": 0.096318,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10600,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     },
     {
@@ -114,8 +114,8 @@
       "generated_first_line": false,
       "lines": [
         "Tall grass sways on soil...",
-        "worms crawl in the wet garden",
-        "a sun fades through fog."
+        "stones remain in the wet fog",
+        "a red sun is pale."
       ],
       "syllables": [
         5,
@@ -125,17 +125,17 @@
       "complete": true,
       "attempts": 15,
       "rejected_attempts": 0,
-      "forwards": 82,
-      "grammar_filtered": 7371,
+      "forwards": 83,
+      "grammar_filtered": 7698,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.102068,
+      "host_seconds": 0.10469,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10600,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     }
   ],
@@ -162,16 +162,16 @@
       "attempts": 15,
       "rejected_attempts": 0,
       "forwards": 69,
-      "grammar_filtered": 6665,
+      "grammar_filtered": 6642,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.089217,
+      "host_seconds": 0.089791,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10600,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     },
     {
@@ -184,7 +184,7 @@
       "generated_first_line": false,
       "lines": [
         "Dry leaves fall on grass...",
-        "stones remain in the cold rain",
+        "sunlight fades in the cold rain",
         "a lake is quiet."
       ],
       "syllables": [
@@ -195,17 +195,17 @@
       "complete": true,
       "attempts": 15,
       "rejected_attempts": 0,
-      "forwards": 78,
-      "grammar_filtered": 6968,
+      "forwards": 77,
+      "grammar_filtered": 7088,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.097588,
+      "host_seconds": 0.09711,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10600,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     }
   ],
@@ -230,18 +230,18 @@
       ],
       "complete": true,
       "attempts": 15,
-      "rejected_attempts": 2,
+      "rejected_attempts": 3,
       "forwards": 73,
-      "grammar_filtered": 7120,
+      "grammar_filtered": 7292,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.092259,
+      "host_seconds": 0.092058,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10600,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     },
     {
@@ -254,8 +254,8 @@
       "generated_first_line": false,
       "lines": [
         "Snow falls on the hill...",
-        "worms rest in a cold garden",
-        "leaves float across grass."
+        "twigs drift through a cold garden",
+        "quiet stones are dry."
       ],
       "syllables": [
         5,
@@ -265,17 +265,17 @@
       "complete": true,
       "attempts": 15,
       "rejected_attempts": 0,
-      "forwards": 83,
-      "grammar_filtered": 7866,
+      "forwards": 82,
+      "grammar_filtered": 8079,
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.103513,
+      "host_seconds": 0.101891,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10600,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     }
   ],
@@ -306,12 +306,12 @@
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.133279,
+      "host_seconds": 0.133552,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10360,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     },
     {
@@ -340,12 +340,12 @@
       "palette_fallbacks": 0,
       "line_repeat_attempts": 0,
       "line_repeat_fallbacks": 0,
-      "host_seconds": 0.116242,
+      "host_seconds": 0.116047,
       "scratch_bytes": 1294380,
       "saved_logits_bytes": 101412,
       "used_bits_bytes": 3184,
       "grammar_workspace_bytes": 16384,
-      "grammar_table_bytes": 10360,
+      "grammar_table_bytes": 10640,
       "grammar_state_bytes": 24
     }
   ],
@@ -463,8 +463,8 @@
       "line_repeat_attempts": 0,
       "lines": [
         "My mind grasps atoms...",
-        "sunlight shines past the black moon",
-        "I watch a sunbeam."
+        "sunlight shines over the moon",
+        "I watch a comet."
       ]
     },
     {
@@ -473,7 +473,7 @@
       "lines": [
         "My eyes wonder here...",
         "spheres of light and a void glow",
-        "the asteroid turns."
+        "the fusion expands."
       ]
     },
     {
@@ -482,7 +482,7 @@
       "lines": [
         "My hand traces light...",
         "density and the time shift",
-        "a quasar fades here."
+        "lunar planets turn."
       ]
     },
     {
@@ -490,26 +490,26 @@
       "line_repeat_attempts": 0,
       "lines": [
         "Meteors drift far...",
-        "frequency grows past the sun",
-        "a neutron expands."
+        "silent clouds stretch over space",
+        "a sunbeam is bright."
       ]
     },
     {
       "case": 16,
-      "line_repeat_attempts": 0,
+      "line_repeat_attempts": 1,
       "lines": [
-        "Silent halos glow...",
-        "momentum changes in space",
-        "the galaxy spins."
+        "Starlight and time fade...",
+        "The asteroid spins in space",
+        "an old quasar glows."
       ]
     },
     {
       "case": 17,
-      "line_repeat_attempts": 1,
+      "line_repeat_attempts": 0,
       "lines": [
         "We wait under stars...",
-        "planets and matter whisper",
-        "my old heart is calm."
+        "neutrons and matter whisper",
+        "my heart is quiet."
       ]
     },
     {
@@ -517,26 +517,26 @@
       "line_repeat_attempts": 0,
       "lines": [
         "My cold palm opens...",
-        "spheres of gas in a flash pulse",
-        "now I gently breathe."
+        "An older moon fills the sun",
+        "now I watch a beam."
       ]
     },
     {
       "case": 19,
       "line_repeat_attempts": 0,
       "lines": [
-        "My mind grasps the flash...",
-        "starlight burns softly in gas",
-        "I blink at a moon."
+        "My small eyes seek light...",
+        "Now the solar light wave burns",
+        "I blink at a star."
       ]
     },
     {
       "case": 20,
       "line_repeat_attempts": 0,
       "lines": [
-        "Radio waves fade...",
-        "faint light waves in a flash pulse",
-        "a shadow is deep."
+        "Radiation drifts...",
+        "radio waves and gas fade",
+        "an atom is cold."
       ]
     },
     {
@@ -545,25 +545,25 @@
       "lines": [
         "Gravity flows far...",
         "ancient meteors float fast",
-        "the universe drifts."
+        "a comet is still."
       ]
     },
     {
       "case": 22,
-      "line_repeat_attempts": 1,
+      "line_repeat_attempts": 2,
       "lines": [
-        "Dusty halos shine...",
-        "lit clouds fill the quiet sun",
-        "a comet is pale."
+        "Mass and the cloud merge...",
+        "momentum in a flash shifts",
+        "an old pulsar turns."
       ]
     },
     {
       "case": 23,
       "line_repeat_attempts": 0,
       "lines": [
-        "Cosmic lights sparkle...",
-        "constellations and time turn",
-        "the nebula glows."
+        "Cosmic fusion drifts...",
+        "Now the galaxy expands",
+        "an asteroid glows."
       ]
     }
   ]

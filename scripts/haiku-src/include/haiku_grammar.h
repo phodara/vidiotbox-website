@@ -123,6 +123,8 @@ typedef struct {
 #define GX_BEE_VERB 8     // verb: buzz, buzzes, swarm, favoured after a bee (haiku_bee_verb_bias)
 #define GX_SHINE 16       // verb: shine, shines: not after trees, branches, pines, oaks, vines or roots (2026-10-31)
 #define GX_GROW 32        // verb: grow, grows: not "softly" or "gently" in the seasons (2026-11-01)
+#define GX_DRIFT 64       // verb: drift, drifts: birds instead glide or fly (review 2026-11-02)
+#define GX_GLIDE 128      // verb: glide, glides: birds only, with flying's place restrictions
 #define GX_GENTLE 1       // adverb: softly, gently (not "a bridge stands gently")
 #define GX_DEIXIS 2       // adverb: here, there (the sun, moon and stars are never "here")
 typedef struct {
@@ -143,7 +145,7 @@ typedef struct {
 #define G_MARK_FROZEN 0x10   // snow, frost, ice, fog, mist, dew do not flow or ripple
 #define G_MARK_FALLING 0x20  // snow, rain, dew, frost, ice do not rise or ripple
 #define G_MARK_GROWN 0x20    // state after the verb: grow or grows (FALLING's bit: a pair mark a non-copula verb drops)
-#define G_MARK_STILLWATER 0x100  // pond, lake, puddle stand still: they do not flow; "a pond is soft" is out too
+#define G_MARK_STILLWATER 0x100  // pond, lake, puddle stand still: they do not flow or wash; "a pond is soft" is out too
 #define G_MARK_POOLISH 0x200     // pond, lake, puddle, stream, brook, water: none covers a garden
 #define G_PAIR_MARKS (G_MARK_AIR | G_MARK_FROZEN | G_MARK_FALLING | G_MARK_STILLWATER | G_MARK_POOLISH | G_MARK_NOBLOOM | G_MARK_TINY | G_MARK_BRIGHT | G_MARK_COLD | G_MARK_IMMOVABLE | G_MARK_NOPULL | G_MARK_NOMERGE | G_MARK_ALL | G_MARK_FOREVER)
 // Verb marks carried to the place phrase (review 2026-10-27): drift and float refuse "a dry meadow";
@@ -165,6 +167,7 @@ typedef struct {
 #define G_MARK_NOGRASP 0x40000000  // neutrino, proton, photon...: nothing subatomic is grasped
 #define G_MARK_STONY 0x40000000    // state: a stone or rock subject, never by, near or in stones or rocks (shares NOGRASP's noun-only bit; 2026-11-01)
 #define G_MARK_GRASPY 0x80000000u  // grasp, grasps, hold, holds (carried to the object; after a plant's hold, no place phrase)
+#define G_MARK_BIRD 0x80000000u    // subject until the verb: bird, crow, gull, duck; rebuilt at the verb before GRASPY is used
 #define G_MARK_ICE 0x4000000      // ice: not on or in grass, moss or ivy (frost is)
 #define G_MARK_IMMOVABLE 0x8000000 // still, and bridges, walls, stones, hills...: "a bridge is still" says nothing
 #define G_MARK_DEW 0x1000000      // dew: not "in" a pond, lake or stream
@@ -368,7 +371,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
         if (rank > (int)(s.marks & G_ORBIT_RANK)) s.marks = (uint32_t)((s.marks & ~G_ORBIT_RANK) | (uint32_t)rank);   // "planets and comets": the larger
         if (s.marks & e->marks & G_MARK_FOREVER) return 0;   // not "a faint photon"
         s.marks &= ~(uint32_t)G_MARK_FOREVER;   // the adjective's mark ends with its noun: "faint light fades" is fine
-        s.marks |= e->marks & (G_PAIR_MARKS | G_MARK_WATERWORD | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE | G_MARK_ROOT);
+        s.marks |= e->marks & (G_PAIR_MARKS | G_MARK_WATERWORD | G_MARK_DUCK | G_MARK_FLYER | G_MARK_DEW | G_MARK_ICE | G_MARK_ROOT | G_MARK_BIRD);
         if (e->object & G_STONE_NOUN) s.marks |= G_MARK_STONY;
         // "Space and time bend": a second subject noun makes the clause plural. A mass noun (singular, no article
         // needed: grass, rain, snow) is number 0 until the verb, which agrees with it as singular (2026-10-31).
@@ -446,8 +449,10 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if (s.marks & e->marks & G_PAIR_MARKS) return 0;   // not "air blows", "snow flows", "snow rises", "dew ripples"
     if (e->tag == G_VERB && (e->extra & GX_STILL_VERB) && !(s.marks & G_MARK_IMMOVABLE)) return 0;
     // Review 2026-10-31: "crickets float over the fence". Crawlers (crickets, beetles, cicadas: the crawl action, bit 30)
-    // do not float or drift on the air; bees, birds, fireflies and leaves may (drift too since 2026-11-01).
+    // do not float or drift on the air; bees, fireflies and leaves may. Birds float, but glide or fly instead of drift.
     if (e->tag == G_VERB && (e->marks & G_MARK_DRIFTY) && (s.subject & (1u << 30))) return 0;
+    if (e->tag == G_VERB && (e->extra & GX_DRIFT) && (s.marks & G_MARK_BIRD)) return 0;
+    if (e->tag == G_VERB && (e->extra & GX_GLIDE) && !(s.marks & G_MARK_BIRD)) return 0;
     if ((e->tag == G_VERB || e->tag == G_TRANSITIVE) && (e->extra & GX_SOUND) && (s.marks & G_MARK_HUSHED)) return 0;   // not "quiet birds sing"
     if ((e->tag == G_VERB || e->tag == G_TRANSITIVE) && (e->extra & GX_SOUND) && (s.marks & G_MARK_ROOT)) return 0;   // roots are underground: not "roots rustle" (2026-11-01)   // walls, gates, stones... crumble, lean, remain, stand
     // Moonlight and starlight are G_AIRY on earth only: "starlight burns through space" stays.

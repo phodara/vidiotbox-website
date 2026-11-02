@@ -503,6 +503,26 @@ static int self_test() {
   // 2026-11-01: remaining and standing are states, never slow; crumbling may be.
   for (const char *text : {"Stones remain slowly in fog", "A stone stands slowly"}) ok &= grammar_test(text,0);
   for (const char *text : {"An old wall crumbles slowly", "Stones remain quietly in fog", "A rock stands silently", "Stones remain in fog"}) ok &= grammar_test(text,1);
+  // Blind review 2026-11-02: shining is not slow; keep soft/quiet light and slow motion.
+  for (const char *text : {"A pond shines slowly", "A lake shines slowly", "Stars shine slowly", "The sun shines slowly in the field"})
+    ok &= grammar_test(text,0);
+  for (const char *text : {"A pond shines softly", "A lake shines quietly", "Stars shine gently", "A lake shines in mist",
+                           "Starlight fades slowly", "Light glows slowly", "A stream flows slowly"}) ok &= grammar_test(text,1);
+  // Puddles, ponds and lakes are standing water. Rain, flowing water and waves may wash ground.
+  for (const char *text : {"Puddles wash wet mud", "A puddle washes mud", "The pond washes the shore", "A lake washes a path"})
+    ok &= grammar_test(text,0);
+  for (const char *text : {"Rain washes mud", "Water washes the shore", "A stream washes the shore", "The brook washes mud",
+                           "Waves on the pond wash the shore", "Puddles reflect light", "A puddle shines softly"}) ok &= grammar_test(text,1);
+  // Round 2, 2026-11-02: birds fly or glide, not drift. Insects and non-animal drift stay available.
+  for (const char *text : {"Calm birds drift by a small path", "The birds drift by a small path", "A bird drifts",
+                           "The old birds drift through a path", "Crows drift", "A crow drifts", "Gulls drift", "A gull drifts",
+                           "Ducks drift on the pond", "A duck drifts on the pond", "A bee glides", "Fireflies glide", "Worms glide",
+                           "A bird glide", "Birds glides", "Birds glide on the pond", "Birds glide under stones"}) ok &= grammar_test(text,0);
+  for (const char *text : {"Calm birds glide by a small path", "Calm birds fly by a small path", "A bird glides",
+                           "Birds glide over a path", "A crow glides", "Crows glide", "A gull glides", "Gulls glide", "A duck glides",
+                           "Ducks glide over the pond", "Ducks float on the pond", "Birds glide under a bridge", "Leaves drift slowly",
+                           "Mist drifts", "Bees drift", "Comets drift", "My hand traces light", "An oak holds dew"}) ok &= grammar_test(text,1);
+  ok &= themed_test(1,"Fireflies drift over the pond",1);
   // 2026-11-01: summer's traditional insects. Cicadas sing and fly; a firefly is an animal and a light, and never warm.
   // "Cicada" is split by the tokenizer, so its season comes from G_MULTI_SEASONS.
   for (const char *text : {"A cicada sings", "A firefly glows", "Cicadas sing in the pines", "The pond reflects fireflies", "Bright fireflies shine"})
