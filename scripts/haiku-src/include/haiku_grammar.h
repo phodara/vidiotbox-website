@@ -157,6 +157,7 @@ typedef struct {
 #define G_MARK_EARTH_WORD 0x2000    // a noun the tokenizer splits (hillside, ridge) that the seasons may still use
 #define G_MARK_WATERWORD 0x10000 // the word "water": not "in" a field, meadow or garden (rain and mist are)
 #define G_MARK_JUMPY 0x20000     // jump, jumps: not over a tree
+#define G_MARK_NOT_SOFT 0x20000  // pond, lake, puddle, stream, brook, water: not after "soft" (shares JUMPY's verb-only bit; review 2026-11-02)
 #define G_MARK_OVERPASS 0x80000   // bridge, bridges: the one ground noun a bird flies under
 #define G_MARK_WARMED 0x80000     // state: "warm" before its noun: not the moon, a star, fog, mist, dew, snow or ice (shares OVERPASS's noun-only bit; 2026-11-01)
 #define G_MARK_NEEDS_PLACE 0x2000  // stay, stays: "a universe stays" is unfinished without a place (shares EARTH_WORD's bit; nouns only carry that one)
@@ -167,7 +168,7 @@ typedef struct {
 #define G_MARK_NOGRASP 0x40000000  // neutrino, proton, photon...: nothing subatomic is grasped
 #define G_MARK_STONY 0x40000000    // state: a stone or rock subject, never by, near or in stones or rocks (shares NOGRASP's noun-only bit; 2026-11-01)
 #define G_MARK_GRASPY 0x80000000u  // grasp, grasps, hold, holds (carried to the object; after a plant's hold, no place phrase)
-#define G_MARK_BIRD 0x80000000u    // subject until the verb: bird, crow, gull, duck; rebuilt at the verb before GRASPY is used
+#define G_MARK_BIRD 0x80000000u    // subject until the verb: bird, crow, gull, duck, and bud (no drift either); rebuilt at the verb before GRASPY is used
 #define G_MARK_ICE 0x4000000      // ice: not on or in grass, moss or ivy (frost is)
 #define G_MARK_IMMOVABLE 0x8000000 // still, and bridges, walls, stones, hills...: "a bridge is still" says nothing
 #define G_MARK_DEW 0x1000000      // dew: not "in" a pond, lake or stream
@@ -175,6 +176,7 @@ typedef struct {
 #define G_MARK_FLYER 0x800000     // bird, crow, gull, duck, bee: never under or beneath the ground
 #define G_MARK_COLD 0x400000      // moon, moonlight, star, starlight: never "warm" anything
 #define G_MARK_DUCK 0x100000      // duck, ducks: not on or in a tree
+#define G_MARK_EXPANDS 0x100000   // expand, expands: not a rank 3 subject (shares DUCK's noun-only bit; review 2026-11-02)
 #define G_MARK_BRIGHT 0x200000    // dark, sunlight, moonlight, starlight, light: not "dark sunlight"
 #define G_MARK_TINY 0x40000      // worm, worms, small, tiny: a worm is small already
 #define G_MARK_TREE 0x4000      // state: the subject is a tree, branch or vine
@@ -319,7 +321,12 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
       if (!subject && (s.object & G_NOT_SURFACE) && !(s.object & G_NOT_SOLID) && !((s.marks & G_MARK_AIR) && !(s.subject & G_LIGHT)) &&
           (e->marks & G_MARK_IMMOVABLE) && (e->marks & G_MARK_NOPULL)) return 0;
       // "the wind rises through a path": wind and air go over or along a path or shore, not through it.
-      if (!subject && (s.subject & G_AIR) && (s.object & G_NOT_SOLID) && !(s.object & G_NOT_SURFACE) && (e->semantic & G_SURFACE)) return 0;
+      // Nor what flies, nor light: "the old birds drift through a path", "red light shines through the dark path" (review 2026-11-02).
+      if (!subject && (s.subject & (G_AIR | G_ACT_FLY | G_LIGHT)) && (s.object & G_NOT_SOLID) && !(s.object & G_NOT_SURFACE) && (e->semantic & G_SURFACE)) return 0;
+      // "air rises slowly through dew" should be through mist (review 2026-11-02). The air rule below turns "through" into
+      // "in" for the word "air"; "cold wind howls in dew" stays.
+      if (!subject && (s.subject & G_AIR) && (s.object & G_NOT_SOLID) && (!(s.object & G_NOT_SURFACE) || ((s.marks & G_MARK_AIR) && !(s.subject & G_LIGHT))) &&
+          (e->marks & G_MARK_DEW)) return 0;
       // "the wind blows on soil": wind, breezes and air are not "on" soil, earth or mud (G_NOT_AIRY marks "on").
       if (!subject && (s.subject & G_AIR) && (s.object & G_NOT_AIRY) && (e->extra & GX_SIZELESS) && (e->semantic & G_GROUND)) return 0;
       // ...nor in or through them: "air rises slowly through mud" (2026-11-01).
@@ -344,7 +351,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
           (e->semantic & G_WATER) && (e->semantic & G_AIRY)) return 0;   // not "pines shade a stone in fog"
       if (!subject && (s.marks & (G_ORBIT_VERB | G_ORBIT_RANK)) == G_SHADE_RANK && rank == G_SHADE_RANK) return 0;   // not "vines shade a pine"
       if ((s.adjectives & G_LIMIT_WEATHER) && (e->semantic & G_AIRY) && !(e->semantic & G_GROUND)) return 0;   // not "grass grows across rain"
-      if ((s.adjectives & G_LIMIT_NOAIR) && (e->marks & (G_MARK_AIR | G_MARK_IMMOVABLE))) return 0;      // not "soft air", "a soft wall"
+      if ((s.adjectives & G_LIMIT_NOAIR) && (e->marks & (G_MARK_AIR | G_MARK_IMMOVABLE | G_MARK_NOT_SOFT))) return 0;      // not "soft air", "a soft wall", "soft streams"
       if ((s.adjectives & G_LIMIT_NOTINY) && (e->marks & G_MARK_TINY)) return 0;    // not "a small worm"
       if ((s.adjectives & G_LIMIT_NOTINY) && (e->extra & GX_SIZELESS)) return 0;    // not "small dew", "huge stardust"
       if ((s.adjectives & G_LIMIT_DARK) && (e->marks & G_MARK_BRIGHT)) return 0;     // not "dark sunlight"
@@ -453,6 +460,10 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if (e->tag == G_VERB && (e->marks & G_MARK_DRIFTY) && (s.subject & (1u << 30))) return 0;
     if (e->tag == G_VERB && (e->extra & GX_DRIFT) && (s.marks & G_MARK_BIRD)) return 0;
     if (e->tag == G_VERB && (e->extra & GX_GLIDE) && !(s.marks & G_MARK_BIRD)) return 0;
+    // Review 2026-11-02: "huge comets expand through space". Planets, asteroids, comets and meteors keep their size.
+    if ((e->marks & G_MARK_EXPANDS) && (s.marks & G_ORBIT_RANK) == 3) return 0;
+    // Nor one particle: "now the neutrino expands". Particles (plural) and gravity may. The physics class reuses G_CRAFT.
+    if ((e->marks & G_MARK_EXPANDS) && s.number == 1 && (s.subject & G_CRAFT) && !(s.subject & G_SPACE)) return 0;
     if ((e->tag == G_VERB || e->tag == G_TRANSITIVE) && (e->extra & GX_SOUND) && (s.marks & G_MARK_HUSHED)) return 0;   // not "quiet birds sing"
     if ((e->tag == G_VERB || e->tag == G_TRANSITIVE) && (e->extra & GX_SOUND) && (s.marks & G_MARK_ROOT)) return 0;   // roots are underground: not "roots rustle" (2026-11-01)   // walls, gates, stones... crumble, lean, remain, stand
     // Moonlight and starlight are G_AIRY on earth only: "starlight burns through space" stays.
@@ -503,6 +514,7 @@ static inline int g_advance(GState s, const GEntry *e, GState *out) {
     if ((e->extra & GX_HUSH) && ((s.subject & G_PLANT) || (s.marks & G_MARK_IMMOVABLE))) return 0;   // a rock is always quiet (2026-10-31)
     if ((e->extra & GX_TEMP) && (s.marks & G_MARK_IMMOVABLE)) return 0;   // "an old bridge is hot" measures it; "a warm stone" is fine (2026-11-01)
     if ((e->marks & G_MARK_AIR) && (s.marks & G_MARK_IMMOVABLE)) return 0;   // "soft" (the one adjective with this mark): not "the wall is soft"
+    if ((e->marks & G_MARK_AIR) && (s.tail & 8)) return 0;   // nor "the stream is soft", "the water is soft" (review 2026-11-02)
     s.phase = G_DONE;
     s.tail |= 4; // after a predicate adjective, no directional adverb
     if (e->object & G_STILL_ADJ) { s.tail |= 1; s.marks |= G_MARK_STILLNOW; }   // not "an oak is still there": it reads as "continues"

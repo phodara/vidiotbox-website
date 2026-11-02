@@ -154,6 +154,44 @@ static inline bool haiku_moonless_crater(int token, const uint32_t *used) {
   return true;
 }
 
+// Review 2026-11-02: the stars are not visible when the sun is, so a poem names one or the other, in
+// every theme; a moon goes with either. `used` also holds this line's words, so a clash within a line
+// is caught too ("Stars drift by the sun"). "stellar" and "stardust" name no star you can see.
+static inline bool haiku_sun_star_clash(int token, const uint32_t *used) {
+  static int ids[9], ready;
+  if (!ready) {
+    const char *names[9] = {"sun", "sunlight", "sunbeam", "solar", "star", "stars", "starlight", "constellation", "constellations"};
+    for (int i = 0; i < 9; i++) ids[i] = haiku_word_token(names[i]);
+    ready = 1;
+  }
+  if (token < 0) return false;
+  for (int i = 0; i < 9; i++) {
+    if (token != ids[i]) continue;
+    for (int j = i < 4 ? 4 : 0, end = i < 4 ? 9 : 4; j < end; j++)
+      if (ids[j] >= 0 && (used[ids[j] >> 5] & (1u << (ids[j] & 31)))) return true;
+    return false;
+  }
+  return false;
+}
+
+// Review 2026-11-02: "Silent dust rises", "Dust sparks in the void". On its own dust does not say space, so a
+// space poem offers it only after naming something out there ("Comets drift through dust"). The seasons keep it.
+static inline bool haiku_dust_without_context(int token, const uint32_t *used, bool space) {
+  static int dust = -2, ids[32], count;
+  if (dust == -2) {
+    dust = haiku_word_token("dust");
+    const char *names[32] = {"space", "void", "cosmos", "universe", "moon", "moons", "moonlight", "sun", "sunlight", "star", "stars",
+                             "starlight", "planet", "planets", "comet", "comets", "asteroid", "asteroids", "meteor", "meteors", "galaxy",
+                             "galaxies", "nebula", "nebulas", "supernova", "supernovas", "pulsar", "pulsars", "quasar", "quasars",
+                             "constellation", "constellations"};
+    for (const char *name : names) { int id = haiku_word_token(name); if (id >= 0) ids[count++] = id; }
+  }
+  if (!space || dust < 0 || token != dust) return false;
+  for (int i = 0; i < count; i++)
+    if (used[ids[i] >> 5] & (1u << (ids[i] & 31))) return false;
+  return true;
+}
+
 // Space poems draw their place nouns (cloud, wave, dust...) and their intransitive
 // verbs (falls, floats...) from random subsets that change every poem, so no one
 // word can fill line two of most poems. Bodies, abstract nouns and `protect` (the

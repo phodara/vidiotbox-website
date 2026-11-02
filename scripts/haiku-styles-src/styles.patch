@@ -121,8 +121,8 @@
    }
    if (constrained) for (int i=0;i<themed_count;i++) {
      const GEntry &e=themed[i];
--    if (e.token==UINT16_MAX || is_used(e.token) || haiku_moonless_crater(e.token,used) ||
-+    if (e.token==UINT16_MAX || lab_technical_word(e.token) || is_used(e.token) || haiku_moonless_crater(e.token,used) ||
+-    if (e.token==UINT16_MAX || is_used(e.token) || haiku_moonless_crater(e.token,used) || haiku_sun_star_clash(e.token,used) || haiku_dust_without_context(e.token,used,season==HAIKU_SEASON_SPACE) ||
++    if (e.token==UINT16_MAX || lab_technical_word(e.token) || is_used(e.token) || haiku_moonless_crater(e.token,used) || haiku_sun_star_clash(e.token,used) || haiku_dust_without_context(e.token,used,season==HAIKU_SEASON_SPACE) ||
          haiku_word_length(e.token)>budget || !grammar_allows(e.token,e.syl,rem,state)) continue;
      int first=haiku_word_piece(e.token,0);
      // First-piece shortlist ranking; every forced continuation is scored below.

@@ -3,7 +3,7 @@
 #define HAIKU_TOP_K 20
 // Finished poems the board writes ahead while nobody presses a button (firmware only).
 // One is written after each poem shown; more follow while idle, up to this many, then it rests.
-#define HAIKU_PREFETCH_MAX 5
+#define HAIKU_PREFETCH_MAX 20
 #define HAIKU_TEMPERATURE 0.7f
 #define HAIKU_TRIES 5
 // Weight of "the model would punctuate here" against mean word log-probability.
