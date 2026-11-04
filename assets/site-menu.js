@@ -120,6 +120,7 @@
   const menuItems = [
     { href: 'index.html', label: 'VIDIOTBOX-WEBSITE (HOME)' },
     { href: '/generated-haikus.html', label: 'AI Haiku Generator' },
+    { href: '/docs/haiku-matic-instruction-manual.html', label: 'hAIku-Matic Hardware Manual' },
     { href: 'vidiotbox-hardware_docs.html', label: 'Vidiotbox-hardware Docs' },
     { href: 'lilygo-t-display-c5.html', label: 'POCKET PROWLER WIFI/BLE ANALYZER' },
     { href: 'pictograms.html', label: 'Pictograms' },

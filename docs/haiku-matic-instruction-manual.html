@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-845EZ02BY8"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-845EZ02BY8');
+</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Haiku-Matic Manual</title>
+  <meta name="description" content="Haiku-Matic instruction manual for start-up, touch controls, themes, the settings menu, poem color, SD card music, battery and firmware.">
+  <link rel="canonical" href="https://www.vidiotbox.net/docs/haiku-matic-instruction-manual.html">
+  <meta property="og:title" content="Haiku-Matic Manual">
+  <meta property="og:description" content="Start-up, touch controls, themes, settings, music, battery and firmware for the hardware Haiku-Matic.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://www.vidiotbox.net/docs/haiku-matic-instruction-manual.html">
+  <meta property="og:image" content="https://www.vidiotbox.net/docs/release-assets/haiku-matic/og-cover.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Haiku-Matic Manual",
+    "url": "https://www.vidiotbox.net/docs/haiku-matic-instruction-manual.html",
+    "description": "Instruction manual for the hardware Haiku-Matic, an AI haiku generator that runs on Vidiotbox hardware."
+  }
+  </script>
+  <link rel="icon" type="image/png" href="release-assets/haiku-matic/favicon.png">
+  <style>
+    /* The Vidiotbox and Pocket Prowler manual system: heavy rules, hard shadows, numbered
+       sections. Its accent colors are taken from the Haiku-Matic woodblock art. */
+    :root {
+      --ink: #0d1b2a;
+      --paper: #fbeccb;
+      --desk: #d9c79c;
+      --panel: #fffaf0;
+      --muted: #5a5240;
+      --gold: #f6c343;
+      --sky: #7cc4ea;
+      --red: #cf3a1e;
+      --pine: #6fc79a;
+      --navy: #12324f;
+      --on-red: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-height: 100%;
+      background: var(--desk);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      line-height: 1.36;
+    }
+
+    body {
+      margin: 0 auto;
+      width: 100%;
+      max-width: 1120px;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(13, 27, 42, 0.05) 1px, transparent 1px) 0 0 / 40px 40px,
+        linear-gradient(rgba(13, 27, 42, 0.04) 1px, transparent 1px) 0 0 / 40px 40px,
+        var(--paper);
+    }
+
+    img, svg { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; font-weight: 900; }
+
+    .page { padding: 32px 32px 128px; }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      min-height: 430px;
+      border: 4px solid var(--ink);
+      background: var(--panel);
+    }
+
+    .mast-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      border-right: 4px solid var(--ink);
+    }
+
+    .kicker {
+      display: inline-block;
+      max-width: 100%;
+      padding: 4px 9px;
+      border: 3px solid var(--ink);
+      background: var(--gold);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 22px 0 10px;
+      font-size: clamp(46px, 6.6vw, 78px);
+      line-height: 0.92;
+      letter-spacing: -0.04em;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 38px;
+      line-height: 0.94;
+      letter-spacing: -0.02em;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    p { margin: 0 0 14px; }
+
+    .subtitle {
+      max-width: 560px;
+      font-size: 22px;
+      font-weight: 850;
+    }
+
+    .credit {
+      display: grid;
+      gap: 5px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mast-art {
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, var(--red), transparent 38%),
+        linear-gradient(315deg, var(--gold), transparent 44%),
+        var(--navy);
+    }
+
+    .mast-art img {
+      width: 100%;
+      border: 3px solid var(--ink);
+      filter: drop-shadow(10px 10px 0 rgba(0, 0, 0, 0.35));
+    }
+
+    .strip {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      margin: 22px 0;
+      border: 3px solid var(--ink);
+      background: var(--ink);
+    }
+
+    .strip a { color: var(--ink); text-decoration: none; }
+    .strip a:hover span, .strip a:focus span { background: var(--sky); }
+    .strip a:focus { outline: 3px solid var(--sky); outline-offset: -3px; }
+
+    .strip span {
+      display: block;
+      padding: 9px 7px;
+      background: var(--gold);
+      text-align: center;
+      font-size: 11px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .section {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      gap: 22px;
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 6px solid var(--ink);
+    }
+
+    .num {
+      min-height: 120px;
+      border-right: 4px solid var(--ink);
+      font-size: 84px;
+      line-height: 0.85;
+      letter-spacing: -0.06em;
+      font-weight: 950;
+    }
+
+    .deck {
+      max-width: 780px;
+      margin-bottom: 16px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .card, .callout, .face-note, .screen-frame {
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .card { padding: 16px; }
+    .card pre { font-size: 12.5px; }
+
+    .callout {
+      padding: 16px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .callout.gold { background: var(--gold); }
+    .callout.sky { background: var(--sky); }
+    .callout.pine { background: var(--pine); }
+    .callout.red { background: var(--red); color: var(--on-red); }
+    .stack { display: grid; gap: 18px; }
+
+    .face-note {
+      display: grid;
+      grid-template-columns: 78px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      margin: 18px 0;
+      font-weight: 800;
+    }
+
+    .face-note img {
+      width: 70px;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border: 2px solid var(--ink);
+    }
+
+    .face-note p { margin: 0; }
+    .stack .face-note { margin: 0; }
+
+    .screen-frame { margin: 0 0 14px; padding: 10px; }
+
+    .screen-frame img, .screen-frame svg {
+      width: 100%;
+      border: 2px solid var(--ink);
+    }
+
+    .screen-frame figcaption {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    table {
+      width: 100%;
+      margin: 0 0 18px;
+      border: 3px solid var(--ink);
+      border-collapse: collapse;
+      background: var(--panel);
+    }
+
+    th, td {
+      padding: 8px 9px;
+      border: 2px solid var(--ink);
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--ink);
+      color: var(--panel);
+      text-align: left;
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    td strong { font-weight: 950; }
+
+    .led {
+      display: inline-block;
+      width: 13px;
+      height: 13px;
+      margin-right: 6px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      vertical-align: -2px;
+    }
+
+    code, pre {
+      background: var(--ink);
+      color: var(--gold);
+      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+    }
+
+    code { padding: 1px 4px; font-size: 0.92em; }
+
+    pre {
+      margin: 0;
+      padding: 14px;
+      border: 3px solid var(--ink);
+      overflow-x: auto;
+    }
+
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 3px;
+      margin-bottom: 18px;
+      border: 3px solid var(--ink);
+      background: var(--ink);
+    }
+
+    .swatches span {
+      padding: 9px 4px;
+      background: #000000;
+      text-align: center;
+      font-family: Georgia, "DejaVu Serif", serif;
+      font-style: italic;
+      font-size: 16px;
+    }
+
+    .art-panel {
+      display: grid;
+      grid-template-columns: 62px minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+      padding: 18px;
+      border: 3px solid var(--ink);
+      background:
+        linear-gradient(135deg, var(--red), transparent 38%),
+        linear-gradient(315deg, var(--gold), transparent 44%),
+        var(--navy);
+    }
+
+    .art-panel img { width: 100%; border: 2px solid var(--ink); }
+
+    .ticker {
+      margin-top: 32px;
+      padding: 10px 18px;
+      background: var(--ink);
+      color: var(--gold);
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .footer {
+      margin-top: 34px;
+      padding: 18px;
+      background: var(--ink);
+      color: var(--panel);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 0.04em;
+    }
+
+    .end-marker {
+      margin-top: 28px;
+      padding: 18px;
+      border: 4px solid var(--ink);
+      background: var(--gold);
+      text-align: center;
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    @media print {
+      html { background: #ffffff; }
+      body { max-width: none; }
+      .page { padding: 18mm; }
+      .section { break-inside: avoid; page-break-inside: avoid; }
+      .card, .callout, .face-note, .screen-frame, .end-marker { box-shadow: none; }
+      a { color: inherit; text-decoration: none; }
+    }
+
+    @media (max-width: 760px) {
+      html, body { max-width: 100%; overflow-x: hidden; }
+      .page { padding: 18px 18px 96px; }
+
+      .masthead, .section, .grid-2, .grid-3 { grid-template-columns: minmax(0, 1fr); }
+
+      .masthead { min-height: 0; }
+      .mast-copy { border-right: 0; border-bottom: 4px solid var(--ink); }
+      .strip { grid-template-columns: repeat(2, 1fr); }
+
+      .num {
+        min-height: auto;
+        padding-bottom: 8px;
+        border-right: 0;
+        border-bottom: 4px solid var(--ink);
+      }
+
+      h2 { font-size: 32px; overflow-wrap: anywhere; }
+      td, th { overflow-wrap: break-word; }
+      .subtitle, .deck, .callout { overflow-wrap: anywhere; }
+      .swatches span { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="stars" viewBox="0 0 320 240"><rect x="228" y="216" width="2" height="2" fill="rgb(49,49,57)"/><rect x="5" y="29" width="1" height="1" fill="rgb(87,87,100)"/><rect x="27" y="69" width="1" height="1" fill="rgb(73,73,84)"/><rect x="219" y="214" width="1" height="1" fill="rgb(64,64,74)"/><rect x="248" y="131" width="1" height="1" fill="rgb(163,163,187)"/><rect x="230" y="17" width="1" height="1" fill="rgb(58,58,67)"/><rect x="281" y="51" width="1" height="1" fill="rgb(63,63,72)"/><rect x="133" y="236" width="1" height="1" fill="rgb(161,161,185)"/><rect x="223" y="115" width="1" height="1" fill="rgb(124,124,142)"/><rect x="282" y="137" width="1" height="1" fill="rgb(122,122,140)"/><rect x="106" y="164" width="1" height="1" fill="rgb(171,171,196)"/><rect x="195" y="70" width="1" height="1" fill="rgb(65,65,75)"/><rect x="26" y="214" width="1" height="1" fill="rgb(98,98,112)"/><rect x="98" y="101" width="1" height="1" fill="rgb(82,82,94)"/><rect x="143" y="217" width="1" height="1" fill="rgb(91,91,104)"/><rect x="22" y="21" width="1" height="1" fill="rgb(56,56,64)"/><rect x="41" y="77" width="1" height="1" fill="rgb(127,127,146)"/><rect x="62" y="21" width="2" height="2" fill="rgb(165,165,189)"/><rect x="201" y="194" width="2" height="2" fill="rgb(161,161,185)"/><rect x="60" y="151" width="1" height="1" fill="rgb(137,137,157)"/><rect x="141" y="168" width="1" height="1" fill="rgb(115,115,132)"/><rect x="47" y="57" width="1" height="1" fill="rgb(78,78,90)"/><rect x="150" y="31" width="2" height="2" fill="rgb(154,154,177)"/><rect x="182" y="221" width="1" height="1" fill="rgb(147,147,168)"/><rect x="260" y="55" width="1" height="1" fill="rgb(71,71,82)"/><rect x="307" y="49" width="1" height="1" fill="rgb(49,49,57)"/><rect x="311" y="128" width="1" height="1" fill="rgb(74,74,85)"/><rect x="261" y="55" width="2" height="2" fill="rgb(168,168,193)"/><rect x="271" y="106" width="1" height="1" fill="rgb(149,149,171)"/><rect x="139" y="173" width="2" height="2" fill="rgb(45,45,52)"/><rect x="237" y="149" width="1" height="1" fill="rgb(107,107,123)"/><rect x="103" y="181" width="1" height="1" fill="rgb(126,126,145)"/><rect x="303" y="129" width="1" height="1" fill="rgb(83,83,95)"/><rect x="120" y="125" width="1" height="1" fill="rgb(77,77,88)"/><rect x="246" y="14" width="1" height="1" fill="rgb(72,72,83)"/><rect x="221" y="231" width="1" height="1" fill="rgb(71,71,82)"/><rect x="34" y="28" width="1" height="1" fill="rgb(163,163,187)"/><rect x="120" y="81" width="1" height="1" fill="rgb(140,140,161)"/><rect x="83" y="123" width="1" height="1" fill="rgb(67,67,77)"/><rect x="168" y="109" width="1" height="1" fill="rgb(121,121,139)"/><rect x="41" y="123" width="1" height="1" fill="rgb(69,69,79)"/><rect x="268" y="105" width="1" height="1" fill="rgb(98,98,112)"/><rect x="261" y="188" width="1" height="1" fill="rgb(91,91,104)"/><rect x="262" y="55" width="1" height="1" fill="rgb(162,162,186)"/><rect x="197" y="142" width="1" height="1" fill="rgb(88,88,101)"/><rect x="245" y="69" width="1" height="1" fill="rgb(105,105,121)"/><rect x="202" y="17" width="1" height="1" fill="rgb(157,157,180)"/><rect x="248" y="101" width="1" height="1" fill="rgb(132,132,151)"/><rect x="308" y="5" width="1" height="1" fill="rgb(49,49,57)"/><rect x="305" y="166" width="1" height="1" fill="rgb(66,66,76)"/><rect x="291" y="122" width="1" height="1" fill="rgb(57,57,66)"/><rect x="255" y="215" width="1" height="1" fill="rgb(122,122,140)"/><rect x="311" y="96" width="2" height="2" fill="rgb(68,68,78)"/><rect x="1" y="218" width="1" height="1" fill="rgb(143,143,164)"/><rect x="144" y="215" width="1" height="1" fill="rgb(143,143,164)"/><rect x="281" y="141" width="2" height="2" fill="rgb(50,50,58)"/><rect x="271" y="207" width="1" height="1" fill="rgb(85,85,98)"/><rect x="294" y="178" width="1" height="1" fill="rgb(125,125,143)"/><rect x="210" y="56" width="2" height="2" fill="rgb(77,77,88)"/><rect x="71" y="71" width="1" height="1" fill="rgb(62,62,71)"/><rect x="122" y="210" width="1" height="1" fill="rgb(89,89,102)"/><rect x="286" y="142" width="1" height="1" fill="rgb(54,54,62)"/><rect x="295" y="221" width="2" height="2" fill="rgb(172,172,197)"/><rect x="10" y="69" width="1" height="1" fill="rgb(43,43,50)"/><rect x="121" y="137" width="1" height="1" fill="rgb(120,120,138)"/><rect x="234" y="78" width="1" height="1" fill="rgb(130,130,149)"/><rect x="208" y="22" width="1" height="1" fill="rgb(126,126,145)"/><rect x="96" y="119" width="1" height="1" fill="rgb(90,90,103)"/><rect x="13" y="52" width="1" height="1" fill="rgb(147,147,168)"/><rect x="75" y="146" width="1" height="1" fill="rgb(45,45,52)"/></symbol>
+  </svg>
+
+  <main class="page">
+    <header class="masthead">
+      <div class="mast-copy">
+        <div>
+          <span class="kicker">Field Manual / <span style="text-transform:none">hAIku-Matic</span> Hardware</span>
+          <h1>Haiku<br>Matic</h1>
+          <p class="subtitle">A pocket robot poet that writes original haiku on its own chip, with no internet connection.</p>
+        </div>
+        <div class="credit">
+          <span>Another Useless Project by Paul Hodara</span>
+          <span>Firmware V8.31+ / Copyright (c) 2026 Paul Hodara</span>
+        </div>
+      </div>
+      <div class="mast-art">
+        <img src="release-assets/haiku-matic/cover.webp" width="1448" height="854" alt="Haiku-Matic woodblock art: a smiling robot at a desk writing on a scroll, below a red banner, with Mount Fuji and a red sun behind it">
+      </div>
+    </header>
+
+    <nav class="strip" aria-label="Manual contents">
+      <a href="#start"><span>Start</span></a>
+      <a href="#touch"><span>Touch</span></a>
+      <a href="#themes"><span>Themes</span></a>
+      <a href="#menu"><span>Menu</span></a>
+      <a href="#music"><span>Music</span></a>
+      <a href="#battery"><span>Battery</span></a>
+      <a href="#install"><span>Install</span></a>
+    </nav>
+
+    <section class="section" id="device">
+      <div class="num">01</div>
+      <div>
+        <h2>What It Is</h2>
+        <p class="deck">Haiku-Matic turns Vidiotbox hardware into a poet that writes 5-7-5 haiku on its touchscreen. A tiny language model runs on the board itself, so there is no app, account or network to set up.</p>
+        <div class="grid-2">
+          <figure class="screen-frame">
+            <img src="release-assets/haiku-matic/splash.webp" width="960" height="720" alt="The splash screen: the woodblock art with 1 Billion hAIku and the version V8.31+ in its cream bottom border">
+            <figcaption>The splash screen</figcaption>
+          </figure>
+          <table>
+            <thead><tr><th>Part</th><th>What Is In It</th></tr></thead>
+            <tbody>
+              <tr><td>Board</td><td>Vidiotbox hardware, an LCDWIKI ES3C28P</td></tr>
+              <tr><td>Chip</td><td>ESP32-S3, 16 MB flash, 8 MB PSRAM</td></tr>
+              <tr><td>Screen</td><td>About 2.8 inches, 320 x 240, run in landscape</td></tr>
+              <tr><td>Touch</td><td>FT6336G capacitive, two fingers</td></tr>
+              <tr><td>Sound</td><td>ES8311 codec and a small speaker</td></tr>
+              <tr><td>Storage</td><td>microSD card for music</td></tr>
+              <tr><td>Light</td><td>One RGB LED</td></tr>
+              <tr><td>Model</td><td>28.9 million parameters, 14.9 MB, stored in flash</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid-3">
+          <div class="callout gold">It can write over a billion different haiku. The splash screen rounds that to 1 Billion hAIku.</div>
+          <div class="callout sky">Nothing leaves the board. The firmware has no Wi-Fi or Bluetooth code.</div>
+          <div class="callout pine">A poem takes about 15 seconds. While one is on screen, the next ones are written ahead, up to 20.</div>
+        </div>
+        <div class="face-note">
+          <img src="release-assets/haiku-matic/robot.webp" width="384" height="384" alt="The Haiku-Matic robot's smiling face">
+          <p>Rules check the grammar as each poem is written, but the model is very small and its imagery can wander. Expect the occasional strange poem.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="start">
+      <div class="num">02</div>
+      <div>
+        <h2>Start It Up</h2>
+        <p class="deck">Power it on and wait. You get the splash screen, then the instructions, and if you leave it alone it starts writing by itself.</p>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>When</th><th>What Happens</th></tr></thead>
+            <tbody>
+              <tr><td>First 10 seconds</td><td>Splash screen. Touches do nothing yet.</td></tr>
+              <tr><td>Next 25 seconds</td><td>Instruction screen. Music starts if the volume is above 0.</td></tr>
+              <tr><td>Left untouched</td><td>The first poem starts with your saved settings.</td></tr>
+              <tr><td>Touched during the 25 seconds</td><td>The auto-start is canceled. Tap the upper half when you want a poem.</td></tr>
+            </tbody>
+          </table>
+          <figure class="screen-frame">
+            <svg viewBox="0 0 320 240" role="img" aria-label="Instruction screen with three lines of instructions, Music Off, and the version and battery on the bottom line">
+              <rect width="320" height="240" fill="#000000"/>
+              <use href="#stars" width="320" height="240"/>
+              <text x="160" y="39" text-anchor="middle" dominant-baseline="hanging" font-family="Arial, sans-serif" font-size="17" fill="#848284">SPRING</text>
+              <g font-family="Arial, sans-serif" font-size="13.5" fill="#ffffff" text-anchor="middle" dominant-baseline="hanging">
+                <text x="160" y="77">Tap upper half for Haiku</text>
+                <text x="160" y="105">Tap lower half to change theme</text>
+                <text x="160" y="133">Touch with two fingers for the menu</text>
+                <text x="160" y="161" fill="#848284">Music Off</text>
+              </g>
+              <rect y="220" width="320" height="20" fill="#000000"/>
+              <rect y="220" width="320" height="1" fill="#848284"/>
+              <g font-family="Menlo, Consolas, monospace" font-size="11.5" dominant-baseline="hanging">
+                <text x="8" y="224" fill="#848284">V8.31+</text>
+                <text x="312" y="224" fill="#00ffff" text-anchor="end">BAT 87% 4.05V</text>
+              </g>
+            </svg>
+            <figcaption>Instruction screen. Music Off shows only at volume 0.</figcaption>
+          </figure>
+        </div>
+        <div class="grid-2">
+          <div class="callout gold">It starts on a random theme each time. Tap the lower half to change it.</div>
+          <div class="face-note" style="margin:0">
+            <img src="release-assets/haiku-matic/robot.webp" width="384" height="384" alt="The Haiku-Matic robot's smiling face">
+            <p>In a Vidiotbox case, the magnetic cap still controls power. Take it off to run or charge, and put it back to disconnect the battery.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="touch">
+      <div class="num">03</div>
+      <div>
+        <h2>Touch Map</h2>
+        <p class="deck">The screen has two halves and one gesture. Taps act when your finger lifts.</p>
+        <div class="grid-2">
+          <figure class="screen-frame">
+            <svg viewBox="0 0 320 240" role="img" aria-label="Touch map: the upper half shows the next poem, the lower half changes the theme, and two fingers anywhere open the menu">
+              <rect width="320" height="120" fill="#f6c343"/>
+              <rect y="120" width="320" height="120" fill="#7cc4ea"/>
+              <rect y="118" width="320" height="4" fill="#0d1b2a"/>
+              <g font-family="Arial, sans-serif" font-weight="900" fill="#0d1b2a" text-anchor="middle">
+                <text x="160" y="50" font-size="22">UPPER HALF</text>
+                <text x="160" y="74" font-size="14">Next poem</text>
+                <text x="160" y="176" font-size="22">LOWER HALF</text>
+                <text x="160" y="200" font-size="14">Next theme</text>
+              </g>
+              <rect x="64" y="104" width="192" height="32" fill="#0d1b2a"/>
+              <text x="160" y="125" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" font-weight="900" fill="#f6c343">TWO FINGERS: MENU</text>
+            </svg>
+            <figcaption>Works the same on every screen except the menu</figcaption>
+          </figure>
+          <div>
+            <table>
+              <thead><tr><th>Control</th><th>What It Does</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Tap upper half</strong></td><td>Shows the next poem. If one is ready it appears at once. If not, you watch it being written.</td></tr>
+                <tr><td><strong>Tap lower half</strong></td><td>Moves to the next theme and drops poems written ahead for the old one.</td></tr>
+                <tr><td><strong>Two fingers</strong></td><td>Opens the menu, anywhere on the screen.</td></tr>
+                <tr><td><strong>RESET</strong></td><td>Restarts the board. Saved settings stay.</td></tr>
+                <tr><td><strong>BOOT</strong></td><td>Only used when installing firmware. See section 10.</td></tr>
+              </tbody>
+            </table>
+            <div class="face-note">
+              <img src="release-assets/haiku-matic/pen.webp" width="188" height="188" alt="The robot's hand holding a pen">
+              <p>The touch position is scaled to the screen, so aim straight at what you want to press.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="screen">
+      <div class="num">04</div>
+      <div>
+        <h2>Read The Screen</h2>
+        <p class="deck">Three lines of poem, the theme above them, and a status line that only appears when you need it.</p>
+        <div class="grid-2">
+          <figure class="screen-frame">
+            <svg viewBox="0 0 320 240" role="img" aria-label="A poem on screen under the theme name SPACE, with the version and battery on the bottom line">
+              <rect width="320" height="240" fill="#000000"/>
+              <use href="#stars" width="320" height="240"/>
+              <text x="160" y="39" text-anchor="middle" dominant-baseline="hanging" font-family="Arial, sans-serif" font-size="17" fill="#848284">SPACE</text>
+              <g font-family="Georgia, 'DejaVu Serif', serif" font-style="italic" font-size="18" fill="#ffffff" text-anchor="middle" dominant-baseline="hanging">
+                <text x="160" y="77">Density grows fast...</text>
+                <text x="160" y="111">lights fade in the black shadows</text>
+                <text x="160" y="145">a galaxy turns</text>
+              </g>
+              <rect y="220" width="320" height="20" fill="#000000"/>
+              <rect y="220" width="320" height="1" fill="#848284"/>
+              <g font-family="Menlo, Consolas, monospace" font-size="11.5" dominant-baseline="hanging">
+                <text x="8" y="224" fill="#848284">V8.31+</text>
+                <text x="312" y="224" fill="#00ffff" text-anchor="end">BAT 87% 4.05V</text>
+              </g>
+            </svg>
+            <figcaption>A poem written by Haiku-Matic</figcaption>
+          </figure>
+          <table>
+            <thead><tr><th>Part</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>Top line</td><td>The theme in gray capitals. A notice such as <strong>Music On</strong> or <strong>Auto Mode On</strong> replaces it for about 3 seconds.</td></tr>
+              <tr><td>Poem</td><td>Three lines. Line one ends in "...", the pause a haiku traditionally takes. Long lines shrink to fit.</td></tr>
+              <tr><td>Spinner</td><td>A poem is being written and you are waiting for it.</td></tr>
+              <tr><td>Bottom line</td><td>Version on the left, battery on the right. It stays up until the first poem, then shows for 10 seconds after each touch.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="themes">
+      <div class="num">05</div>
+      <div>
+        <h2>Five Themes</h2>
+        <p class="deck">Tap the lower half to step through them in this order. The RGB LED shows which one you are on.</p>
+        <table>
+          <thead><tr><th>Theme</th><th>LED</th><th>One Of Its Openers</th><th>Written Openers</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Spring</strong></td><td><span class="led" style="background:rgb(40,255,60)"></span>Green</td><td>Soft rain falls</td><td>10</td></tr>
+            <tr><td><strong>Summer</strong></td><td><span class="led" style="background:rgb(255,140,10)"></span>Gold</td><td>Hot winds blow</td><td>15</td></tr>
+            <tr><td><strong>Autumn</strong></td><td><span class="led" style="background:rgb(255,50,0)"></span>Orange</td><td>Moonlight fades</td><td>10</td></tr>
+            <tr><td><strong>Winter</strong></td><td><span class="led" style="background:rgb(60,160,255)"></span>Icy blue</td><td>Snow falls</td><td>10</td></tr>
+            <tr><td><strong>Space</strong></td><td><span class="led" style="background:rgb(120,40,255)"></span>Violet</td><td>Stars drift past</td><td>34, and it also writes first lines of its own</td></tr>
+          </tbody>
+        </table>
+        <div class="grid-2">
+          <div class="callout sky">An opener starts the first line and the model finishes it. "Moonlight fades" can become "Moonlight fades in mist".</div>
+          <div class="face-note" style="margin:0">
+            <img src="release-assets/haiku-matic/blossom.webp" width="174" height="174" alt="Cherry blossoms from the Haiku-Matic art">
+            <p>The LED glows dim and steady, and slowly breathes while a poem is being written, on screen or ahead of time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="menu">
+      <div class="num">06</div>
+      <div>
+        <h2>The Menu</h2>
+        <p class="deck">Rest two fingers on the screen to open it. It stays up until you press Done, and poems keep being written underneath.</p>
+        <div class="grid-2">
+          <figure class="screen-frame">
+            <svg viewBox="0 0 320 240" role="img" aria-label="Menu page 1: volume and brightness sliders, auto mode, stars and light show toggles, then 1., Done and a right arrow button">
+              <rect width="320" height="240" fill="#000000"/>
+              <rect x="37" y="5" width="246" height="230" rx="8" fill="none" stroke="#848284" stroke-width="2"/>
+              <g font-family="Arial, sans-serif" font-size="13" dominant-baseline="hanging" fill="#ffffff">
+                <text x="52" y="10">Volume</text>
+                <text x="268" y="10" fill="#00ffff" text-anchor="end">60%</text>
+                <text x="52" y="56">Brightness</text>
+                <text x="268" y="56" fill="#00ffff" text-anchor="end">100%</text>
+                <text x="52" y="106">Auto mode</text>
+                <text x="210" y="106" fill="#848284" text-anchor="end">Off</text>
+                <text x="52" y="136">Stars</text>
+                <text x="210" y="136" fill="#00ffff" text-anchor="end">On</text>
+                <text x="52" y="166">Light show</text>
+                <text x="210" y="166" fill="#00ffff" text-anchor="end">On</text>
+              </g>
+              <rect x="52" y="38" width="216" height="5" rx="2" fill="#848284"/>
+              <rect x="52" y="38" width="130" height="5" rx="2" fill="#ffa500"/>
+              <circle cx="182" cy="40" r="8" fill="#ffffff"/>
+              <rect x="52" y="84" width="216" height="5" rx="2" fill="#ffa500"/>
+              <circle cx="268" cy="86" r="8" fill="#ffffff"/>
+              <rect x="220" y="102" width="48" height="24" rx="12" fill="#848284"/>
+              <circle cx="232" cy="114" r="9" fill="#ffffff"/>
+              <rect x="220" y="132" width="48" height="24" rx="12" fill="#ffa500"/>
+              <circle cx="256" cy="144" r="9" fill="#ffffff"/>
+              <rect x="220" y="162" width="48" height="24" rx="12" fill="#ffa500"/>
+              <circle cx="256" cy="174" r="9" fill="#ffffff"/>
+              <text x="68" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#00ffff">1.</text>
+              <rect x="100" y="194" width="120" height="34" rx="8" fill="#ffa500"/>
+              <text x="160" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#000000">Done</text>
+              <rect x="228" y="194" width="48" height="34" rx="8" fill="#848284"/>
+              <path d="M259 211 L245 202 L245 220 Z" fill="#ffffff"/>
+            </svg>
+            <figcaption>Page 1</figcaption>
+          </figure>
+          <table>
+            <thead><tr><th>Control</th><th>What It Does</th><th>Starts At</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Volume</strong></td><td>Music loudness, 0 to 100. At 0 the music is off.</td><td>60</td></tr>
+              <tr><td><strong>Brightness</strong></td><td>Screen backlight, 10 to 100.</td><td>100</td></tr>
+              <tr><td><strong>Auto mode</strong></td><td>Shows a new poem every 40 seconds.</td><td>Off</td></tr>
+              <tr><td><strong>Stars</strong></td><td>The star field behind the poem.</td><td>On</td></tr>
+              <tr><td><strong>Light show</strong></td><td>The RGB LED.</td><td>On</td></tr>
+              <tr><td><strong>Right arrow</strong></td><td>Goes to page 2.</td><td></td></tr>
+              <tr><td><strong>Done</strong></td><td>Saves everything and closes the menu.</td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid-2">
+          <div class="callout gold">Settings are saved when you press Done. Restart before that and your changes are lost.</div>
+          <div class="face-note" style="margin:0">
+            <img src="release-assets/haiku-matic/robot.webp" width="384" height="384" alt="The Haiku-Matic robot's smiling face">
+            <p>Drag a slider, and tap anywhere along a toggle's row. Adding a second finger cancels a press, so a stray hand will not flip anything.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="color">
+      <div class="num">07</div>
+      <div>
+        <h2>Poem Color</h2>
+        <p class="deck">The right arrow on page 1 opens page 2. Tap a swatch to choose the color of the poem.</p>
+        <div class="grid-2">
+          <figure class="screen-frame">
+            <svg viewBox="0 0 320 240" role="img" aria-label="Menu page 2: a grid of twelve color swatches with White selected, then a left arrow button, Done and 2.">
+              <rect width="320" height="240" fill="#000000"/>
+              <rect x="37" y="5" width="246" height="230" rx="8" fill="none" stroke="#848284" stroke-width="2"/>
+              <g font-family="Arial, sans-serif" font-size="13" dominant-baseline="hanging" fill="#ffffff">
+                <text x="52" y="10">Poem color</text>
+                <text x="268" y="10" text-anchor="end">White</text>
+              </g>
+              <g>
+                <rect x="57" y="41" width="44" height="40" rx="6" fill="rgb(255,255,255)"/>
+                <rect x="111" y="41" width="44" height="40" rx="6" fill="rgb(255,240,200)"/>
+                <rect x="165" y="41" width="44" height="40" rx="6" fill="rgb(190,200,215)"/>
+                <rect x="219" y="41" width="44" height="40" rx="6" fill="rgb(255,205,70)"/>
+                <rect x="57" y="91" width="44" height="40" rx="6" fill="rgb(255,170,120)"/>
+                <rect x="111" y="91" width="44" height="40" rx="6" fill="rgb(255,130,140)"/>
+                <rect x="165" y="91" width="44" height="40" rx="6" fill="rgb(255,160,220)"/>
+                <rect x="219" y="91" width="44" height="40" rx="6" fill="rgb(195,165,255)"/>
+                <rect x="57" y="141" width="44" height="40" rx="6" fill="rgb(120,190,255)"/>
+                <rect x="111" y="141" width="44" height="40" rx="6" fill="rgb(90,230,230)"/>
+                <rect x="165" y="141" width="44" height="40" rx="6" fill="rgb(140,240,180)"/>
+                <rect x="219" y="141" width="44" height="40" rx="6" fill="rgb(190,240,90)"/>
+              </g>
+              <rect x="53" y="37" width="52" height="48" rx="8" fill="none" stroke="#ffffff" stroke-width="2"/>
+              <rect x="44" y="194" width="48" height="34" rx="8" fill="#848284"/>
+              <path d="M61 211 L75 202 L75 220 Z" fill="#ffffff"/>
+              <rect x="100" y="194" width="120" height="34" rx="8" fill="#ffa500"/>
+              <text x="160" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#000000">Done</text>
+              <text x="252" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#00ffff">2.</text>
+            </svg>
+            <figcaption>Page 2</figcaption>
+          </figure>
+          <div>
+            <div class="swatches" aria-label="The twelve poem colors">
+              <span style="color:rgb(255,255,255)">White</span>
+              <span style="color:rgb(255,240,200)">Cream</span>
+              <span style="color:rgb(190,200,215)">Silver</span>
+              <span style="color:rgb(255,205,70)">Gold</span>
+              <span style="color:rgb(255,170,120)">Peach</span>
+              <span style="color:rgb(255,130,140)">Rose</span>
+              <span style="color:rgb(255,160,220)">Pink</span>
+              <span style="color:rgb(195,165,255)">Lilac</span>
+              <span style="color:rgb(120,190,255)">Sky</span>
+              <span style="color:rgb(90,230,230)">Aqua</span>
+              <span style="color:rgb(140,240,180)">Mint</span>
+              <span style="color:rgb(190,240,90)">Lime</span>
+            </div>
+            <table>
+              <thead><tr><th>On Page 2</th><th>What It Does</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Swatch</strong></td><td>Chooses that color. A ring marks it, and its name appears at the top in that color.</td></tr>
+                <tr><td><strong>Left arrow</strong></td><td>Goes back to page 1.</td></tr>
+                <tr><td><strong>Done</strong></td><td>Saves, closes the menu and shows the poem in the new color.</td></tr>
+              </tbody>
+            </table>
+            <div class="callout sky">Only the poem lines change color. All twelve are light enough to read on the black screen.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="music">
+      <div class="num">08</div>
+      <div>
+        <h2>Music</h2>
+        <p class="deck">One looping shakuhachi track plays from a microSD card. The volume slider is the only control, so there is no separate music switch.</p>
+        <div class="grid-2">
+          <div>
+            <table>
+              <thead><tr><th>Step</th><th>Set Up The Card</th></tr></thead>
+              <tbody>
+                <tr><td>1</td><td>Use a microSD card formatted as FAT32.</td></tr>
+                <tr><td>2</td><td>Make a folder named <code>haikumatic</code> at the top level.</td></tr>
+                <tr><td>3</td><td>Copy the track into it without renaming it.</td></tr>
+                <tr><td>4</td><td>Put the card in the board and press RESET.</td></tr>
+              </tbody>
+            </table>
+            <pre>/haikumatic/shika-no-toone-shakuhachi.mp3</pre>
+          </div>
+          <table>
+            <thead><tr><th>On The Top Line</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Music On</strong></td><td>The track is playing.</td></tr>
+              <tr><td><strong>Music Off</strong></td><td>The volume reached 0 and the track paused.</td></tr>
+              <tr><td><strong>Music: no SD card</strong></td><td>No readable card. Poems still work.</td></tr>
+              <tr><td><strong>Music: file not on card</strong></td><td>Check the folder and file names.</td></tr>
+              <tr><td><strong>Music: card read failed</strong></td><td>The card stopped responding. Reseat it and press RESET.</td></tr>
+              <tr><td><strong>Music: no sound chip</strong></td><td>The audio chip did not answer. Press RESET.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid-3">
+          <div class="callout gold">Slide the volume to 0 and the music pauses. Raise it and the track carries on from there.</div>
+          <div class="callout pine">After a restart the track starts from the top, unless the volume was left at 0.</div>
+          <div class="callout sky">The same card can hold Vidiotbox's files, so neither needs a card of its own.</div>
+        </div>
+        <div class="face-note">
+          <img src="release-assets/haiku-matic/city.webp" width="390" height="209" alt="A lake and floating towers from the Haiku-Matic art">
+          <p>Music: Araki Kodō III, <em>Shika no Tōne</em> (shakuhachi), Victor 13029, via Wikimedia Commons. Public domain.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="battery">
+      <div class="num">09</div>
+      <div>
+        <h2>Battery</h2>
+        <p class="deck">The bottom line shows charge as <code>BAT 87% 4.05V</code>. It appears for 10 seconds after any touch. Voltage is the number to trust.</p>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Voltage</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>Above&nbsp;4.2&nbsp;V</td><td>Normal while plugged in.</td></tr>
+              <tr><td>About&nbsp;4.2&nbsp;V</td><td>Full.</td></tr>
+              <tr><td>About&nbsp;3.4&nbsp;V</td><td>Time to charge, even though the percentage still reads about 47%.</td></tr>
+              <tr><td>About&nbsp;3.2&nbsp;V</td><td>Low. Charge it now.</td></tr>
+              <tr><td>About&nbsp;2.7&nbsp;V</td><td>Flat. The percentage reads 0%.</td></tr>
+            </tbody>
+          </table>
+          <div class="stack">
+            <div class="callout red">This firmware does not shut itself down on a low battery. Keep an eye on the voltage on long runs.</div>
+            <div class="face-note">
+              <img src="release-assets/haiku-matic/fuji.webp" width="232" height="232" alt="Mount Fuji and a red sun from the Haiku-Matic art">
+              <p>The board can read battery voltage but not charging current, so no charging symbol appears. Watch the voltage rise instead.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="install">
+      <div class="num">10</div>
+      <div>
+        <h2>Install Firmware</h2>
+        <p class="deck">There is no public flasher for Haiku-Matic on this hardware yet. Install it from the <code>haiku-esp32-32e</code> project with PlatformIO.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h3>From the project folder</h3>
+            <pre># Full flash: model and firmware
+scripts/deploy.sh
+
+# Firmware only: keeps the model
+pio run -c platformio-s3.ini -t upload
+
+# With several boards connected
+PORT=/dev/cu.usbmodemNNNN scripts/deploy.sh</pre>
+          </div>
+          <table>
+            <thead><tr><th>Use</th><th>When</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Full flash</strong></td><td>First install, or changing a Vidiotbox board over. Takes about 2.5 minutes.</td></tr>
+              <tr><td><strong>Firmware only</strong></td><td>Updates that keep the same model. Takes under a minute.</td></tr>
+              <tr><td><strong>BOOT and RESET</strong></td><td>If an upload will not start, hold BOOT, tap RESET, then release BOOT.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout gold" style="margin-top:18px">A full flash replaces Vidiotbox on that board. The SD card is not touched, and you can reinstall Vidiotbox later from its own flasher.</div>
+        <div class="face-note">
+          <img src="release-assets/haiku-matic/pen.webp" width="188" height="188" alt="The robot's hand holding a pen">
+          <p>Opening the serial port can restart the board. Save your settings with Done first, then read its log with <code>pio device monitor -p PORT -b 115200</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="trouble">
+      <div class="num">11</div>
+      <div>
+        <h2>Troubleshooting</h2>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Symptom</th><th>Try This</th></tr></thead>
+            <tbody>
+              <tr><td>Settings did not stick</td><td>Press Done before restarting. That is when they are saved.</td></tr>
+              <tr><td>No poem appeared after 25 seconds</td><td>A touch canceled the auto-start. Tap the upper half.</td></tr>
+              <tr><td>The menu will not open</td><td>Put two fingers down together and keep them there for a moment.</td></tr>
+              <tr><td>No music and no message</td><td>Open the menu. If it says <strong>Volume (music off)</strong>, raise the slider.</td></tr>
+              <tr><td>New card not found</td><td>Move the volume slider to try the card again, or press RESET.</td></tr>
+              <tr><td>The Mac does not list the board</td><td>Push the USB-C cable fully in, flip the plug, or try another cable. Some cables only charge.</td></tr>
+              <tr><td>Upload says no serial data received</td><td>Reseat the cable and retry. If it still fails, use the BOOT and RESET sequence.</td></tr>
+            </tbody>
+          </table>
+          <div class="stack">
+            <div class="callout sky">If an upload fails, check the USB cable first. A loose plug can look just like a dead board.</div>
+            <div class="face-note">
+              <img src="release-assets/haiku-matic/robot.webp" width="384" height="384" alt="The Haiku-Matic robot's smiling face">
+              <p>For firmware work, pins live in <code>include/vidiotbox_s3.h</code>, touch scaling in <code>include/touch_controls.h</code>, and the menu in <code>include/settings_menu.h</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="charm">
+      <div class="num">12</div>
+      <div>
+        <h2>Charm Card</h2>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Action</th><th>Do This</th></tr></thead>
+            <tbody>
+              <tr><td>Next poem</td><td>Tap the upper half.</td></tr>
+              <tr><td>Next theme</td><td>Tap the lower half.</td></tr>
+              <tr><td>Open the menu</td><td>Rest two fingers on the screen.</td></tr>
+              <tr><td>Change poem color</td><td>Menu, right arrow, tap a swatch, Done.</td></tr>
+              <tr><td>Turn music off</td><td>Menu, slide Volume to 0, Done.</td></tr>
+              <tr><td>See the battery</td><td>Tap the upper half. The bottom line shows for 10 seconds.</td></tr>
+              <tr><td>Restart</td><td>Press RESET.</td></tr>
+            </tbody>
+          </table>
+          <div class="art-panel">
+            <img src="release-assets/haiku-matic/seal.webp" width="116" height="477" alt="A vertical sign in Japanese from the Haiku-Matic art, ending in a red seal">
+            <img src="release-assets/haiku-matic/scroll.webp" width="391" height="217" alt="The robot's scroll: Why A.I. Haiku? Another Useless Project By Paul Hodara">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ticker">Tap high for a poem / tap low for a season / two fingers for the menu / volume zero is silence / five seven five /</div>
+
+    <footer class="footer">
+      Haiku-Matic for Vidiotbox hardware, firmware V8.31+. Another Useless Project by Paul Hodara.
+      Copyright (c) 2026 Paul Hodara. All rights reserved.
+    </footer>
+    <div class="end-marker">End of Haiku-Matic Instruction Manual</div>
+  </main>
+</body>
+</html>
