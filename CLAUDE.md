@@ -25,6 +25,24 @@ local build step. `AGENTS.md` covers only the RobotFace simulator in `index.html
 - A production preview: `python3 scripts/build-site.py --output <new empty folder>`.
 - Headless Chrome lays pages out at least 500 px wide; check phone width with a 390 px iframe.
 
+## Styling
+
+- There is no shared stylesheet. Each page sets its own look in its own `<style>` block, so
+  pages differ on purpose (Pocket Prowler is cyan on black, the hAIku-Matic hub orange and red),
+  and a change to one page's styles changes only that page.
+- For a site-wide restyle, either edit each page, or first move the common styles into one
+  stylesheet in `assets/` linked from every page. The build versions `.css` URLs as it does
+  images and scripts, so a shared stylesheet refreshes after each change.
+- The menu's look is split: `assets/site-menu.js` injects the menu button's label and
+  stick-figure icon (its `menuCss`), and each page styles `.menu-toggle` and `.menu-panel`
+  (colors, borders) in its own CSS.
+- `generated-haikus.html` is also haiku-matic.com's page, so restyling it changes that site at
+  its next DreamHost deploy. `scripts/deploy-dreamhost.sh` replaces some exact lines in it (the
+  "VIDIOTBOX / GENERATED hAIkus" brand link, the About link, the preview image) and stops if
+  one is missing, so keep those lines or update the script with them.
+- `index.html` is the RobotFace simulator; follow `AGENTS.md` there.
+- Check every restyled page at desktop width and at a 390 px phone width before pushing.
+
 ## The menu
 
 `assets/site-menu.js`, list `menuItems`. It has one haiku entry, "hAIku-Matic Generator",
