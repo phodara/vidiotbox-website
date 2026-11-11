@@ -13,10 +13,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Haiku-Matic Manual</title>
-  <meta name="description" content="Haiku-Matic instruction manual for start-up, touch controls, themes, the settings menu, poem color, SD card music, battery and firmware.">
+  <meta name="description" content="Haiku-Matic instruction manual for start-up, touch controls, themes, the settings menu, poem color and style, choosing SD card music, battery and firmware.">
   <link rel="canonical" href="https://www.vidiotbox.net/docs/haiku-matic-instruction-manual.html">
   <meta property="og:title" content="Haiku-Matic Manual">
-  <meta property="og:description" content="Start-up, touch controls, themes, settings, music, battery and firmware for the hardware Haiku-Matic.">
+  <meta property="og:description" content="Start-up, touch controls, themes, settings, poem styles, music, battery and firmware for the hardware Haiku-Matic.">
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://www.vidiotbox.net/docs/haiku-matic-instruction-manual.html">
   <meta property="og:image" content="https://www.vidiotbox.net/docs/release-assets/haiku-matic/og-cover.jpg">
@@ -27,12 +27,12 @@
     "@type": "TechArticle",
     "headline": "Haiku-Matic Manual",
     "url": "https://www.vidiotbox.net/docs/haiku-matic-instruction-manual.html",
-    "description": "Instruction manual for the hardware Haiku-Matic, an AI haiku generator that runs on Vidiotbox hardware."
+    "description": "Instruction manual for the hardware Haiku-Matic, an AI haiku generator that runs on an ESP32-S3 touchscreen board."
   }
   </script>
   <link rel="icon" type="image/png" href="release-assets/haiku-matic/favicon.png">
   <style>
-    /* The Vidiotbox and Pocket Prowler manual system: heavy rules, hard shadows, numbered
+    /* The manual system: heavy rules, hard shadows, numbered
        sections. Its accent colors are taken from the Haiku-Matic woodblock art. */
     :root {
       --ink: #0d1b2a;
@@ -168,7 +168,7 @@
 
     .strip {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(8, 1fr);
       gap: 3px;
       margin: 22px 0;
       border: 3px solid var(--ink);
@@ -450,7 +450,7 @@
         </div>
         <div class="credit">
           <span>Another Useless Project by Paul Hodara</span>
-          <span>Firmware V8.31+ / Copyright (c) 2026 Paul Hodara</span>
+          <span>Firmware V8.32 / Copyright (c) 2026 Paul Hodara</span>
         </div>
       </div>
       <div class="mast-art">
@@ -463,6 +463,7 @@
       <a href="#touch"><span>Touch</span></a>
       <a href="#themes"><span>Themes</span></a>
       <a href="#menu"><span>Menu</span></a>
+      <a href="#style"><span>Style</span></a>
       <a href="#music"><span>Music</span></a>
       <a href="#battery"><span>Battery</span></a>
       <a href="#install"><span>Install</span></a>
@@ -472,7 +473,7 @@
       <div class="num">01</div>
       <div>
         <h2>What It Is</h2>
-        <p class="deck">Haiku-Matic turns Vidiotbox hardware into a poet that writes 5-7-5 haiku on its touchscreen. A tiny language model runs on the board itself, so there is no app, account or network to set up.</p>
+        <p class="deck">Haiku-Matic is a pocket poet that writes 5-7-5 haiku on its touchscreen. A tiny language model runs on the board itself, so there is no app, account or network to set up.</p>
         <div class="grid-2">
           <figure class="screen-frame">
             <img src="release-assets/haiku-matic/splash.webp" width="960" height="720" alt="The splash screen: the woodblock art with 1 Billion hAIku and the version V8.31+ in its cream bottom border">
@@ -481,7 +482,7 @@
           <table>
             <thead><tr><th>Part</th><th>What Is In It</th></tr></thead>
             <tbody>
-              <tr><td>Board</td><td>Vidiotbox hardware, an LCDWIKI ES3C28P</td></tr>
+              <tr><td>Board</td><td>LCDWIKI ES3C28P</td></tr>
               <tr><td>Chip</td><td>ESP32-S3, 16 MB flash, 8 MB PSRAM</td></tr>
               <tr><td>Screen</td><td>About 2.8 inches, 320 x 240, run in landscape</td></tr>
               <tr><td>Touch</td><td>FT6336G capacitive, two fingers</td></tr>
@@ -533,7 +534,7 @@
               <rect y="220" width="320" height="20" fill="#000000"/>
               <rect y="220" width="320" height="1" fill="#848284"/>
               <g font-family="Menlo, Consolas, monospace" font-size="11.5" dominant-baseline="hanging">
-                <text x="8" y="224" fill="#848284">V8.31+</text>
+                <text x="8" y="224" fill="#848284">V8.32</text>
                 <text x="312" y="224" fill="#00ffff" text-anchor="end">BAT 87% 4.05V</text>
               </g>
             </svg>
@@ -544,7 +545,7 @@
           <div class="callout gold">It starts on a random theme each time. Tap the lower half to change it.</div>
           <div class="face-note" style="margin:0">
             <img src="release-assets/haiku-matic/robot.webp" width="384" height="384" alt="The Haiku-Matic robot's smiling face">
-            <p>In a Vidiotbox case, the magnetic cap still controls power. Take it off to run or charge, and put it back to disconnect the battery.</p>
+            <p>The splash screen shows the firmware version and your saved poem style.</p>
           </div>
         </div>
       </div>
@@ -580,7 +581,7 @@
                 <tr><td><strong>Tap lower half</strong></td><td>Moves to the next theme and drops poems written ahead for the old one.</td></tr>
                 <tr><td><strong>Two fingers</strong></td><td>Opens the menu, anywhere on the screen.</td></tr>
                 <tr><td><strong>RESET</strong></td><td>Restarts the board. Saved settings stay.</td></tr>
-                <tr><td><strong>BOOT</strong></td><td>Only used when installing firmware. See section 10.</td></tr>
+                <tr><td><strong>BOOT</strong></td><td>Only used when installing firmware. See section 11.</td></tr>
               </tbody>
             </table>
             <div class="face-note">
@@ -611,7 +612,7 @@
               <rect y="220" width="320" height="20" fill="#000000"/>
               <rect y="220" width="320" height="1" fill="#848284"/>
               <g font-family="Menlo, Consolas, monospace" font-size="11.5" dominant-baseline="hanging">
-                <text x="8" y="224" fill="#848284">V8.31+</text>
+                <text x="8" y="224" fill="#848284">V8.32</text>
                 <text x="312" y="224" fill="#00ffff" text-anchor="end">BAT 87% 4.05V</text>
               </g>
             </svg>
@@ -659,10 +660,10 @@
       <div class="num">06</div>
       <div>
         <h2>The Menu</h2>
-        <p class="deck">Rest two fingers on the screen to open it. It stays up until you press Done, and poems keep being written underneath.</p>
+        <p class="deck">Rest two fingers on the screen to open it. It has four pages, it stays up until you press Done, and poems keep being written underneath.</p>
         <div class="grid-2">
           <figure class="screen-frame">
-            <svg viewBox="0 0 320 240" role="img" aria-label="Menu page 1: volume and brightness sliders, auto mode, stars and light show toggles, then 1., Done and a right arrow button">
+            <svg viewBox="0 0 320 240" role="img" aria-label="Menu page 1: volume and brightness sliders, auto mode, stars and light show toggles, then Done 1/4 and a right arrow button">
               <rect width="320" height="240" fill="#000000"/>
               <rect x="37" y="5" width="246" height="230" rx="8" fill="none" stroke="#848284" stroke-width="2"/>
               <g font-family="Arial, sans-serif" font-size="13" dominant-baseline="hanging" fill="#ffffff">
@@ -688,9 +689,8 @@
               <circle cx="256" cy="144" r="9" fill="#ffffff"/>
               <rect x="220" y="162" width="48" height="24" rx="12" fill="#ffa500"/>
               <circle cx="256" cy="174" r="9" fill="#ffffff"/>
-              <text x="68" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#00ffff">1.</text>
               <rect x="100" y="194" width="120" height="34" rx="8" fill="#ffa500"/>
-              <text x="160" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#000000">Done</text>
+              <text x="160" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#000000">Done 1/4</text>
               <rect x="228" y="194" width="48" height="34" rx="8" fill="#848284"/>
               <path d="M259 211 L245 202 L245 220 Z" fill="#ffffff"/>
             </svg>
@@ -705,7 +705,7 @@
               <tr><td><strong>Stars</strong></td><td>The star field behind the poem.</td><td>On</td></tr>
               <tr><td><strong>Light show</strong></td><td>The RGB LED.</td><td>On</td></tr>
               <tr><td><strong>Right arrow</strong></td><td>Goes to page 2.</td><td></td></tr>
-              <tr><td><strong>Done</strong></td><td>Saves everything and closes the menu.</td><td></td></tr>
+              <tr><td><strong>Done</strong></td><td>Saves everything and closes the menu. It also shows the page you are on, such as 1/4.</td><td></td></tr>
             </tbody>
           </table>
         </div>
@@ -726,7 +726,7 @@
         <p class="deck">The right arrow on page 1 opens page 2. Tap a swatch to choose the color of the poem.</p>
         <div class="grid-2">
           <figure class="screen-frame">
-            <svg viewBox="0 0 320 240" role="img" aria-label="Menu page 2: a grid of twelve color swatches with White selected, then a left arrow button, Done and 2.">
+            <svg viewBox="0 0 320 240" role="img" aria-label="Menu page 2: a grid of twelve color swatches with White selected, then a left arrow button, Done 2/4 and a right arrow button">
               <rect width="320" height="240" fill="#000000"/>
               <rect x="37" y="5" width="246" height="230" rx="8" fill="none" stroke="#848284" stroke-width="2"/>
               <g font-family="Arial, sans-serif" font-size="13" dominant-baseline="hanging" fill="#ffffff">
@@ -751,8 +751,9 @@
               <rect x="44" y="194" width="48" height="34" rx="8" fill="#848284"/>
               <path d="M61 211 L75 202 L75 220 Z" fill="#ffffff"/>
               <rect x="100" y="194" width="120" height="34" rx="8" fill="#ffa500"/>
-              <text x="160" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#000000">Done</text>
-              <text x="252" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#00ffff">2.</text>
+              <text x="160" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#000000">Done 2/4</text>
+              <rect x="228" y="194" width="48" height="34" rx="8" fill="#848284"/>
+              <path d="M259 211 L245 202 L245 220 Z" fill="#ffffff"/>
             </svg>
             <figcaption>Page 2</figcaption>
           </figure>
@@ -776,6 +777,7 @@
               <tbody>
                 <tr><td><strong>Swatch</strong></td><td>Chooses that color. A ring marks it, and its name appears at the top in that color.</td></tr>
                 <tr><td><strong>Left arrow</strong></td><td>Goes back to page 1.</td></tr>
+                <tr><td><strong>Right arrow</strong></td><td>Goes to page 3, the poem style.</td></tr>
                 <tr><td><strong>Done</strong></td><td>Saves, closes the menu and shows the poem in the new color.</td></tr>
               </tbody>
             </table>
@@ -785,11 +787,70 @@
       </div>
     </section>
 
-    <section class="section" id="music">
+    <section class="section" id="style">
       <div class="num">08</div>
       <div>
+        <h2>Poem Style</h2>
+        <p class="deck">The right arrow on page 2 opens page 3. Tap a style to change how the next poems are built.</p>
+        <div class="grid-2">
+          <figure class="screen-frame">
+            <svg viewBox="0 0 320 240" role="img" aria-label="Menu page 3: Poem style, with Standard, One-thing and Two-part as three rows and Standard chosen, then a left arrow button, Done 3/4 and a right arrow button">
+              <rect width="320" height="240" fill="#000000"/>
+              <rect x="37" y="5" width="246" height="230" rx="8" fill="none" stroke="#848284" stroke-width="2"/>
+              <text x="52" y="10" font-family="Arial, sans-serif" font-size="13" dominant-baseline="hanging" fill="#ffffff">Poem style</text>
+              <rect x="52" y="42" width="216" height="38" rx="6" fill="none" stroke="#ffa500" stroke-width="1.5"/>
+              <rect x="52" y="86" width="216" height="38" rx="6" fill="none" stroke="#848284" stroke-width="1.5"/>
+              <rect x="52" y="130" width="216" height="38" rx="6" fill="none" stroke="#848284" stroke-width="1.5"/>
+              <circle cx="70" cy="61" r="7" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+              <circle cx="70" cy="61" r="4" fill="#ffa500"/>
+              <circle cx="70" cy="105" r="7" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+              <circle cx="70" cy="149" r="7" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+              <g font-family="Arial, sans-serif" font-size="13" dominant-baseline="middle" fill="#ffffff">
+                <text x="88" y="61">Standard</text>
+                <text x="88" y="105">One-thing</text>
+                <text x="88" y="149">Two-part</text>
+              </g>
+              <rect x="44" y="194" width="48" height="34" rx="8" fill="#848284"/>
+              <path d="M61 211 L75 202 L75 220 Z" fill="#ffffff"/>
+              <rect x="100" y="194" width="120" height="34" rx="8" fill="#ffa500"/>
+              <text x="160" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#000000">Done 3/4</text>
+              <rect x="228" y="194" width="48" height="34" rx="8" fill="#848284"/>
+              <path d="M259 211 L245 202 L245 220 Z" fill="#ffffff"/>
+            </svg>
+            <figcaption>Page 3</figcaption>
+          </figure>
+          <div>
+            <table>
+              <thead><tr><th>Style</th><th>What It Writes</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Standard</strong></td><td>Each line is chosen on its own. This is where it starts.</td></tr>
+                <tr><td><strong style="white-space:nowrap">One-thing</strong></td><td>Every line stays with one idea, such as a black hole, falling snow or falling leaves.</td></tr>
+                <tr><td><strong>Two-part</strong></td><td>Two images side by side, such as wind in the pines and a still pond.</td></tr>
+              </tbody>
+            </table>
+            <table>
+              <thead><tr><th>On Page 3</th><th>What It Does</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Style</strong></td><td>Chooses it at once. A filled ring marks it.</td></tr>
+                <tr><td><strong>Left arrow</strong></td><td>Goes back to page 2.</td></tr>
+                <tr><td><strong>Right arrow</strong></td><td>Goes to page 4, the music.</td></tr>
+                <tr><td><strong>Done</strong></td><td>Saves the style and closes the menu.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="callout gold">A new style drops the poems written ahead, so the next poem uses it. The poem on screen stays until you tap for another. One-thing and Two-part poems can take a little longer to write.</div>
+          <div class="callout sky">All five themes have all three styles. In Spring, One-thing and Two-part poems write their own first line. The splash screen shows the saved style under the version.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="music">
+      <div class="num">09</div>
+      <div>
         <h2>Music</h2>
-        <p class="deck">One looping shakuhachi track plays from a microSD card. The volume slider is the only control, so there is no separate music switch.</p>
+        <p class="deck">Music loops from a microSD card. Page 4 of the menu lists the tracks on the card and picks which one plays. The volume slider on page 1 turns it on and off.</p>
         <div class="grid-2">
           <div>
             <table>
@@ -797,19 +858,64 @@
               <tbody>
                 <tr><td>1</td><td>Use a microSD card formatted as FAT32.</td></tr>
                 <tr><td>2</td><td>Make a folder named <code>haikumatic</code> at the top level.</td></tr>
-                <tr><td>3</td><td>Copy the track into it without renaming it.</td></tr>
+                <tr><td>3</td><td>Copy MP3 files into it. Page 4 shows each file's name without <code>.mp3</code>, with <code>-</code> and <code>_</code> as spaces, so rename a file to change what it shows.</td></tr>
                 <tr><td>4</td><td>Put the card in the board and press RESET.</td></tr>
               </tbody>
             </table>
-            <pre>/haikumatic/shika-no-toone-shakuhachi.mp3</pre>
+            <pre>/haikumatic/ha-uta-umenimo-haru.mp3
+/haikumatic/naga-uta-urashima.mp3
+/haikumatic/Samurai.mp3
+/haikumatic/shika-no-toone-shakuhachi.mp3</pre>
           </div>
+          <figure class="screen-frame">
+            <svg viewBox="0 0 320 240" role="img" aria-label="Menu page 4: Music, with four tracks as rows and Shika no toone shakuhachi chosen, then a left arrow button and Done 4/4">
+              <rect width="320" height="240" fill="#000000"/>
+              <rect x="37" y="5" width="246" height="230" rx="8" fill="none" stroke="#848284" stroke-width="2"/>
+              <text x="52" y="10" font-family="Arial, sans-serif" font-size="13" dominant-baseline="hanging" fill="#ffffff">Music</text>
+              <rect x="52" y="34" width="216" height="27" rx="6" fill="none" stroke="#848284" stroke-width="1.5"/>
+              <rect x="52" y="66" width="216" height="27" rx="6" fill="none" stroke="#848284" stroke-width="1.5"/>
+              <rect x="52" y="98" width="216" height="27" rx="6" fill="none" stroke="#848284" stroke-width="1.5"/>
+              <rect x="52" y="130" width="216" height="27" rx="6" fill="none" stroke="#ffa500" stroke-width="1.5"/>
+              <g fill="none" stroke="#ffffff" stroke-width="1.5">
+                <circle cx="68" cy="47" r="6"/>
+                <circle cx="68" cy="79" r="6"/>
+                <circle cx="68" cy="111" r="6"/>
+                <circle cx="68" cy="143" r="6"/>
+              </g>
+              <circle cx="68" cy="143" r="3" fill="#ffa500"/>
+              <g font-family="Arial, sans-serif" font-size="13" dominant-baseline="middle" fill="#ffffff">
+                <text x="82" y="47">Ha uta umenimo haru</text>
+                <text x="82" y="79">Naga uta urashima</text>
+                <text x="82" y="111">Samurai</text>
+                <text x="82" y="143">Shika no toone shakuhachi</text>
+              </g>
+              <rect x="44" y="194" width="48" height="34" rx="8" fill="#848284"/>
+              <path d="M61 211 L75 202 L75 220 Z" fill="#ffffff"/>
+              <rect x="100" y="194" width="120" height="34" rx="8" fill="#ffa500"/>
+              <text x="160" y="216" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#000000">Done 4/4</text>
+            </svg>
+            <figcaption>Page 4, read from the card each time it opens</figcaption>
+          </figure>
+        </div>
+        <div class="grid-2">
           <table>
-            <thead><tr><th>On The Top Line</th><th>Meaning</th></tr></thead>
+            <thead><tr><th>On Page 4</th><th>What It Does</th></tr></thead>
             <tbody>
-              <tr><td><strong>Music On</strong></td><td>The track is playing.</td></tr>
+              <tr><td><strong>Track</strong></td><td>Plays it from the top, at once if the volume is above 0. A filled ring marks it.</td></tr>
+              <tr><td><strong>More than five</strong></td><td>Each five tracks more add a page, up to 15 tracks in all.</td></tr>
+              <tr><td><strong>Left arrow</strong></td><td>Goes back to page 3.</td></tr>
+              <tr><td><strong>Done</strong></td><td>Saves the choice and closes the menu.</td></tr>
+            </tbody>
+          </table>
+          <table>
+            <thead><tr><th>Message</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Music On</strong></td><td>A track is playing.</td></tr>
               <tr><td><strong>Music Off</strong></td><td>The volume reached 0 and the track paused.</td></tr>
               <tr><td><strong>Music: no SD card</strong></td><td>No readable card. Poems still work.</td></tr>
-              <tr><td><strong>Music: file not on card</strong></td><td>Check the folder and file names.</td></tr>
+              <tr><td><strong>Music: no haikumatic folder</strong></td><td>The card has no <code>haikumatic</code> folder at the top level.</td></tr>
+              <tr><td><strong>Music: no MP3 on card</strong></td><td>The folder has no MP3 files in it.</td></tr>
+              <tr><td><strong>Music: file not on card</strong></td><td>The track could not be opened. Choose it again on page 4.</td></tr>
               <tr><td><strong>Music: card read failed</strong></td><td>The card stopped responding. Reseat it and press RESET.</td></tr>
               <tr><td><strong>Music: no sound chip</strong></td><td>The audio chip did not answer. Press RESET.</td></tr>
             </tbody>
@@ -817,18 +923,27 @@
         </div>
         <div class="grid-3">
           <div class="callout gold">Slide the volume to 0 and the music pauses. Raise it and the track carries on from there.</div>
-          <div class="callout pine">After a restart the track starts from the top, unless the volume was left at 0.</div>
-          <div class="callout sky">The same card can hold Vidiotbox's files, so neither needs a card of its own.</div>
+          <div class="callout pine">Your track is kept, and after a restart it plays from the top unless the volume was left at 0. If it is gone from the card, the first track by name plays.</div>
+          <div class="callout sky">No card in the board? The poems still work. Only the music needs the card.</div>
         </div>
+        <table style="margin-top:18px">
+          <thead><tr><th>On Page 4</th><th>Music</th><th>License</th></tr></thead>
+          <tbody>
+            <tr><td>Ha uta umenimo haru</td><td><em>Ha-uta Umenimo haru</em>, performers unknown, from <em>Musik des Orients</em> (Lindström, Berlin, 1931), via <a href="https://commons.wikimedia.org/wiki/File:Ha-uta_Umenimo_haru_(1931).ogg">Wikimedia Commons</a></td><td>Public domain</td></tr>
+            <tr><td>Naga uta urashima</td><td><em>Naga-uta Urashima</em>, performers unknown, from <em>Musik des Orients</em> (Lindström, Berlin, 1931), via <a href="https://commons.wikimedia.org/wiki/File:Naga-uta_Urashima_(1931).oga">Wikimedia Commons</a></td><td>Public domain</td></tr>
+            <tr><td>Samurai</td><td>"Samurai" by TAD, from <a href="https://opengameart.org/node/99995">OpenGameArt</a></td><td><a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></td></tr>
+            <tr><td>Shika no toone shakuhachi</td><td>Araki Kodō III, <em>Shika no Tōne</em> (shakuhachi), Victor 13029, via <a href="https://commons.wikimedia.org/wiki/File:Shikanotoone.ogg">Wikimedia Commons</a></td><td>Public domain</td></tr>
+          </tbody>
+        </table>
         <div class="face-note">
           <img src="release-assets/haiku-matic/city.webp" width="390" height="209" alt="A lake and floating towers from the Haiku-Matic art">
-          <p>Music: Araki Kodō III, <em>Shika no Tōne</em> (shakuhachi), Victor 13029, via Wikimedia Commons. Public domain.</p>
+          <p>Page 4 lists only MP3 files, and leaves out the hidden <code>._</code> files a Mac adds when it copies to a card. The two 1931 records were trimmed of their surface hiss and matched in loudness to the shakuhachi, so the volume means the same for every track.</p>
         </div>
       </div>
     </section>
 
     <section class="section" id="battery">
-      <div class="num">09</div>
+      <div class="num">10</div>
       <div>
         <h2>Battery</h2>
         <p class="deck">The bottom line shows charge as <code>BAT 87% 4.05V</code>. It appears for 10 seconds after any touch. Voltage is the number to trust.</p>
@@ -855,7 +970,7 @@
     </section>
 
     <section class="section" id="install">
-      <div class="num">10</div>
+      <div class="num">11</div>
       <div>
         <h2>Install Firmware</h2>
         <p class="deck">There is no public flasher for Haiku-Matic on this hardware yet. Install it from the <code>haiku-esp32-32e</code> project with PlatformIO.</p>
@@ -874,13 +989,12 @@ PORT=/dev/cu.usbmodemNNNN scripts/deploy.sh</pre>
           <table>
             <thead><tr><th>Use</th><th>When</th></tr></thead>
             <tbody>
-              <tr><td><strong>Full flash</strong></td><td>First install, or changing a Vidiotbox board over. Takes about 2.5 minutes.</td></tr>
+              <tr><td><strong>Full flash</strong></td><td>First install. Takes about 2.5 minutes.</td></tr>
               <tr><td><strong>Firmware only</strong></td><td>Updates that keep the same model. Takes under a minute.</td></tr>
               <tr><td><strong>BOOT and RESET</strong></td><td>If an upload will not start, hold BOOT, tap RESET, then release BOOT.</td></tr>
             </tbody>
           </table>
         </div>
-        <div class="callout gold" style="margin-top:18px">A full flash replaces Vidiotbox on that board. The SD card is not touched, and you can reinstall Vidiotbox later from its own flasher.</div>
         <div class="face-note">
           <img src="release-assets/haiku-matic/pen.webp" width="188" height="188" alt="The robot's hand holding a pen">
           <p>Opening the serial port can restart the board. Save your settings with Done first, then read its log with <code>pio device monitor -p PORT -b 115200</code>.</p>
@@ -889,7 +1003,7 @@ PORT=/dev/cu.usbmodemNNNN scripts/deploy.sh</pre>
     </section>
 
     <section class="section" id="trouble">
-      <div class="num">11</div>
+      <div class="num">12</div>
       <div>
         <h2>Troubleshooting</h2>
         <div class="grid-2">
@@ -900,7 +1014,8 @@ PORT=/dev/cu.usbmodemNNNN scripts/deploy.sh</pre>
               <tr><td>No poem appeared after 25 seconds</td><td>A touch canceled the auto-start. Tap the upper half.</td></tr>
               <tr><td>The menu will not open</td><td>Put two fingers down together and keep them there for a moment.</td></tr>
               <tr><td>No music and no message</td><td>Open the menu. If it says <strong>Volume (music off)</strong>, raise the slider.</td></tr>
-              <tr><td>New card not found</td><td>Move the volume slider to try the card again, or press RESET.</td></tr>
+              <tr><td>New card not found</td><td>Open page 4 of the menu again, or move the volume slider, to try the card again. Or press RESET.</td></tr>
+              <tr><td>A track is missing from page 4</td><td>Only MP3 files in the <code>haikumatic</code> folder are listed, up to 15, with names of at most 63 characters. Copy the MP3, not an <code>.ogg</code> or <code>.oga</code> file.</td></tr>
               <tr><td>The Mac does not list the board</td><td>Push the USB-C cable fully in, flip the plug, or try another cable. Some cables only charge.</td></tr>
               <tr><td>Upload says no serial data received</td><td>Reseat the cable and retry. If it still fails, use the BOOT and RESET sequence.</td></tr>
             </tbody>
@@ -909,7 +1024,7 @@ PORT=/dev/cu.usbmodemNNNN scripts/deploy.sh</pre>
             <div class="callout sky">If an upload fails, check the USB cable first. A loose plug can look just like a dead board.</div>
             <div class="face-note">
               <img src="release-assets/haiku-matic/robot.webp" width="384" height="384" alt="The Haiku-Matic robot's smiling face">
-              <p>For firmware work, pins live in <code>include/vidiotbox_s3.h</code>, touch scaling in <code>include/touch_controls.h</code>, and the menu in <code>include/settings_menu.h</code>.</p>
+              <p>For firmware work, touch scaling lives in <code>include/touch_controls.h</code>, the menu in <code>include/settings_menu.h</code>, and the music in <code>include/music_player.h</code>.</p>
             </div>
           </div>
         </div>
@@ -917,7 +1032,7 @@ PORT=/dev/cu.usbmodemNNNN scripts/deploy.sh</pre>
     </section>
 
     <section class="section" id="charm">
-      <div class="num">12</div>
+      <div class="num">13</div>
       <div>
         <h2>Charm Card</h2>
         <div class="grid-2">
@@ -928,6 +1043,8 @@ PORT=/dev/cu.usbmodemNNNN scripts/deploy.sh</pre>
               <tr><td>Next theme</td><td>Tap the lower half.</td></tr>
               <tr><td>Open the menu</td><td>Rest two fingers on the screen.</td></tr>
               <tr><td>Change poem color</td><td>Menu, right arrow, tap a swatch, Done.</td></tr>
+              <tr><td>Change poem style</td><td>Menu, right arrow twice, tap a style, Done.</td></tr>
+              <tr><td>Change the music</td><td>Menu, right arrow three times, tap a track, Done.</td></tr>
               <tr><td>Turn music off</td><td>Menu, slide Volume to 0, Done.</td></tr>
               <tr><td>See the battery</td><td>Tap the upper half. The bottom line shows for 10 seconds.</td></tr>
               <tr><td>Restart</td><td>Press RESET.</td></tr>
@@ -944,7 +1061,7 @@ PORT=/dev/cu.usbmodemNNNN scripts/deploy.sh</pre>
     <div class="ticker">Tap high for a poem / tap low for a season / two fingers for the menu / volume zero is silence / five seven five /</div>
 
     <footer class="footer">
-      Haiku-Matic for Vidiotbox hardware, firmware V8.31+. Another Useless Project by Paul Hodara.
+      Haiku-Matic, firmware V8.32. Another Useless Project by Paul Hodara.
       Copyright (c) 2026 Paul Hodara. All rights reserved.
     </footer>
     <div class="end-marker">End of Haiku-Matic Instruction Manual</div>
