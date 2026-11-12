@@ -262,8 +262,10 @@
   a:focus-visible, button:focus-visible { outline: 3px solid #a34524; outline-offset: 5px; }
   .skip-link { position: absolute; top: -100px; background: var(--panel); padding: 8px; z-index: 50; }
   .skip-link:focus { top: 8px; }
-  .site-header { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 0 0 22px; margin: 0; text-align: left; border: 0; border-bottom: 1px solid #bac3b6; background: none; box-shadow: none; }
-  .wordmark { font-size: 23px; font-weight: 800; letter-spacing: -.05em; text-decoration: none; }
+  .site-header { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 0 0 22px; margin: 0; text-align: left; border: 0; border-bottom: 1px solid #bac3b6; background: none; box-shadow: none; }
+  /* The nameplate: the headline serif, with "box" in the olive italic of "Questioning". */
+  .wordmark { font: normal 46px/1 Georgia, serif; letter-spacing: -.03em; text-decoration: none; }
+  .wordmark em { color: #647440; }
   .site-menu { position: absolute; top: 22px; left: auto; right: max(24px, calc((100vw - 1104px) / 2)); }
   .site-menu .menu-toggle { border: 1px solid #bac3b6; background: transparent; box-shadow: none; }
   .menu-panel { box-shadow: 4px 4px 0 #c9d0c1; border: 1px solid var(--ink); left: auto; right: 0; }
@@ -322,6 +324,7 @@
   @media (max-width: 760px) {
     body { width: 100%; max-width: 100%; padding: 22px; }
     .site-header { width: 100%; max-width: none; margin-top: 0; min-height: 45px; gap: 10px; }
+    .wordmark { font-size: 36px; }
     .site-menu { top: 22px; right: 22px; }
     .hero { grid-template-columns: 1fr; gap: 28px; padding: 44px 0; }
     .hero-note { max-width: 480px; }
@@ -343,7 +346,7 @@
 <script src="assets/site-menu.js"></script>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
-  <a class="wordmark" href="index.html" aria-label="Vidiotbox home">VIDIOTBOX</a>
+  <a class="wordmark" href="index.html" aria-label="Vidiotbox home">Vidiot<em>box</em></a>
   <div class="eyebrow">Paul Hodara / A place for ongoing exploration</div>
 </header>
 <main id="main">
