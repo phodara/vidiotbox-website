@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <!-- Google tag (gtag.js) -->
@@ -10,920 +10,455 @@
 
   gtag('config', 'G-845EZ02BY8');
 </script>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vidiotbox User Guide - System/Form Edition</title>
-  <meta name="description" content="Vidiotbox user guide for the System/Form edition, including setup, controls, expressions, audio, and hardware notes.">
-  <link rel="canonical" href="https://www.vidiotbox.net/vidiotbox-hardware_docs.html">
-  <meta property="og:title" content="Vidiotbox User Guide">
-  <meta property="og:description" content="Setup, controls, expressions, audio, and hardware notes for Vidiotbox.">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://www.vidiotbox.net/vidiotbox-hardware_docs.html">
-  <meta property="og:image" content="https://www.vidiotbox.net/assets/images/happy.png">
-  <meta name="twitter:card" content="summary">
-  <link rel="icon" type="image/png" href="assets/images/happy.png">
-  <script src="assets/analytics.js"></script>
-  <style>
-    :root {
-      --ink: #080808;
-      --paper: #f6f3ea;
-      --panel: #ffffff;
-      --muted: #5b5b55;
-      --line: #111111;
-      --yellow: #fff200;
-      --cyan: #00d7ff;
-      --red: #ff2a2a;
-      --pink: #ff4fd8;
-      --green: #00d46a;
-      --blue: #234cff;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="assets/images/happy.png">
+<title>Vidiotbox: a Touchy, Sound-Reactive Screen Creature</title>
+<meta name="description" content="Vidiotbox is a touchy, sound-reactive little screen creature: fifteen expressions, moods, sound reactions and a personality, with a user guide, a browser simulator and a firmware installer.">
+<link rel="canonical" href="https://www.vidiotbox.net/vidiotbox-hardware_docs.html">
+<meta property="og:title" content="Vidiotbox">
+<meta property="og:description" content="A touchy, sound-reactive, occasionally dramatic little screen creature, with its user guide, a browser simulator and a firmware installer.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.vidiotbox.net/vidiotbox-hardware_docs.html">
+<meta property="og:image" content="https://www.vidiotbox.net/assets/images/happy.png">
+<meta name="twitter:card" content="summary">
+<script src="assets/analytics.js"></script>
+<style>
+  :root {
+    --yellow: #ffd84a;
+    --yellow-strong: #ffe600;
+    --pink: #ff5fd2;
+    --cyan: #00d7ff;
+    --line: #6f6326;
+    --ink: #e8e4d4;
+    --panel: #16140a;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    background: #111;
+    color: var(--ink);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .site-menu {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 20;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .menu-toggle {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: #101010;
+    border: 1px solid var(--yellow-strong);
+    color: var(--yellow);
+    box-shadow: 0 0 0 1px rgba(255, 230, 0, .2);
+    cursor: pointer;
+  }
+
+  .menu-toggle:hover,
+  .menu-toggle:focus {
+    border-color: var(--pink);
+    color: var(--pink);
+    outline: none;
+  }
+
+  .menu-toggle span,
+  .menu-toggle::before,
+  .menu-toggle::after {
+    content: "";
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: currentColor;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+
+  .menu-toggle::before { transform: translateY(-6px); }
+  .menu-toggle::after { transform: translateY(6px); }
+  .site-menu[data-open="true"] .menu-toggle span { opacity: 0; }
+  .site-menu[data-open="true"] .menu-toggle::before { transform: translateY(2px) rotate(45deg); }
+  .site-menu[data-open="true"] .menu-toggle::after { transform: translateY(-2px) rotate(-45deg); }
+
+  .menu-panel {
+    position: absolute;
+    top: 54px;
+    left: 0;
+    width: min(260px, calc(100vw - 28px));
+    display: none;
+    padding: 10px;
+    background: #101010;
+    border: 1px solid var(--yellow-strong);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+  }
+
+  .site-menu[data-open="true"] .menu-panel {
+    display: grid;
+    gap: 8px;
+  }
+
+  .menu-panel a {
+    display: block;
+    padding: 12px;
+    color: var(--yellow);
+    border: 1px solid var(--line);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .menu-panel a:hover,
+  .menu-panel a:focus {
+    border-color: var(--pink);
+    color: var(--pink);
+    outline: none;
+  }
+
+  main {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    padding: 78px 20px 44px;
+  }
+
+  .project {
+    display: grid;
+    grid-template-columns: minmax(280px, .9fr) minmax(300px, 1.1fr);
+    gap: clamp(24px, 5vw, 58px);
+    align-items: center;
+  }
+
+  .project-media {
+    margin: 0;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: clamp(10px, 2vw, 18px);
+  }
+
+  .project-media video,
+  .detail img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .project-media video {
+    background: #000;
+  }
+
+  .project-media figcaption {
+    margin-top: 10px;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .detail img {
+    margin-top: 14px;
+  }
+
+  .eyebrow {
+    margin: 0 0 10px;
+    color: var(--pink);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    color: var(--yellow);
+    font-size: clamp(34px, 5.2vw, 56px);
+    line-height: .94;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .description {
+    max-width: 620px;
+    margin: 24px 0 0;
+    color: var(--ink);
+    font-size: clamp(17px, 2vw, 21px);
+    line-height: 1.48;
+    font-weight: 700;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 18px;
+    color: var(--panel);
+    background: var(--yellow);
+    border: 1px solid var(--yellow);
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .button.secondary {
+    color: var(--yellow);
+    background: transparent;
+  }
+
+  .button:hover,
+  .button:focus {
+    color: var(--panel);
+    background: var(--pink);
+    border-color: var(--pink);
+    outline: none;
+  }
+
+  /* The expression faces sit on the cyan and pink glow of the original Vidiotbox guide. */
+  .faces {
+    margin-top: clamp(30px, 6vw, 64px);
+    padding: clamp(18px, 3vw, 28px);
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(135deg, var(--cyan), transparent 38%),
+      linear-gradient(315deg, var(--pink), transparent 42%),
+      #111;
+  }
+
+  .faces h2 {
+    margin: 0;
+    color: var(--yellow);
+    font-size: clamp(22px, 2.8vw, 30px);
+    text-transform: uppercase;
+  }
+
+  .faces > p {
+    margin: 8px 0 0;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 900;
+  }
+
+  .face-row {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 12px;
+    margin: 22px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .face-row li {
+    text-align: center;
+  }
+
+  .face-row img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .face-row span {
+    display: block;
+    margin-top: 6px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 1px;
+  }
+
+  .details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: clamp(30px, 6vw, 64px);
+  }
+
+  .details + .details {
+    margin-top: 12px;
+  }
+
+  .detail {
+    min-height: 112px;
+    padding: 18px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+  }
+
+  .detail h2 {
+    margin: 0 0 8px;
+    color: var(--yellow);
+    font-size: 14px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .detail p {
+    margin: 0;
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 700;
+  }
+
+  .detail p + p {
+    margin-top: 10px;
+  }
+
+  .detail code {
+    color: #fff;
+    font-size: 13px;
+  }
+
+  .detail-links {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .detail-links a {
+    color: var(--yellow);
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+
+  .detail-links a:hover,
+  .detail-links a:focus {
+    color: var(--pink);
+    outline: none;
+  }
+
+  @media (max-width: 760px) {
+    main {
+      padding-top: 72px;
     }
 
-    * { box-sizing: border-box; }
-
-    html {
-      background: #d8d4c8;
-      color: var(--ink);
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 15px;
-      line-height: 1.35;
-      min-height: 100%;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+    .project,
+    .details {
+      grid-template-columns: 1fr;
     }
 
-    body {
-      margin: 0 auto;
-      width: 100%;
-      max-width: 1120px;
-      background:
-        linear-gradient(90deg, rgba(0,0,0,0.045) 1px, transparent 1px) 0 0 / 40px 40px,
-        linear-gradient(rgba(0,0,0,0.035) 1px, transparent 1px) 0 0 / 40px 40px,
-        var(--paper);
-      min-height: 100vh;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    img { max-width: 100%; height: auto; }
-
-    .site-menu {
-      position: fixed;
-      top: 16px;
-      left: 16px;
-      z-index: 30;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .menu-toggle {
-      width: 46px;
-      height: 46px;
-      display: grid;
-      place-items: center;
-      background: var(--panel);
-      border: 3px solid var(--ink);
-      color: var(--ink);
-      box-shadow: 5px 5px 0 var(--ink);
-      cursor: pointer;
-    }
-
-    .menu-toggle:hover,
-    .menu-toggle:focus {
-      background: var(--yellow);
-      outline: none;
-    }
-
-    .menu-toggle span,
-    .menu-toggle::before,
-    .menu-toggle::after {
-      content: "";
-      display: block;
-      width: 22px;
-      height: 3px;
-      background: currentColor;
-      transition: transform .2s ease, opacity .2s ease;
-    }
-
-    .menu-toggle::before { transform: translateY(-7px); }
-    .menu-toggle::after { transform: translateY(7px); }
-
-    .site-menu[data-open="true"] .menu-toggle span { opacity: 0; }
-    .site-menu[data-open="true"] .menu-toggle::before { transform: translateY(3px) rotate(45deg); }
-    .site-menu[data-open="true"] .menu-toggle::after { transform: translateY(-3px) rotate(-45deg); }
-
-    .menu-panel {
-      position: absolute;
-      top: 58px;
-      left: 0;
-      width: min(280px, calc(100vw - 32px));
-      display: none;
-      gap: 8px;
-      padding: 12px;
-      background: var(--panel);
-      border: 3px solid var(--ink);
-      box-shadow: 8px 8px 0 var(--ink);
-    }
-
-    .site-menu[data-open="true"] .menu-panel {
-      display: grid;
-    }
-
-    .menu-panel a {
-      display: block;
-      padding: 12px 13px;
-      background: var(--paper);
-      border: 2px solid var(--ink);
-      color: var(--ink);
-      font-size: 13px;
-      font-weight: 950;
-      letter-spacing: .08em;
-      text-decoration: none;
-      text-transform: uppercase;
-    }
-
-    .menu-panel a:hover,
-    .menu-panel a:focus {
-      background: var(--cyan);
-      outline: none;
-    }
-
-    .page {
-      padding: 32px 32px 128px;
-    }
-
-    .masthead {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 22px;
-      border: 4px solid var(--ink);
-      background: var(--panel);
-      min-height: 430px;
-    }
-
-    .mast-copy {
-      padding: 30px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      border-right: 4px solid var(--ink);
-    }
-
-    .kicker {
-      display: inline-block;
-      width: max-content;
-      background: var(--yellow);
-      border: 3px solid var(--ink);
-      padding: 4px 9px;
-      font-size: 12px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    h1 {
-      margin: 22px 0 10px;
-      font-size: clamp(42px, 6.5vw, 86px);
-      line-height: 0.9;
-      letter-spacing: -0.055em;
-      text-transform: uppercase;
-      font-weight: 950;
-      white-space: nowrap;
-    }
-
-    .subtitle {
-      font-size: 22px;
-      font-weight: 800;
-      max-width: 560px;
-    }
-
-    .credit {
-      margin-top: 24px;
-      display: grid;
-      gap: 5px;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .mast-art {
-      position: relative;
-      overflow: hidden;
-      background:
-        linear-gradient(135deg, var(--cyan), transparent 38%),
-        linear-gradient(315deg, var(--pink), transparent 42%),
-        #111;
-      padding: 18px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      align-items: center;
-      gap: 0;
-    }
-
-    .mast-art img {
-      width: 100%;
-      aspect-ratio: 340 / 500;
-      object-fit: contain;
-      filter: drop-shadow(10px 10px 0 rgba(0,0,0,0.35));
-    }
-
-    .mast-art .dreaming {
-      grid-column: 1 / 3;
-      width: 66%;
-      justify-self: center;
-      margin-top: -28px;
-    }
-
-    .strip {
-      margin: 22px 0;
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      border: 3px solid var(--ink);
-      background: var(--ink);
-      gap: 3px;
-    }
-
-    .strip a {
-      background: var(--yellow);
-      color: var(--ink);
-      display: block;
-      padding: 9px 7px;
-      text-align: center;
-      font-size: 11px;
-      font-weight: 900;
-      text-decoration: none;
-      text-transform: uppercase;
-    }
-
-    .strip a:hover,
-    .strip a:focus {
-      background: var(--cyan);
-      outline: none;
-    }
-
-    .section {
-      margin-top: 32px;
-      display: grid;
-      grid-template-columns: 132px 1fr;
-      border-top: 6px solid var(--ink);
-      gap: 22px;
-      padding-top: 16px;
-    }
-
-    .num {
-      font-size: 84px;
-      line-height: 0.85;
-      font-weight: 950;
-      letter-spacing: -0.08em;
-      border-right: 4px solid var(--ink);
-      min-height: 120px;
-    }
-
-    h2 {
-      margin: 0 0 14px;
-      font-size: 38px;
-      line-height: 0.92;
-      letter-spacing: -0.035em;
-      text-transform: uppercase;
-      font-weight: 950;
-    }
-
-    .deck {
-      margin: 0 0 16px;
-      font-size: 18px;
-      font-weight: 750;
-      max-width: 760px;
-    }
-
-    .grid-2 {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 18px;
-      align-items: start;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .grid-4 {
-      display: grid;
+    .face-row {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
+      row-gap: 18px;
     }
 
-    .card,
-    .callout,
-    table {
-      background: var(--panel);
-      border: 3px solid var(--ink);
-      box-shadow: 8px 8px 0 var(--ink);
-    }
-
-    .card { padding: 16px; }
-
-    .device-video {
-      display: grid;
-      gap: 10px;
-      background: var(--panel);
-      border: 4px solid var(--ink);
-      padding: 12px;
-      box-shadow: 8px 8px 0 var(--ink);
-    }
-
-    .device-video video {
-      display: block;
-      width: 100%;
-      max-height: 620px;
-      background: var(--ink);
-      border: 3px solid var(--ink);
-      object-fit: contain;
-    }
-
-    .device-video figcaption {
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .callout {
-      padding: 16px;
-      font-weight: 850;
-      font-size: 18px;
-    }
-
-    .callout.yellow { background: var(--yellow); }
-    .callout.cyan { background: var(--cyan); }
-    .callout.red { background: var(--red); color: white; }
-    .callout.green { background: var(--green); }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 10px 0 18px;
-      box-shadow: none;
-    }
-
-    th, td {
-      border: 2px solid var(--ink);
-      padding: 8px 9px;
-      vertical-align: top;
-    }
-
-    th {
-      background: var(--ink);
-      color: white;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .face-row span {
       font-size: 11px;
-      text-align: left;
+      letter-spacing: 0;
     }
-
-    td strong { font-weight: 950; }
-
-    code, pre {
-      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-      background: var(--ink);
-      color: var(--yellow);
-    }
-
-    code {
-      padding: 1px 4px;
-      font-size: 0.92em;
-    }
-
-    pre {
-      margin: 0;
-      padding: 14px;
-      border: 3px solid var(--ink);
-      overflow: auto;
-    }
-
-    .face-note {
-      display: grid;
-      grid-template-columns: 86px 1fr;
-      gap: 12px;
-      align-items: center;
-      background: var(--panel);
-      border: 3px solid var(--ink);
-      padding: 8px 12px;
-      margin: 10px 0;
-    }
-
-    .face-note img {
-      width: 76px;
-      aspect-ratio: 340 / 500;
-      object-fit: contain;
-    }
-
-    .touch-map,
-    .vu {
-      background: white;
-      border: 4px solid var(--ink);
-      padding: 10px 10px 6px;
-      margin-bottom: 8px;
-    }
-
-    .touch-map img,
-    .vu img {
-      display: block;
-      margin: 0 auto;
-      width: 100%;
-      max-height: 720px;
-      object-fit: contain;
-    }
-
-    .touch-map img { aspect-ratio: 960 / 1060; }
-    .vu img { aspect-ratio: 820 / 560; }
-
-    img[src*="hold-indicators"] {
-      aspect-ratio: 760 / 260;
-      object-fit: contain;
-    }
-
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    .face-tile {
-      background: white;
-      border: 3px solid var(--ink);
-      min-height: 170px;
-      padding: 8px;
-      display: grid;
-      grid-template-rows: 1fr auto;
-      align-items: end;
-      text-align: center;
-      font-weight: 950;
-      font-size: 12px;
-      letter-spacing: 0.06em;
-    }
-
-    .face-tile img {
-      max-height: 126px;
-      aspect-ratio: 340 / 500;
-      object-fit: contain;
-      justify-self: center;
-    }
-
-    .face-tile svg {
-      max-height: 126px;
-      justify-self: center;
-    }
-
-    .face-tile.listening-face img {
-      max-height: 126px;
-      width: min(100%, 210px);
-      aspect-ratio: 420 / 500;
-    }
-
-    .ticker {
-      margin-top: 26px;
-      background: var(--ink);
-      color: var(--yellow);
-      padding: 10px 0;
-      overflow: hidden;
-      white-space: nowrap;
-      font-weight: 950;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      border-top: 3px solid var(--ink);
-      border-bottom: 3px solid var(--ink);
-    }
-
-    .ticker span { padding-left: 18px; }
-
-    .footer {
-      margin-top: 34px;
-      padding: 18px;
-      background: var(--ink);
-      color: white;
-      font-size: 12px;
-      letter-spacing: 0.04em;
-    }
-
-    .end-marker {
-      margin-top: 28px;
-      padding: 18px;
-      border: 4px solid var(--ink);
-      background: var(--yellow);
-      text-align: center;
-      font-size: 18px;
-      font-weight: 950;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      box-shadow: 8px 8px 0 var(--ink);
-    }
-
-    @media print {
-      html { background: white; }
-      body { max-width: none; }
-      .page { padding: 18mm; }
-      .section { break-inside: avoid; page-break-inside: avoid; }
-      .masthead, .card, .callout, table, .touch-map, .vu, .face-tile {
-        box-shadow: none;
-      }
-      a { color: inherit; text-decoration: none; }
-    }
-
-    @media (max-width: 760px) {
-      html,
-      body {
-        max-width: 100%;
-        overflow-x: hidden;
-      }
-      .page { padding: 18px 18px 96px; }
-      .masthead,
-      .section,
-      .grid-2,
-      .grid-3,
-      .grid-4 {
-        grid-template-columns: 1fr;
-      }
-      .mast-copy { border-right: 0; border-bottom: 4px solid var(--ink); }
-      .masthead > *,
-      .section > *,
-      .grid-2 > *,
-      .grid-3 > *,
-      .grid-4 > *,
-      .gallery > * {
-        min-width: 0;
-      }
-      .strip { grid-template-columns: repeat(2, 1fr); }
-      .num { border-right: 0; border-bottom: 4px solid var(--ink); min-height: auto; }
-      .gallery { grid-template-columns: repeat(2, 1fr); }
-      h1,
-      h2,
-      .subtitle,
-      .credit span,
-      .deck,
-      .callout,
-      td,
-      th {
-        overflow-wrap: anywhere;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <script src="assets/site-menu.js"></script>
-  <main class="page">
-    <header class="masthead">
-      <div class="mast-copy">
-        <div>
-          <span class="kicker">System / Form Edition</span>
-          <h1>Vidiotbox</h1>
-          <p class="subtitle">A field guide to a touchy, sound-reactive, occasionally dramatic little screen creature.</p>
-        </div>
-        <div class="credit">
-          <span>Another Fine Piece of Useless Digital Art by Paul Hodara</span>
-          <span>Version V10-Basel / Copyright (c) 2026 Paul Hodara / All rights reserved</span>
-        </div>
+<script src="assets/site-menu.js"></script>
+<main>
+  <section class="project" aria-labelledby="project-title">
+    <figure class="project-media">
+      <video controls playsinline preload="none" poster="assets/vidiotbox/device-poster.webp" width="1000" height="865" aria-label="The physical Vidiotbox on its stand, reacting to touch">
+        <source src="assets/physicalvidiotbox-real.mp4" type="video/mp4">
+      </video>
+      <figcaption>Physical Vidiotbox prototype</figcaption>
+    </figure>
+    <div>
+      <p class="eyebrow">Another Fine Piece of Useless Digital Art</p>
+      <h1 id="project-title">Vidiotbox</h1>
+      <p class="description">A touchy, sound-reactive, occasionally dramatic little screen creature. The handheld Vidiotbox includes the features of the web-based virtual Vidiotbox, plus moods that develop from user interactions, sound reactions, and dynamic lighting that changes with its expressions.</p>
+      <div class="actions">
+        <a class="button" href="docs/user-guide/">User Guide</a>
+        <a class="button secondary" href="index.html#simulator">Try The Simulator</a>
+        <a class="button secondary" href="flasher.html">Install Firmware</a>
       </div>
-      <div class="mast-art" aria-label="Vidiotbox expression collage">
-        <img src="assets/images/happy.png" alt="Happy Vidiotbox">
-        <img src="assets/images/proud.png" alt="Proud Vidiotbox">
-        <img class="dreaming" src="assets/images/dreaming.png" alt="Dreaming Vidiotbox">
-      </div>
-    </header>
-
-    <div class="strip" aria-label="Quick feature strip">
-      <a href="#touch-map">Touch Map</a>
-      <a href="#moods">Moods</a>
-      <a href="#vu-bar">VU Bar</a>
-      <a href="#battery">Battery</a>
-      <a href="#setup-wifi">Setup Wi-Fi</a>
-      <a href="#personality">Personality</a>
     </div>
+  </section>
 
-    <section class="section">
-      <div class="num">00</div>
-      <div>
-        <h2>The Physical Device</h2>
-        <p class="deck">The handheld physical Vidiotbox includes the features of the web-based virtual Vidiotbox, plus moods that develop from user interactions, sound reactions, and dynamic lighting that changes with its expressions.</p>
-        <figure class="device-video">
-          <video controls playsinline preload="metadata">
-            <source src="assets/physicalvidiotbox-real.mp4" type="video/mp4">
-          </video>
-          <figcaption>Physical Vidiotbox prototype</figcaption>
-        </figure>
+  <section class="faces" aria-labelledby="faces-title">
+    <h2 id="faces-title">Fifteen Expressions</h2>
+    <p>Thirteen are a tap away. LOVING and SCARY only appear in moods.</p>
+    <ul class="face-row">
+      <li><img src="assets/images/happy.png" width="340" height="500" alt="" loading="lazy"><span>HAPPY</span></li>
+      <li><img src="assets/images/proud.png" width="340" height="500" alt="" loading="lazy"><span>PROUD</span></li>
+      <li><img src="assets/images/surprised.png" width="340" height="500" alt="" loading="lazy"><span>SURPRISED</span></li>
+      <li><img src="assets/images/dreaming.png" width="340" height="500" alt="" loading="lazy"><span>DREAMING</span></li>
+      <li><img src="assets/images/wacky.png" width="340" height="500" alt="" loading="lazy"><span>WACKY</span></li>
+      <li><img src="assets/images/angry.png" width="340" height="500" alt="" loading="lazy"><span>ANGRY</span></li>
+      <li><img src="assets/images/loving.png" width="340" height="500" alt="" loading="lazy"><span>LOVING</span></li>
+      <li><img src="assets/images/sleeping.png" width="340" height="500" alt="" loading="lazy"><span>SLEEPING</span></li>
+    </ul>
+  </section>
+
+  <section class="details" aria-label="Vidiotbox highlights">
+    <article class="detail">
+      <h2>Touch</h2>
+      <p>Tap one of 13 screen regions and that face appears at once, then holds briefly after you let go. Hold about 2.5 seconds to toggle labels, 5 for the QR screen, 10 for the battery.</p>
+    </article>
+    <article class="detail">
+      <h2>Moods</h2>
+      <p>A mood is a short sequence of expressions: Calm, Curious, Playful, Whackbop, Annoyed, Sleepy, Dreamy or Torn. Poke patterns queue them, and touch interrupts them.</p>
+    </article>
+    <article class="detail">
+      <h2>Sound</h2>
+      <p>While idle, it listens. Soft sounds make it curious and very loud ones can annoy it. The setup portal has a VU meter for tuning the thresholds.</p>
+    </article>
+    <article class="detail">
+      <h2>Personality</h2>
+      <p>Energy, patience and sociability reflect recent behavior, then fade back toward neutral. Low patience makes it easier to annoy; high sociability makes it quicker to get curious.</p>
+    </article>
+    <article class="detail">
+      <h2>Power</h2>
+      <p>Remove the magnetic cap to turn it on; put it back to disconnect the battery. To charge, take the cap off and plug USB into the bottom. It sleeps before the LiPo runs too low.</p>
+    </article>
+    <article class="detail">
+      <h2>Setup Portal</h2>
+      <p>At startup it opens a temporary Wi-Fi network, <code>vidiotbox-XXXX</code>. Join it and open <code>192.168.4.1</code> to adjust sound, audio, personality, idle expressions and GIFs.</p>
+    </article>
+  </section>
+
+  <section class="details" aria-label="Touch map, firmware and user guide">
+    <article class="detail">
+      <h2>Touch Map</h2>
+      <img src="assets/images/touch-expression-map.png" width="960" height="1060" alt="Vidiotbox touch expression map: thirteen screen regions, from SURPRISED, DREAMING and CONFUSED along the top to WACKY, SLEEPING and SAD along the bottom" loading="lazy">
+    </article>
+    <article class="detail">
+      <h2>Firmware</h2>
+      <p>Install firmware from Chrome or Edge on a desktop computer, over a USB cable. V101-RF2 Basel is the current version; earlier ones stay available.</p>
+      <p>The installer writes the board's flash only. Faceimator images, GIFs, sounds and settings live on the microSD card.</p>
+      <div class="detail-links">
+        <a href="flasher.html">Vidiotbox Flasher</a>
       </div>
-    </section>
-
-    <section class="section">
-      <div class="num">01</div>
-      <div>
-        <h2>Wake The Face</h2>
-        <p class="deck">Portrait orientation. USB at the bottom. Magnetic cap at the top. Simple rules, large consequences.</p>
-        <div class="grid-2">
-          <table>
-            <thead><tr><th>Action</th><th>Result</th></tr></thead>
-            <tbody>
-              <tr><td>Remove magnetic cap</td><td>Vidiotbox turns on.</td></tr>
-              <tr><td>Place cap back on top</td><td>Battery is physically disconnected.</td></tr>
-              <tr><td>Remove cap, then plug in USB</td><td>Battery can charge.</td></tr>
-            </tbody>
-          </table>
-          <div class="callout yellow">Important: the cap must be off before USB charging can work.</div>
-        </div>
-        <div class="grid-2">
-          <div class="card">
-            <strong>Startup setup portal</strong>
-            <pre>SETUP WIFI
-vidiotbox-XXXX
-&lt;password&gt;
-192.168.4.1</pre>
-          </div>
-          <div class="face-note">
-            <img src="assets/images/neutral.png" alt="Neutral Vidiotbox">
-            <p>The setup access point is temporary. It shuts down after about 30 seconds of no client activity.</p>
-          </div>
-        </div>
+    </article>
+    <article class="detail">
+      <h2>User Guide</h2>
+      <p>Waking the face, the touch map, hidden holds, poke patterns, moods, idle and sound behavior, the setup portal, battery and personality.</p>
+      <div class="detail-links">
+        <a href="docs/user-guide/">Vidiotbox User Guide</a>
+        <a href="docs/user-guide/#touch-map">Touch map</a>
+        <a href="docs/user-guide/#moods">Moods</a>
+        <a href="docs/user-guide/#vu-bar">Idle and sound</a>
+        <a href="docs/user-guide/#setup-wifi">Setup portal</a>
+        <a href="docs/user-guide/#battery">Battery</a>
       </div>
-    </section>
-
-    <section class="section" id="touch-map">
-      <div class="num">02</div>
-      <div>
-        <h2>Touch The Mood Map</h2>
-        <p class="deck">Tap one of the 13 screen regions. The selected face appears immediately, then holds briefly after release.</p>
-        <div class="touch-map">
-          <img src="assets/images/touch-expression-map.png" alt="Vidiotbox touch expression map">
-        </div>
-        <table>
-          <thead><tr><th>Zone</th><th>Expression</th><th>Tendency</th></tr></thead>
-          <tbody>
-            <tr><td>Top far left</td><td>SURPRISED</td><td>Playful</td></tr>
-            <tr><td>Top center</td><td>DREAMING</td><td>Dreamy / idle</td></tr>
-            <tr><td>Top far right</td><td>CONFUSED</td><td>Curious-friendly</td></tr>
-            <tr><td>Upper row</td><td>LISTENING, PROUD, ANXIETY</td><td>Curious / positive / curious</td></tr>
-            <tr><td>Middle row</td><td>HAPPY, BEAT-BOP, NEUTRAL, ANGRY</td><td>Playful / beat face / calm / annoyed</td></tr>
-            <tr><td>Bottom row</td><td>WACKY, SLEEPING, SAD</td><td>Playful / sleepy / curious</td></tr>
-          </tbody>
-        </table>
-        <div class="callout cyan">LOVING and SCARY are automatic-only expressions. They appear in moods, not direct touch zones.</div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="num">03</div>
-      <div>
-        <h2>Expression Index</h2>
-        <p class="deck">The black reference-sheet backgrounds have been removed so the faces can work as signs, warnings, and little emotional punctuation marks.</p>
-        <div class="gallery">
-          <div class="face-tile"><img src="assets/images/neutral.png" alt="Neutral"><span>NEUTRAL</span></div>
-          <div class="face-tile"><img src="assets/images/happy.png" alt="Happy"><span>HAPPY</span></div>
-          <div class="face-tile">
-            <svg viewBox="35 35 170 250" role="img" aria-label="Beat-bop Vidiotbox">
-              <path d="M 60,78 H 180 V 258 H 60 Z" fill="#06120C"/>
-              <path d="M 52,202 Q 41,191 42,177 Q 43,162 55,151 Q 62,145 67,150" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
-              <path d="M 188,202 Q 199,191 198,177 Q 197,162 185,151 Q 178,145 173,150" stroke="#111" stroke-width="3" fill="none" stroke-linecap="round"/>
-              <text x="54" y="96" fill="#008866" font-size="18">♪</text>
-              <text x="172" y="108" fill="#008866" font-size="16">♫</text>
-              <path d="M 92,136 C 86,116 98,98 92,80 C 86,62 98,56 93,54" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
-              <path d="M 120,136 C 114,116 126,98 120,80 C 114,62 126,56 120,54" stroke="#111" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-              <path d="M 148,136 C 142,116 154,98 148,80 C 142,62 154,56 147,54" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
-              <rect x="76" y="154" width="30" height="18" rx="9" fill="#111"/>
-              <rect x="134" y="154" width="30" height="18" rx="9" fill="#111"/>
-              <rect x="86" y="157" width="18" height="12" rx="6" fill="#fff"/>
-              <rect x="144" y="157" width="18" height="12" rx="6" fill="#fff"/>
-              <circle cx="95" cy="163" r="3" fill="#111"/>
-              <circle cx="153" cy="163" r="3" fill="#111"/>
-              <circle cx="127" cy="186" r="6" fill="#111"/>
-              <rect x="100" y="197" width="54" height="60" rx="0" fill="#111"/>
-              <path d="M 99,212 Q 127,228 155,212 L 155,242 Q 127,255 99,242 Z" fill="#fff"/>
-              <ellipse cx="127" cy="229" rx="8" ry="12" fill="#111"/>
-            </svg>
-            <span>BEAT-BOP</span>
-          </div>
-          <div class="face-tile"><img src="assets/images/angry.png" alt="Angry"><span>ANGRY</span></div>
-          <div class="face-tile"><img src="assets/images/surprised.png" alt="Surprised"><span>SURPRISED</span></div>
-          <div class="face-tile"><img src="assets/images/loving.png" alt="Loving"><span>LOVING</span></div>
-          <div class="face-tile"><img src="assets/images/scary.png" alt="Scary"><span>SCARY</span></div>
-          <div class="face-tile"><img src="assets/images/sad.png" alt="Sad"><span>SAD</span></div>
-          <div class="face-tile"><img src="assets/images/sleeping.png" alt="Sleeping"><span>SLEEPING</span></div>
-          <div class="face-tile"><img src="assets/images/wacky.png" alt="Wacky"><span>WACKY</span></div>
-          <div class="face-tile"><img src="assets/images/confused.png" alt="Confused"><span>CONFUSED</span></div>
-          <div class="face-tile"><img src="assets/images/anxiety.png" alt="Anxiety"><span>ANXIETY</span></div>
-          <div class="face-tile"><img src="assets/images/proud.png" alt="Proud"><span>PROUD</span></div>
-          <div class="face-tile"><img src="assets/images/dreaming.png" alt="Dreaming"><span>DREAMING</span></div>
-          <div class="face-tile listening-face"><img src="assets/images/listening.png" alt="Listening"><span>LISTENING</span></div>
-          <div class="card"><strong>LOVING + SCARY</strong><br>System-called only. They do not have direct touch zones.</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="num">04</div>
-      <div>
-        <h2>Hidden Holds</h2>
-        <p class="deck">Hold actions are time-based. The spot under your finger does not matter once the hold begins.</p>
-        <div class="grid-2">
-          <div class="card">
-            <img src="assets/images/hold-indicators.png" alt="Hold indicators">
-          </div>
-          <table>
-            <thead><tr><th>Hold time</th><th>Result</th></tr></thead>
-            <tbody>
-              <tr><td>Tap and release</td><td>Selected expression shows immediately.</td></tr>
-              <tr><td>About 2.5 seconds</td><td>Expression labels toggle on or off.</td></tr>
-              <tr><td>About 5 seconds</td><td>Emotional Rescue QR/credit screen opens.</td></tr>
-              <tr><td>About 10 seconds total</td><td>Battery status screen opens.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="num">05</div>
-      <div>
-        <h2>Poke Patterns</h2>
-        <p class="deck">Vidiotbox remembers recent taps. Rapid means about 2.5 seconds apart. Repeat means the same expression within about 6 seconds.</p>
-        <div class="grid-2">
-          <table>
-            <thead><tr><th>Pattern</th><th>Reaction</th></tr></thead>
-            <tbody>
-              <tr><td>HAPPY, BEAT-BOP, WACKY, or SURPRISED once</td><td>Queues PLAYFUL unless a specific two-touch mood pattern wins.</td></tr>
-              <tr><td>WACKY / BEAT-BOP twice within 3 seconds</td><td>Queues WHACKBOP.</td></tr>
-              <tr><td>ANGRY / ANXIOUS twice within 3 seconds</td><td>Queues ANNOYED. One touch only shows that expression.</td></tr>
-              <tr><td>Two CURIOUS expressions within 3 seconds</td><td>NEUTRAL, LISTENING, SURPRISED, PROUD, or HAPPY can queue CURIOUS after the mood cooldown.</td></tr>
-              <tr><td>DREAMING twice</td><td>Queues DREAMY.</td></tr>
-              <tr><td>SLEEPING twice while calm</td><td>Queues DREAMY.</td></tr>
-              <tr><td>PLAYFUL/ANNOYED alternation twice</td><td>Queues TORN.</td></tr>
-            </tbody>
-          </table>
-          <div class="face-note">
-            <img src="assets/images/wacky.png" alt="Wacky Vidiotbox">
-            <p>Queued moods wait until the post-touch hold ends and Vidiotbox returns to idle.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="moods">
-      <div class="num">06</div>
-      <div>
-        <h2>Mood Parade</h2>
-        <p class="deck">A mood is a compact expression sequence. Touch interrupts it. Sound can interrupt it when sound detection is allowed.</p>
-        <table>
-          <thead><tr><th>Mood</th><th>Trigger</th><th>Sequence</th></tr></thead>
-          <tbody>
-            <tr><td>CALM</td><td>Default idle</td><td>NEUTRAL -> PROUD -> HAPPY -> NEUTRAL</td></tr>
-            <tr><td>CURIOUS</td><td>Soft sound, CURIOUS expression pair, or personality</td><td>NEUTRAL -> LISTENING -> SURPRISED/PROUD/HAPPY -> LISTENING; can play surprise then interesting audio</td></tr>
-            <tr><td>PLAYFUL</td><td>Single HAPPY/BEAT-BOP/WACKY/SURPRISED touch or personality</td><td>HAPPY, WACKY, LOVING, SURPRISED, PROUD</td></tr>
-            <tr><td>WHACKBOP</td><td>WACKY/BEAT-BOP two-touch pair</td><td>WACKY -> BEAT-BOP -> WACKY -> BEAT-BOP; can play whacky then happy audio</td></tr>
-            <tr><td>ANNOYED</td><td>ANGRY/ANXIOUS two-touch pair, over-poking, very loud sound</td><td>ANGRY, SCARY, ANXIETY</td></tr>
-            <tr><td>SLEEPY</td><td>Long idle, controlled by personality or Sleepy idle seconds, plus accumulated touch delay</td><td>DREAMING -> SLEEPING -> SLEEPING -> DREAMING -> SLEEPING</td></tr>
-            <tr><td>DREAMY</td><td>DREAMING twice or calm SLEEPING twice</td><td>DREAMING and SLEEPING alternate</td></tr>
-            <tr><td>TORN</td><td>Fast playful/annoyed alternation</td><td>WACKY and CONFUSED alternate</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="section" id="vu-bar">
-      <div class="num">07</div>
-      <div>
-        <h2>Idle / Sound</h2>
-        <p class="deck">When Vidiotbox is idle, expression checks and sound checks share the stage. Random idle expressions happen on a timer; sound can start moods or configured sound events when the touch and cooldown gates are clear.</p>
-        <div class="vu">
-          <img src="assets/images/vu-bar-reference.png" alt="Sound detection VU bar">
-        </div>
-        <div class="grid-4">
-          <div class="callout green">Green = background noise floor.</div>
-          <div class="callout cyan">Blue = LOVING floor.</div>
-          <div class="callout yellow">Yellow = GIF/image trigger.</div>
-          <div class="callout red">Red = ANNOYED threshold. Very loud sounds win.</div>
-        </div>
-        <table>
-          <thead><tr><th>Idle random logic</th><th>Current behavior</th></tr></thead>
-          <tbody>
-            <tr><td>Timer</td><td><code>/faceimator/expr.txt</code> controls <code>check_every_ms</code>; default is 5000 ms, minimum is 1000 ms.</td></tr>
-            <tr><td>Chance</td><td><code>play_probability_percent</code> decides whether the timer picks an idle expression on that check.</td></tr>
-            <tr><td>Weights</td><td>Each expression weight is 0-100. Weight 0 removes it from idle selection; higher weights make it more likely.</td></tr>
-            <tr><td>Audio filter</td><td>If idle expression audio is enabled and not muted, the random picker only uses expressions with matching idle audio files.</td></tr>
-            <tr><td>Current face</td><td>The picker avoids repeating the current expression when another eligible expression exists.</td></tr>
-            <tr><td>Mood priority</td><td>Active mood sequences block random idle expression changes until the mood ends or is interrupted.</td></tr>
-          </tbody>
-        </table>
-        <table>
-          <thead><tr><th>Sound</th><th>Result</th></tr></thead>
-          <tbody>
-            <tr><td>Quiet</td><td>Background adjusts.</td></tr>
-            <tr><td>Soft</td><td>CURIOUS can start while idle after the curious cooldown.</td></tr>
-            <tr><td>Sustained friendly</td><td>The LOW sound event can run after sound stays in the LOVING band for the configured window.</td></tr>
-            <tr><td>Strong</td><td>The MEDIUM sound event runs after the decision window unless the peak upgrades to HIGH.</td></tr>
-            <tr><td>Very loud</td><td>The HIGH sound event runs, or personality may redirect the reaction into PLAYFUL.</td></tr>
-            <tr><td>During an idle mood</td><td>MEDIUM/HIGH sound interrupts the mood and runs the configured event.</td></tr>
-            <tr><td>Gated</td><td>Sound events pause during startup settle, image/GIF cooldown, active touch, post-touch cooldown, touch holds, and ANNOYED mood.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="section" id="setup-wifi">
-      <div class="num">08</div>
-      <div>
-        <h2>Setup Portal</h2>
-        <p class="deck">Connect to the temporary startup Wi-Fi named <code>vidiotbox-XXXX</code>, then open <code>http://192.168.4.1/</code>.</p>
-        <table>
-          <thead><tr><th>Page</th><th>Use</th></tr></thead>
-          <tbody>
-            <tr><td><code>/config</code></td><td>General config and brightness.</td></tr>
-            <tr><td><code>/sound</code></td><td>Microphone thresholds, timing, and VU meter.</td></tr>
-            <tr><td><code>/events</code></td><td>Low, medium, and high sound-event behavior.</td></tr>
-            <tr><td><code>/audio</code></td><td>Idle/random audio, uploads, per-file volume, and deletion.</td></tr>
-            <tr><td><code>/personality</code></td><td>Personality axes, derived behavior, and reset.</td></tr>
-            <tr><td><code>/expr</code></td><td>Idle expression probabilities.</td></tr>
-            <tr><td><code>/gif</code></td><td>GIF selection, upload, delete, and tint.</td></tr>
-            <tr><td><code>/images</code>, <code>/images/edit</code></td><td>Faceimator RGB565 image assets and message metadata.</td></tr>
-            <tr><td><code>/info</code>, <code>/reboot</code></td><td>Device info and restart.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="section" id="battery">
-      <div class="num">09</div>
-      <div>
-        <h2>Battery / Rest</h2>
-        <p class="deck">Vidiotbox checks battery voltage after the startup grace period, then sleeps before the LiPo gets dangerously low.</p>
-        <div class="grid-2">
-          <table>
-            <thead><tr><th>State</th><th>Approximate value</th></tr></thead>
-            <tbody>
-              <tr><td>Full</td><td>raw about 2445, about 4.2 V</td></tr>
-              <tr><td>Resume</td><td>raw 2100, about 3.4 V</td></tr>
-              <tr><td>Low warning</td><td>raw 2000, about 3.2 V</td></tr>
-              <tr><td>Flat reference</td><td>raw about 1560, about 2.7 V</td></tr>
-            </tbody>
-          </table>
-          <div class="face-note">
-            <img src="assets/images/sleeping.png" alt="Sleeping Vidiotbox">
-            <p>Three consecutive low readings trigger the Charge Me warning and deep sleep. Charge-rest checks again every 15 minutes.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="personality">
-      <div class="num">10</div>
-      <div>
-        <h2>Personality</h2>
-        <p class="deck">The personality file lives at <code>/faceimator/personality.txt</code>. It reflects recent behavior, then fades back toward neutral.</p>
-        <table>
-          <thead><tr><th>Axis</th><th>Low side</th><th>High side</th></tr></thead>
-          <tbody>
-            <tr><td>Energy</td><td>Calmer, sleepier</td><td>More playful</td></tr>
-            <tr><td>Patience</td><td>Easier to annoy</td><td>More tolerant</td></tr>
-            <tr><td>Sociability</td><td>Slower sound reactions</td><td>Quicker curious reactions</td></tr>
-          </tbody>
-        </table>
-        <div class="callout yellow">To reset personality, open the setup portal, go to <code>/personality</code>, and use the reset button.</div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="num">11</div>
-      <div>
-        <h2>Charm Card</h2>
-        <div class="grid-2">
-          <table>
-            <thead><tr><th>Action</th><th>Do this</th></tr></thead>
-            <tbody>
-              <tr><td>Turn on</td><td>Remove the magnetic cap.</td></tr>
-              <tr><td>Turn off</td><td>Put the magnetic cap back on top.</td></tr>
-              <tr><td>Charge</td><td>Remove cap, connect USB to bottom port.</td></tr>
-              <tr><td>Pick a face</td><td>Tap a touch-map zone.</td></tr>
-              <tr><td>Open QR</td><td>Hold about 5 seconds.</td></tr>
-              <tr><td>Open battery</td><td>Keep holding about 10 seconds total.</td></tr>
-            </tbody>
-          </table>
-          <div class="mast-art">
-            <img src="assets/images/surprised.png" alt="Surprised Vidiotbox">
-            <img src="assets/images/loving.png" alt="Loving Vidiotbox">
-            <img class="dreaming" src="assets/images/sleeping.png" alt="Sleeping Vidiotbox">
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="ticker">
-      <span>Touch gently / listen closely / charge before the drama / DREAMING lives at the top center / SCARY is automatic only /</span>
-    </div>
-
-    <footer class="footer">
-      Vidiotbox V10-Basel - Copyright (c) 2026 Paul Hodara - All rights reserved.
-      This project is proprietary. No use, copying, modification, distribution,
-      commercialization, or derivative work is permitted without prior explicit
-      written permission from Paul Hodara. Design treatment is an original
-      Vidiotbox guide layout inspired by modular editorial systems, not an
-      official magazine template.
-    </footer>
-    <div class="end-marker">End of Vidiotbox User Guide</div>
-  </main>
+    </article>
+  </section>
+</main>
 </body>
 </html>

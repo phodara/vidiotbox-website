@@ -21,7 +21,7 @@
   <meta property="og:url" content="https://www.vidiotbox.net/docs/user-guide/">
   <meta property="og:image" content="https://www.vidiotbox.net/assets/images/happy.png">
   <meta name="twitter:card" content="summary">
-  <link rel="icon" type="image/png" href="assets/images/happy.png">
+  <link rel="icon" type="image/png" href="../../assets/images/happy.png">
   <script src="../../assets/analytics.js"></script>
   <style>
     :root {
@@ -240,13 +240,22 @@
       gap: 3px;
     }
 
-    .strip span {
+    .strip a {
       background: var(--yellow);
+      color: var(--ink);
+      display: block;
       padding: 9px 7px;
       text-align: center;
       font-size: 11px;
       font-weight: 900;
+      text-decoration: none;
       text-transform: uppercase;
+    }
+
+    .strip a:hover,
+    .strip a:focus {
+      background: var(--cyan);
+      outline: none;
     }
 
     .section {
@@ -311,6 +320,31 @@
     }
 
     .card { padding: 16px; }
+
+    .device-video {
+      display: grid;
+      gap: 10px;
+      background: var(--panel);
+      border: 4px solid var(--ink);
+      padding: 12px;
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .device-video video {
+      display: block;
+      width: 100%;
+      max-height: 620px;
+      background: var(--ink);
+      border: 3px solid var(--ink);
+      object-fit: contain;
+    }
+
+    .device-video figcaption {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
 
     .callout {
       padding: 16px;
@@ -534,7 +568,6 @@
   </style>
 </head>
 <body>
-  <script src="assets/site-menu.js"></script>
   <main class="page">
     <header class="masthead">
       <div class="mast-copy">
@@ -549,20 +582,34 @@
         </div>
       </div>
       <div class="mast-art" aria-label="Vidiotbox expression collage">
-        <img src="assets/images/happy.png" alt="Happy Vidiotbox">
-        <img src="assets/images/proud.png" alt="Proud Vidiotbox">
-        <img class="dreaming" src="assets/images/dreaming.png" alt="Dreaming Vidiotbox">
+        <img src="../../assets/images/happy.png" alt="Happy Vidiotbox">
+        <img src="../../assets/images/proud.png" alt="Proud Vidiotbox">
+        <img class="dreaming" src="../../assets/images/dreaming.png" alt="Dreaming Vidiotbox">
       </div>
     </header>
 
     <div class="strip" aria-label="Quick feature strip">
-      <span>Touch Map</span>
-      <span>Moods</span>
-      <span>VU Bar</span>
-      <span>Battery</span>
-      <span>Setup Wi-Fi</span>
-      <span>Personality</span>
+      <a href="#touch-map">Touch Map</a>
+      <a href="#moods">Moods</a>
+      <a href="#vu-bar">VU Bar</a>
+      <a href="#battery">Battery</a>
+      <a href="#setup-wifi">Setup Wi-Fi</a>
+      <a href="#personality">Personality</a>
     </div>
+
+    <section class="section">
+      <div class="num">00</div>
+      <div>
+        <h2>The Physical Device</h2>
+        <p class="deck">The handheld physical Vidiotbox includes the features of the web-based virtual Vidiotbox, plus moods that develop from user interactions, sound reactions, and dynamic lighting that changes with its expressions.</p>
+        <figure class="device-video">
+          <video controls playsinline preload="metadata">
+            <source src="../../assets/physicalvidiotbox-real.mp4" type="video/mp4">
+          </video>
+          <figcaption>Physical Vidiotbox prototype</figcaption>
+        </figure>
+      </div>
+    </section>
 
     <section class="section">
       <div class="num">01</div>
@@ -589,20 +636,20 @@ vidiotbox-XXXX
 192.168.4.1</pre>
           </div>
           <div class="face-note">
-            <img src="assets/images/neutral.png" alt="Neutral Vidiotbox">
+            <img src="../../assets/images/neutral.png" alt="Neutral Vidiotbox">
             <p>The setup access point is temporary. It shuts down after about 30 seconds of no client activity.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="touch-map">
       <div class="num">02</div>
       <div>
         <h2>Touch The Mood Map</h2>
         <p class="deck">Tap one of the 13 screen regions. The selected face appears immediately, then holds briefly after release.</p>
         <div class="touch-map">
-          <img src="assets/images/touch-expression-map.png" alt="Vidiotbox touch expression map">
+          <img src="../../assets/images/touch-expression-map.png" alt="Vidiotbox touch expression map">
         </div>
         <table>
           <thead><tr><th>Zone</th><th>Expression</th><th>Tendency</th></tr></thead>
@@ -625,8 +672,8 @@ vidiotbox-XXXX
         <h2>Expression Index</h2>
         <p class="deck">The black reference-sheet backgrounds have been removed so the faces can work as signs, warnings, and little emotional punctuation marks.</p>
         <div class="gallery">
-          <div class="face-tile"><img src="assets/images/neutral.png" alt="Neutral"><span>NEUTRAL</span></div>
-          <div class="face-tile"><img src="assets/images/happy.png" alt="Happy"><span>HAPPY</span></div>
+          <div class="face-tile"><img src="../../assets/images/neutral.png" alt="Neutral"><span>NEUTRAL</span></div>
+          <div class="face-tile"><img src="../../assets/images/happy.png" alt="Happy"><span>HAPPY</span></div>
           <div class="face-tile">
             <svg viewBox="35 35 170 250" role="img" aria-label="Beat-bop Vidiotbox">
               <path d="M 60,78 H 180 V 258 H 60 Z" fill="#06120C"/>
@@ -650,18 +697,18 @@ vidiotbox-XXXX
             </svg>
             <span>BEAT-BOP</span>
           </div>
-          <div class="face-tile"><img src="assets/images/angry.png" alt="Angry"><span>ANGRY</span></div>
-          <div class="face-tile"><img src="assets/images/surprised.png" alt="Surprised"><span>SURPRISED</span></div>
-          <div class="face-tile"><img src="assets/images/loving.png" alt="Loving"><span>LOVING</span></div>
-          <div class="face-tile"><img src="assets/images/scary.png" alt="Scary"><span>SCARY</span></div>
-          <div class="face-tile"><img src="assets/images/sad.png" alt="Sad"><span>SAD</span></div>
-          <div class="face-tile"><img src="assets/images/sleeping.png" alt="Sleeping"><span>SLEEPING</span></div>
-          <div class="face-tile"><img src="assets/images/wacky.png" alt="Wacky"><span>WACKY</span></div>
-          <div class="face-tile"><img src="assets/images/confused.png" alt="Confused"><span>CONFUSED</span></div>
-          <div class="face-tile"><img src="assets/images/anxiety.png" alt="Anxiety"><span>ANXIETY</span></div>
-          <div class="face-tile"><img src="assets/images/proud.png" alt="Proud"><span>PROUD</span></div>
-          <div class="face-tile"><img src="assets/images/dreaming.png" alt="Dreaming"><span>DREAMING</span></div>
-          <div class="face-tile listening-face"><img src="assets/images/listening.png" alt="Listening"><span>LISTENING</span></div>
+          <div class="face-tile"><img src="../../assets/images/angry.png" alt="Angry"><span>ANGRY</span></div>
+          <div class="face-tile"><img src="../../assets/images/surprised.png" alt="Surprised"><span>SURPRISED</span></div>
+          <div class="face-tile"><img src="../../assets/images/loving.png" alt="Loving"><span>LOVING</span></div>
+          <div class="face-tile"><img src="../../assets/images/scary.png" alt="Scary"><span>SCARY</span></div>
+          <div class="face-tile"><img src="../../assets/images/sad.png" alt="Sad"><span>SAD</span></div>
+          <div class="face-tile"><img src="../../assets/images/sleeping.png" alt="Sleeping"><span>SLEEPING</span></div>
+          <div class="face-tile"><img src="../../assets/images/wacky.png" alt="Wacky"><span>WACKY</span></div>
+          <div class="face-tile"><img src="../../assets/images/confused.png" alt="Confused"><span>CONFUSED</span></div>
+          <div class="face-tile"><img src="../../assets/images/anxiety.png" alt="Anxiety"><span>ANXIETY</span></div>
+          <div class="face-tile"><img src="../../assets/images/proud.png" alt="Proud"><span>PROUD</span></div>
+          <div class="face-tile"><img src="../../assets/images/dreaming.png" alt="Dreaming"><span>DREAMING</span></div>
+          <div class="face-tile listening-face"><img src="../../assets/images/listening.png" alt="Listening"><span>LISTENING</span></div>
           <div class="card"><strong>LOVING + SCARY</strong><br>System-called only. They do not have direct touch zones.</div>
         </div>
       </div>
@@ -674,7 +721,7 @@ vidiotbox-XXXX
         <p class="deck">Hold actions are time-based. The spot under your finger does not matter once the hold begins.</p>
         <div class="grid-2">
           <div class="card">
-            <img src="assets/images/hold-indicators.png" alt="Hold indicators">
+            <img src="../../assets/images/hold-indicators.png" alt="Hold indicators">
           </div>
           <table>
             <thead><tr><th>Hold time</th><th>Result</th></tr></thead>
@@ -708,14 +755,14 @@ vidiotbox-XXXX
             </tbody>
           </table>
           <div class="face-note">
-            <img src="assets/images/wacky.png" alt="Wacky Vidiotbox">
+            <img src="../../assets/images/wacky.png" alt="Wacky Vidiotbox">
             <p>Queued moods wait until the post-touch hold ends and Vidiotbox returns to idle.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="moods">
       <div class="num">06</div>
       <div>
         <h2>Mood Parade</h2>
@@ -736,13 +783,13 @@ vidiotbox-XXXX
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="vu-bar">
       <div class="num">07</div>
       <div>
         <h2>Idle / Sound</h2>
         <p class="deck">When Vidiotbox is idle, expression checks and sound checks share the stage. Random idle expressions happen on a timer; sound can start moods or configured sound events when the touch and cooldown gates are clear.</p>
         <div class="vu">
-          <img src="assets/images/vu-bar-reference.png" alt="Sound detection VU bar">
+          <img src="../../assets/images/vu-bar-reference.png" alt="Sound detection VU bar">
         </div>
         <div class="grid-4">
           <div class="callout green">Green = background noise floor.</div>
@@ -776,7 +823,7 @@ vidiotbox-XXXX
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="setup-wifi">
       <div class="num">08</div>
       <div>
         <h2>Setup Portal</h2>
@@ -798,7 +845,7 @@ vidiotbox-XXXX
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="battery">
       <div class="num">09</div>
       <div>
         <h2>Battery / Rest</h2>
@@ -814,14 +861,14 @@ vidiotbox-XXXX
             </tbody>
           </table>
           <div class="face-note">
-            <img src="assets/images/sleeping.png" alt="Sleeping Vidiotbox">
+            <img src="../../assets/images/sleeping.png" alt="Sleeping Vidiotbox">
             <p>Three consecutive low readings trigger the Charge Me warning and deep sleep. Charge-rest checks again every 15 minutes.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="section" id="personality">
       <div class="num">10</div>
       <div>
         <h2>Personality</h2>
@@ -855,9 +902,9 @@ vidiotbox-XXXX
             </tbody>
           </table>
           <div class="mast-art">
-            <img src="assets/images/surprised.png" alt="Surprised Vidiotbox">
-            <img src="assets/images/loving.png" alt="Loving Vidiotbox">
-            <img class="dreaming" src="assets/images/sleeping.png" alt="Sleeping Vidiotbox">
+            <img src="../../assets/images/surprised.png" alt="Surprised Vidiotbox">
+            <img src="../../assets/images/loving.png" alt="Loving Vidiotbox">
+            <img class="dreaming" src="../../assets/images/sleeping.png" alt="Sleeping Vidiotbox">
           </div>
         </div>
       </div>
