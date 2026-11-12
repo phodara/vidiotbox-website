@@ -417,10 +417,15 @@
   .section-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; border-top: 1px solid #bac3b6; padding-top: 18px; }
   h2 { font: normal clamp(28px, 3vw, 38px)/1.2 Georgia, serif; letter-spacing: -.025em; margin: 0; }
   .section-heading > p { color: var(--muted); font-size: 13px; margin: 0; }
-  .project-list { display: grid; grid-template-columns: repeat(3, 1fr); margin: 28px 0 72px; }
+  /* Equal padding on every column keeps the three images the same size; the negative margin keeps the outer edges aligned. */
+  .project-list { display: grid; grid-template-columns: repeat(3, 1fr); margin: 28px -28px 72px; }
   .project { padding: 6px 28px 8px; border-left: 1px solid #bac3b6; }
-  .project:first-child { padding-left: 0; border: 0; }
-  .project:last-child { padding-right: 0; }
+  .project:first-child { border: 0; }
+  .project-image { display: block; aspect-ratio: 10 / 9; overflow: hidden; margin: 0 0 20px; background: #050704; }
+  .project-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .project-image.expression-image img { box-sizing: border-box; padding: 22px; object-fit: contain; }
+  .project-image.poetry-image img { object-position: 50% 55%; }
+  .project-image.prowler-image img { object-position: 50% 52%; }
   .project h3 { font: normal 29px/1.2 Georgia, serif; margin: 18px 0 12px; }
   .project p { color: var(--muted); font-size: 15px; }
   .project .project-question { color: var(--ink); font-family: Georgia, serif; font-size: 18px; }
@@ -448,7 +453,7 @@
     .hero { grid-template-columns: 1fr; gap: 28px; padding: 44px 0; }
     .hero-note { max-width: 480px; }
     .hero-note p { font-size: 23px; }
-    .project-list { grid-template-columns: 1fr; margin-bottom: 44px; }
+    .project-list { grid-template-columns: 1fr; margin: 28px 0 44px; }
     .project, .project:first-child, .project:last-child { padding: 22px 0; border: 0; border-bottom: 1px solid #bac3b6; }
     .project h3 { margin-top: 10px; }
     .statement { grid-template-columns: 1fr; gap: 24px; padding: 32px 0 44px; }
@@ -490,18 +495,21 @@
     <div class="section-heading"><h2 id="projects-title">Three projects. An open inquiry.</h2><p>Hardware, software, and creative experiments.</p></div>
     <div class="project-list">
       <article class="project">
+        <a class="project-image prowler-image" href="lilygo-t-display-c5.html" tabindex="-1" aria-hidden="true"><img src="assets/home/pocket-prowler.webp" width="675" height="900" loading="lazy" decoding="async" alt=""></a>
         <div class="eyebrow">01 / Tools & development</div>
         <h3><a href="lilygo-t-display-c5.html">Pocket Prowler ↗</a></h3>
         <p>A handheld Wi-Fi and Bluetooth scanner, bringing firmware, electronics, and a custom enclosure into one practical tool.</p>
         <p class="project-question">How does AI change the work of turning an idea into something that works?</p>
       </article>
       <article class="project">
+        <a class="project-image expression-image" href="vidiotbox-hardware_docs.html" tabindex="-1" aria-hidden="true"><img src="assets/images/dreaming.png" width="340" height="500" loading="lazy" decoding="async" alt=""></a>
         <div class="eyebrow">02 / Expression & perception</div>
         <h3><a href="vidiotbox-hardware_docs.html">Vidiotbox ↗</a></h3>
         <p>A playful meeting of hardware, animated faces, and digital expression. A place to experiment with how machines appear to have character.</p>
         <p class="project-question">What do we bring to a machine when we see a personality in it?</p>
       </article>
       <article class="project">
+        <a class="project-image poetry-image" href="haiku-matic.html" tabindex="-1" aria-hidden="true"><img src="assets/home/haiku-matic.webp" width="675" height="900" loading="lazy" decoding="async" alt=""></a>
         <div class="eyebrow">03 / Language & authorship</div>
         <h3><a href="haiku-matic.html">hAIku-matic ↗</a></h3>
         <p>A small AI language model writing haiku, in a browser or on a pocket robot poet. Human choices shape the system; the system generates the words.</p>
