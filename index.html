@@ -301,6 +301,18 @@
   .statement-copy blockquote { margin: 30px 0 0; padding-left: 22px; border-left: 3px solid #a34524; font-size: 25px; line-height: 1.45; }
   .poetry-link { text-align: center; margin-top: 24px; font-size: 14px; }
   #copyright { border-top: 1px solid #bac3b6; margin-top: 36px; padding-top: 22px; text-align: left; font-weight: normal; letter-spacing: 0; text-transform: none; }
+  /* Lines of inquiry: four questions, one shown at a time. The panels share one grid cell, so the section keeps the height of the longest. */
+  .question-buttons { display: flex; flex-wrap: wrap; gap: 6px 26px; }
+  .question-buttons button { padding: 6px 0; border: 0; background: none; color: var(--muted); font: 15px Arial, Helvetica, sans-serif; cursor: pointer; text-decoration: underline; text-decoration-color: #bac3b6; text-underline-offset: 6px; }
+  .question-buttons button:hover { color: var(--ink); text-decoration-color: currentColor; }
+  .question-buttons button[aria-pressed="true"] { color: var(--ink); font-weight: 700; text-decoration: none; box-shadow: inset 0 -3px 0 #a34524; }
+  .question-panels { display: grid; padding: 34px 0 72px; }
+  .question-panel { grid-area: 1 / 1; display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px 60px; align-items: end; visibility: hidden; }
+  .question-panel.is-active { visibility: visible; }
+  .question-panel .eyebrow { grid-column: 1 / -1; }
+  .question-heading { margin: 0; max-width: 680px; font: normal clamp(34px, 4.4vw, 56px)/1.1 Georgia, serif; letter-spacing: -.035em; }
+  .question-heading em { color: #647440; }
+  .question-detail { margin: 0; color: var(--muted); font: 19px/1.6 Georgia, serif; }
   /* Four projects fit side by side only at full width; between tablet and desktop they sit two by two. */
   @media (max-width: 1100px) and (min-width: 761px) {
     .project-list { grid-template-columns: repeat(2, 1fr); }
@@ -320,6 +332,9 @@
     .statement { grid-template-columns: 1fr; gap: 24px; padding: 32px 0 44px; }
     .section-heading { display: block; }
     .section-heading > p { margin-top: 10px; }
+    .section-heading > .question-buttons { margin-top: 12px; }
+    .question-panels { padding: 26px 0 44px; }
+    .question-panel { grid-template-columns: 1fr; }
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
@@ -377,6 +392,38 @@
       </article>
     </div>
   </section>
+  <section id="questions" aria-labelledby="questions-title">
+    <div class="section-heading"><h2 id="questions-title">Lines of inquiry</h2>
+      <div class="question-buttons" role="group" aria-label="Choose a line of inquiry">
+        <button type="button" data-question="creativity" aria-pressed="true">Creativity</button>
+        <button type="button" data-question="consciousness" aria-pressed="false">Consciousness</button>
+        <button type="button" data-question="responsibility" aria-pressed="false">Responsibility</button>
+        <button type="button" data-question="understanding" aria-pressed="false">Understanding</button>
+      </div>
+    </div>
+    <div class="question-panels" aria-live="polite">
+      <div class="question-panel is-active" data-panel="creativity">
+        <div class="eyebrow">On creativity &amp; authorship</div>
+        <p class="question-heading">When a machine helps us create, what makes the work <em>ours?</em></p>
+        <p class="question-detail">Where do intention, originality, and authorship reside when people and machines work together? And whose contribution do we fail to see?</p>
+      </div>
+      <div class="question-panel" data-panel="consciousness">
+        <div class="eyebrow">On intelligence &amp; consciousness</div>
+        <p class="question-heading">When we sense a mind behind the machine, what do we <em>see?</em></p>
+        <p class="question-detail">An expression can suggest emotion; words can suggest understanding. What evidence would distinguish our interpretation from a machine’s subjective experience?</p>
+      </div>
+      <div class="question-panel" data-panel="responsibility">
+        <div class="eyebrow">On responsibility &amp; human agency</div>
+        <p class="question-heading">As our tools become more capable, what do we <em>owe?</em></p>
+        <p class="question-detail">What responsibilities come with the power to create? Questions of credit, consent, resources, and consequences belong inside the experiment, from the beginning.</p>
+      </div>
+      <div class="question-panel" data-panel="understanding">
+        <div class="eyebrow">On efficiency &amp; understanding</div>
+        <p class="question-heading">When we can do more, faster, what do we <em>understand?</em></p>
+        <p class="question-detail">Does speed create room for deeper thought, or let us bypass it? What happens to craftsmanship, learning, and judgment when more of the work is delegated?</p>
+      </div>
+    </div>
+  </section>
   <section class="statement" id="statement" aria-labelledby="statement-title">
     <div>
       <div class="eyebrow">A personal statement</div>
@@ -400,5 +447,16 @@
   <p class="poetry-link">Keep exploring: <a href="/haiku-generator/">Generate your own haiku ↗</a> · <a href="https://haiku-matic.com/">Cosmic Haikus ↗</a></p>
 </main>
 <footer id="copyright">&copy; 2026 Paul Hodara. Licensed under PolyForm Noncommercial 1.0.0.</footer>
+<script>
+// Lines of inquiry: show the chosen question.
+(() => {
+  const buttons = document.querySelectorAll('[data-question]');
+  const panels = document.querySelectorAll('[data-panel]');
+  buttons.forEach(button => button.addEventListener('click', () => {
+    buttons.forEach(other => other.setAttribute('aria-pressed', String(other === button)));
+    panels.forEach(panel => panel.classList.toggle('is-active', panel.dataset.panel === button.dataset.question));
+  }));
+})();
+</script>
 </body>
 </html>
