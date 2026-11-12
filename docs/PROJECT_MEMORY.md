@@ -6,7 +6,7 @@ RobotFace Simulator is a browser-based preview of robot face expressions. It fav
 
 ## Current Shape
 
-- Main file: `index.html`
+- Main file: `robotface.html` (it was `index.html` until 12 November 2026, when the home page took that file)
 - Canvas logical size: `240x320`
 - Scale: `1.5`
 - UI: touch/click buttons arranged around the canvas, plus keyboard shortcuts.

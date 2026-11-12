@@ -2,13 +2,13 @@
 
 ## Project Overview
 
-This repository is a single-file RobotFace simulator. The main application lives in `index.html` and renders a 240x320 pixel-style robot face on a scaled canvas.
+The RobotFace simulator is a single page of vidiotbox.net, `robotface.html`, which renders a 240x320 pixel-style robot face on a scaled canvas.
 
-There is no package manager or build step. Open `index.html` directly in a browser to run the simulator.
+There is no package manager or build step. Open `robotface.html` in a browser to run the simulator.
 
 ## Local Workflow
 
-- Prefer focused edits to `index.html`; avoid splitting the app unless the user asks for a larger refactor.
+- Prefer focused edits to `robotface.html`; avoid splitting the app unless the user asks for a larger refactor.
 - Keep generated and OS-local files out of Git. `.DS_Store` is ignored.
 - Use `rg` for searching.
 - For browser verification on this machine, Google Chrome is available at `/Applications/Google Chrome.app`.
@@ -30,7 +30,7 @@ Expression-specific drawing usually belongs in:
 - `drawMouth(mainCtx, expr, amp, opts={})`
 - `drawFaceToCtx(ctx, expr, opts={})` for full-face overlays or marks
 - `update()` for expression-specific animation state
-- the keyboard map near the bottom of `index.html`
+- the keyboard map near the bottom of `robotface.html`
 
 Expression audio is optional. If an expression has no entry in `expressionAudio`, it simply plays no audio.
 
@@ -42,7 +42,7 @@ Expression audio is optional. If an expression has no entry in `expressionAudio`
 
 ## Verification
 
-Basic visual verification can be done by opening `index.html` or with headless Chrome screenshots, for example:
+Basic visual verification can be done by opening `robotface.html` or with headless Chrome screenshots, for example:
 
 ```sh
 /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \

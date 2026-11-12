@@ -1,7 +1,7 @@
 # vidiotbox-website
 
 The source of vidiotbox.net: a static site of plain HTML files, with no WordPress and no
-local build step. `AGENTS.md` covers only the RobotFace simulator in `index.html`.
+local build step. `AGENTS.md` covers only the RobotFace simulator in `robotface.html`.
 
 ## Publishing
 
@@ -40,7 +40,8 @@ local build step. `AGENTS.md` covers only the RobotFace simulator in `index.html
   its next DreamHost deploy. `scripts/deploy-dreamhost.sh` replaces some exact lines in it (the
   "VIDIOTBOX / GENERATED hAIkus" brand link, the About link, the preview image) and stops if
   one is missing, so keep those lines or update the script with them.
-- `index.html` is the RobotFace simulator; follow `AGENTS.md` there.
+- `index.html` is the home page. The RobotFace simulator is its own page, `robotface.html`, linked
+  from the Vidiotbox page (`vidiotbox-hardware_docs.html`); follow `AGENTS.md` there.
 - Check every restyled page at desktop width and at a 390 px phone width before pushing.
 
 ## The menu
