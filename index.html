@@ -264,8 +264,8 @@
   .skip-link:focus { top: 8px; }
   .site-header { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 0 0 22px; margin: 0; text-align: left; border: 0; border-bottom: 1px solid #bac3b6; background: none; box-shadow: none; }
   /* The nameplate: the headline serif, with "box" in the olive italic of "Questioning". */
-  .nameplate { display: flex; align-items: center; gap: 14px; }
-  .principles-link { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; font-size: 32px; line-height: 1; text-decoration: none; }
+  #main { position: relative; }
+  .principles-link { position: absolute; top: 8px; right: 0; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; font-size: 32px; line-height: 1; text-decoration: none; }
   .wordmark { font: normal 46px/1 Georgia, serif; letter-spacing: -.03em; text-decoration: none; }
   .wordmark em { color: #647440; }
   .site-menu { position: absolute; top: 22px; left: auto; right: max(24px, calc((100vw - 1104px) / 2)); }
@@ -348,13 +348,11 @@
 <script src="assets/site-menu.js"></script>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
-  <div class="nameplate">
-    <a class="wordmark" href="index.html" aria-label="Vidiotbox home">Vidiot<em>box</em></a>
-    <a class="principles-link" href="philosophy.html" aria-label="The Vidiotbox Principles" title="The Vidiotbox Principles">🤡</a>
-  </div>
+  <a class="wordmark" href="index.html" aria-label="Vidiotbox home">Vidiot<em>box</em></a>
   <div class="eyebrow">Paul Hodara / A place for ongoing exploration</div>
 </header>
 <main id="main">
+  <a class="principles-link" href="philosophy.html" aria-label="The Vidiotbox Principles" title="The Vidiotbox Principles">🤡</a>
   <section class="hero" aria-labelledby="page-title">
     <div>
       <h1 id="page-title">Building with AI.<br><em>Questioning</em><br>what it means.</h1>
