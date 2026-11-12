@@ -262,9 +262,8 @@
   a:focus-visible, button:focus-visible { outline: 3px solid #a34524; outline-offset: 5px; }
   .skip-link { position: absolute; top: -100px; background: var(--panel); padding: 8px; z-index: 50; }
   .skip-link:focus { top: 8px; }
-  .site-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 0 0 22px; margin: 0; text-align: left; border: 0; border-bottom: 1px solid #bac3b6; background: none; box-shadow: none; }
+  .site-header { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 0 0 22px; margin: 0; text-align: left; border: 0; border-bottom: 1px solid #bac3b6; background: none; box-shadow: none; }
   .wordmark { font-size: 23px; font-weight: 800; letter-spacing: -.05em; text-decoration: none; }
-  .header-links { display: flex; flex-wrap: wrap; gap: 24px; padding-right: 142px; font-size: 13px; }
   .site-menu { position: absolute; top: 22px; left: auto; right: max(24px, calc((100vw - 1104px) / 2)); }
   .site-menu .menu-toggle { border: 1px solid #bac3b6; background: transparent; box-shadow: none; }
   .menu-panel { box-shadow: 4px 4px 0 #c9d0c1; border: 1px solid var(--ink); left: auto; right: 0; }
@@ -281,17 +280,18 @@
   h2 { font: normal clamp(28px, 3vw, 38px)/1.2 Georgia, serif; letter-spacing: -.025em; margin: 0; }
   .section-heading > p { color: var(--muted); font-size: 13px; margin: 0; }
   /* Equal padding on every column keeps the three images the same size; the negative margin keeps the outer edges aligned. */
-  .project-list { display: grid; grid-template-columns: repeat(3, 1fr); margin: 28px -28px 72px; }
-  .project { padding: 6px 28px 8px; border-left: 1px solid #bac3b6; }
+  .project-list { display: grid; grid-template-columns: repeat(4, 1fr); margin: 28px -28px 72px; }
+  /* Each project spans four rows of the list (image, label, title, text), so they line up across the columns when a label or title wraps. */
+  .project { display: grid; grid-row: span 4; grid-template-rows: subgrid; padding: 6px 28px 8px; border-left: 1px solid #bac3b6; }
   .project:first-child { border: 0; }
   .project-image { display: block; aspect-ratio: 10 / 9; overflow: hidden; margin: 0 0 20px; background: #050704; }
   .project-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
   .project-image.expression-image img { box-sizing: border-box; padding: 22px; object-fit: contain; }
   .project-image.poetry-image img { object-position: 50% 55%; }
   .project-image.prowler-image img { object-position: 50% 52%; }
-  .project h3 { font: normal 29px/1.2 Georgia, serif; margin: 18px 0 12px; }
-  .project p { color: var(--muted); font-size: 15px; }
-  .project .project-question { color: var(--ink); font-family: Georgia, serif; font-size: 18px; }
+  .project h3 { font: normal 29px/1.2 Georgia, serif; margin: 18px 0 0; }
+  .project p { color: var(--muted); font-size: 15px; margin: 15px 0 0; }
+  .project .project-question { color: var(--ink); font-family: Georgia, serif; font-size: 18px; margin: 18px 0; }
   .statement { display: grid; grid-template-columns: 1fr 2fr; gap: 72px; padding: 40px 0 64px; border-top: 1px solid #bac3b6; }
   .statement h2 { margin: 14px 0; }
   .statement-byline { color: var(--muted); font-size: 13px; }
@@ -301,10 +301,15 @@
   .statement-copy blockquote { margin: 30px 0 0; padding-left: 22px; border-left: 3px solid #a34524; font-size: 25px; line-height: 1.45; }
   .poetry-link { text-align: center; margin-top: 24px; font-size: 14px; }
   #copyright { border-top: 1px solid #bac3b6; margin-top: 36px; padding-top: 22px; text-align: left; font-weight: normal; letter-spacing: 0; text-transform: none; }
+  /* Four projects fit side by side only at full width; between tablet and desktop they sit two by two. */
+  @media (max-width: 1100px) and (min-width: 761px) {
+    .project-list { grid-template-columns: repeat(2, 1fr); }
+    .project:nth-child(odd) { border-left: 0; }
+    .project:nth-child(-n+2) { padding-bottom: 40px; }
+  }
   @media (max-width: 760px) {
     body { width: 100%; max-width: 100%; padding: 22px; }
-    .site-header { width: 100%; max-width: none; margin-top: 0; min-height: 45px; }
-    .header-links { display: none; }
+    .site-header { width: 100%; max-width: none; margin-top: 0; min-height: 45px; gap: 10px; }
     .site-menu { top: 22px; right: 22px; }
     .hero { grid-template-columns: 1fr; gap: 28px; padding: 44px 0; }
     .hero-note { max-width: 480px; }
@@ -324,12 +329,11 @@
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <a class="wordmark" href="index.html" aria-label="Vidiotbox home">VIDIOTBOX</a>
-  <nav class="header-links" aria-label="On this page"><a href="#projects">The projects</a><a href="#statement">The questions</a></nav>
+  <div class="eyebrow">Paul Hodara / A place for ongoing exploration</div>
 </header>
 <main id="main">
   <section class="hero" aria-labelledby="page-title">
     <div>
-      <div class="eyebrow">Paul Hodara / An ongoing exploration</div>
       <h1 id="page-title">Building with AI.<br><em>Questioning</em><br>what it means.</h1>
       <p class="hero-intro">After forty years of developing software and hardware, I’m exploring how AI changes the way we build, create, and understand our own intelligence.</p>
       <a class="text-link" href="#projects">Explore the experiments ↓</a>
@@ -341,28 +345,35 @@
     </aside>
   </section>
   <section id="projects" aria-labelledby="projects-title">
-    <div class="section-heading"><h2 id="projects-title">Three projects. An open inquiry.</h2><p>Hardware, software, and creative experiments.</p></div>
+    <div class="section-heading"><h2 id="projects-title">Four projects. An open inquiry.</h2><p>Hardware, software, and creative experiments.</p></div>
     <div class="project-list">
       <article class="project">
         <a class="project-image prowler-image" href="lilygo-t-display-c5.html" tabindex="-1" aria-hidden="true"><img src="assets/home/pocket-prowler.webp" width="675" height="900" loading="lazy" decoding="async" alt=""></a>
         <div class="eyebrow">01 / Tools & development</div>
         <h3><a href="lilygo-t-display-c5.html">Pocket Prowler ↗</a></h3>
-        <p>A handheld Wi-Fi and Bluetooth scanner, bringing firmware, electronics, and a custom enclosure into one practical tool.</p>
-        <p class="project-question">How does AI change the work of turning an idea into something that works?</p>
+        <div class="project-text"><p>A handheld Wi-Fi and Bluetooth scanner, bringing firmware, electronics, and a custom enclosure into one practical tool.</p>
+          <p class="project-question">How does AI change the work of turning an idea into something that works?</p></div>
       </article>
       <article class="project">
         <a class="project-image expression-image" href="vidiotbox-hardware_docs.html" tabindex="-1" aria-hidden="true"><img src="assets/images/dreaming.png" width="340" height="500" loading="lazy" decoding="async" alt=""></a>
         <div class="eyebrow">02 / Expression & perception</div>
         <h3><a href="vidiotbox-hardware_docs.html">Vidiotbox ↗</a></h3>
-        <p>A playful meeting of hardware, animated faces, and digital expression. A place to experiment with how machines appear to have character.</p>
-        <p class="project-question">What do we bring to a machine when we see a personality in it?</p>
+        <div class="project-text"><p>A playful meeting of hardware, animated faces, and digital expression. A place to experiment with how machines appear to have character.</p>
+          <p class="project-question">What do we bring to a machine when we see a personality in it?</p></div>
       </article>
       <article class="project">
         <a class="project-image poetry-image" href="haiku-matic.html" tabindex="-1" aria-hidden="true"><img src="assets/home/haiku-matic.webp" width="675" height="900" loading="lazy" decoding="async" alt=""></a>
         <div class="eyebrow">03 / Language & authorship</div>
         <h3><a href="haiku-matic.html">hAIku-matic ↗</a></h3>
-        <p>A small AI language model writing haiku, in a browser or on a pocket robot poet. Human choices shape the system; the system generates the words.</p>
-        <p class="project-question">Where does creativity reside: in the maker, the model, the reader, or their encounter?</p>
+        <div class="project-text"><p>A small AI language model writing haiku, in a browser or on a pocket robot poet. Human choices shape the system; the system generates the words.</p>
+          <p class="project-question">Where does creativity reside: in the maker, the model, the reader, or their encounter?</p></div>
+      </article>
+      <article class="project">
+        <a class="project-image pictogram-image" href="pictograms.html" tabindex="-1" aria-hidden="true"><img src="assets/home/pictograms.webp" width="675" height="900" loading="lazy" decoding="async" alt=""></a>
+        <div class="eyebrow">04 / Symbols & culture</div>
+        <h3><a href="pictograms.html">‘Do Not’ Pictograms ↗</a></h3>
+        <div class="project-text"><p>We have traveled a lot internationally, and I have always been fascinated with international signage. How do we create non-verbal messaging that doesn’t depend on cultural attributes? Does it always work?</p>
+          <p class="project-question">Why are most of these messages warnings about what not to do?</p></div>
       </article>
     </div>
   </section>
