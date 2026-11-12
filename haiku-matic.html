@@ -258,6 +258,23 @@
     height: auto;
   }
 
+  .project-media figure {
+    margin: 0;
+  }
+
+  .project-media figure + figure {
+    margin-top: 24px;
+  }
+
+  .project-media figcaption {
+    margin-top: 10px;
+    color: var(--cream);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.45;
+    text-align: center;
+  }
+
   .detail img {
     margin-top: 14px;
   }
@@ -415,7 +432,14 @@
 
   <section class="project" id="hardware" aria-labelledby="hardware-title">
     <div class="project-media">
-      <img src="docs/release-assets/haiku-matic/product-poem.webp" width="1000" height="1333" alt="hAIku-Matic in its red and orange 3D-printed case, showing an autumn haiku: Moonlight fades in rain... red leaves fall on the dry path, a soft breeze whispers. The version V8.32 and the battery are on the bottom line" loading="lazy">
+      <figure>
+        <img src="docs/release-assets/haiku-matic/product-poem.webp" width="1000" height="1333" alt="hAIku-Matic in its red and orange 3D-printed case, showing an autumn haiku: Moonlight fades in rain... red leaves fall on the dry path, a soft breeze whispers. The version V8.32 and the battery are on the bottom line" loading="lazy">
+        <figcaption>Tabletop Model</figcaption>
+      </figure>
+      <figure>
+        <img src="docs/release-assets/haiku-matic/product-pocket.jpg" width="999" height="1333" alt="Pocket hAIku-Matic held in one hand, with an orange case and blue buttons, displaying an autumn haiku" loading="lazy">
+        <figcaption>Pocket Model - Take your hAIku with you</figcaption>
+      </figure>
     </div>
     <div>
       <p class="eyebrow">The Hardware</p>
