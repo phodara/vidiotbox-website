@@ -1,0 +1,6 @@
+function reveal(id,focus=false){const panel=document.getElementById(id);if(!panel)return;panel.hidden=false;document.querySelectorAll('[data-toggle="'+id+'"]').forEach(b=>b.setAttribute('aria-expanded','true'));if(focus){panel.scrollIntoView({block:'start'});panel.focus({preventScroll:true});}}
+document.querySelectorAll('[data-open]').forEach(a=>a.addEventListener('click',()=>reveal(a.dataset.open)));
+document.querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click',()=>{const panel=document.getElementById(b.dataset.toggle);if(panel.hidden){reveal(panel.id,true);history.replaceState(null,'','#'+panel.id);}else{panel.hidden=true;b.setAttribute('aria-expanded','false');history.replaceState(null,'',location.pathname);}}));
+function openHash(){if(['#about','#experiments'].includes(location.hash))reveal(location.hash.slice(1));}openHash();window.addEventListener('hashchange',openHash);
+// Preserve production measurement without counting private review traffic.
+if(['vidiotbox.net','www.vidiotbox.net'].includes(location.hostname)){const s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-845EZ02BY8';document.head.appendChild(s);window.dataLayer=window.dataLayer||[];window.gtag=function(){dataLayer.push(arguments)};gtag('js',new Date());gtag('config','G-845EZ02BY8');}
