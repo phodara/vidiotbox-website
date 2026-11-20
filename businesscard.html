@@ -19,284 +19,244 @@
 <meta property="og:description" content="Digital business card with links to Paul Hodara's projects, photography, GitHub, Instagram, and LinkedIn.">
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://www.vidiotbox.net/businesscard.html">
-<meta property="og:image" content="https://www.vidiotbox.net/assets/images/happy.png">
+<meta property="og:image" content="https://www.vidiotbox.net/assets/images/paul-portrait.jpg">
 <meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#ffc6ad">
 <link rel="icon" type="image/png" href="assets/images/happy.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="assets/analytics.js"></script>
 
 <style>
+:root {
+    --peach: #ffc6ad;
+    --yellow: #f2db45;
+    --navy: #081a27;
+    --red: #ed2f31;
+    --slate: #455b69;
+    --panel: rgba(255, 255, 255, .38);
+    --rule: rgba(8, 26, 39, .12);
+}
+
+* { box-sizing: border-box; }
+
 html, body {
     margin: 0;
     padding: 0;
-    background: #000;
-    font-family: Arial, Helvetica, sans-serif;
+    background: var(--yellow);
+    color: var(--navy);
+    font-family: "Cabin", Arial, Helvetica, sans-serif;
 }
 
-.wrap {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 24px 14px 14px;
-    box-sizing: border-box;
+a { color: inherit; text-decoration: none; }
+
+.hero {
+    height: 170px;
+    background: var(--peach);
+    border-bottom: 3px solid var(--red);
 }
 
 .card {
-    width: 100%;
     max-width: 420px;
-    background: #000;
-    border: 2px solid #2a6f78;
-    padding: 28px;
-    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 0 18px 32px;
     text-align: center;
 }
 
-.createdby {
-    color: #bbbbbb;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 6px;
+.portrait {
+    display: block;
+    width: 128px;
+    height: 128px;
+    margin: -64px auto 0;
+    border-radius: 50%;
+    border: 4px solid var(--navy);
+    object-fit: cover;
+    object-position: center;
+    background: var(--peach);
+    position: relative;
 }
 
-.logo {
-    font-size: 44px;
-    font-weight: bold;
-    color: #00E5FF;
-    margin-bottom: 12px;
+.createdby {
+    margin-top: 14px;
+    color: var(--red);
+    font-size: 12px;
+    font-weight: 700;
     letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 4px 0 20px;
+    font-family: "Gill Sans", "Gill Sans MT", "Cabin", sans-serif;
+    font-weight: 500;
+    font-size: 38px;
+    letter-spacing: -.5px;
     line-height: 1.1;
 }
 
-.tagline {
-    color: #bbbbbb;
-    font-size: 15px;
-    line-height: 1.4;
-    margin-bottom: 24px;
+.cta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 22px;
 }
 
-.button {
-    display: block;
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 12px;
-    background: transparent;
-    text-decoration: none;
-    color: #7dd3fc;
-    border: 2px solid #2a6f78;
-    font-size: 16px;
-    font-weight: bold;
-    transition: all .2s ease;
-    box-sizing: border-box;
-    font-family: inherit;
-    cursor: pointer;
-    appearance: none;
-}
-
-.button:hover {
-    background: #003840;
-    color: #ffffff;
-}
-
-.contact-button {
+.cta a, .cta button {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-}
-
-.contact-button::before {
-    content: "";
-    width: 24px;
-    height: 16px;
-    border: 2px solid currentColor;
-    box-sizing: border-box;
-    background:
-        linear-gradient(currentColor, currentColor) 12px 5px / 7px 2px no-repeat,
-        linear-gradient(currentColor, currentColor) 12px 10px / 8px 2px no-repeat,
-        radial-gradient(circle, currentColor 0 3px, transparent 3px) 5px 8px / 8px 8px no-repeat;
-}
-
-.footer {
-    margin-top: 18px;
-    color: #666666;
-    font-size: 12px;
-    letter-spacing: 1px;
-}
-
-.site-menu {
-    position: fixed;
-    top: 14px;
-    right: 14px;
-    z-index: 20;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-.menu-toggle {
-    width: 44px;
-    height: 44px;
-    display: grid;
-    place-items: center;
-    background: #02191d;
-    border: 2px solid #00E5FF;
-    color: #7dd3fc;
-    box-shadow: 0 0 0 1px rgba(0, 229, 255, .24);
+    min-height: 48px;
+    padding: 12px 6px;
+    border-radius: 6px;
+    font: 700 13px/1 "Cabin", Arial, sans-serif;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    white-space: nowrap;
     cursor: pointer;
+    transition: background .15s ease, color .15s ease;
 }
 
-.menu-toggle:hover,
-.menu-toggle:focus {
-    background: #003840;
+.cta .primary {
+    background: var(--red);
     color: #fff;
-    outline: none;
+    border: 2px solid var(--red);
 }
 
-.menu-toggle span,
-.menu-toggle::before,
-.menu-toggle::after {
-    content: "";
-    display: block;
-    width: 20px;
-    height: 2px;
-    background: currentColor;
-    transition: transform .2s ease, opacity .2s ease;
+.cta .primary:hover, .cta .primary:focus-visible { background: var(--navy); border-color: var(--navy); }
+
+.cta .secondary {
+    background: transparent;
+    color: var(--navy);
+    border: 2px solid var(--navy);
+    appearance: none;
 }
 
-.menu-toggle::before {
-    transform: translateY(-6px);
-}
+.cta .secondary:hover, .cta .secondary:focus-visible { background: var(--navy); color: var(--yellow); }
 
-.menu-toggle::after {
-    transform: translateY(6px);
-}
-
-.site-menu[data-open="true"] .menu-toggle span {
-    opacity: 0;
-}
-
-.site-menu[data-open="true"] .menu-toggle::before {
-    transform: translateY(2px) rotate(45deg);
-}
-
-.site-menu[data-open="true"] .menu-toggle::after {
-    transform: translateY(-2px) rotate(-45deg);
-}
-
-.menu-panel {
-    position: absolute;
-    top: 54px;
-    right: 0;
-    width: min(260px, calc(100vw - 28px));
-    display: none;
-    padding: 10px;
-    background: #000;
-    border: 2px solid #00E5FF;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, .42);
-}
-
-.site-menu[data-open="true"] .menu-panel {
-    display: grid;
-    gap: 8px;
-}
-
-.menu-panel a {
-    display: block;
-    padding: 12px;
-    color: #7dd3fc;
-    border: 1px solid #2a6f78;
-    font-size: 14px;
-    font-weight: bold;
-    text-decoration: none;
+h2 {
+    text-align: left;
+    margin: 18px 2px 7px;
+    color: var(--red);
+    font-size: 13px;
+    font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
 
-.menu-panel a:hover,
-.menu-panel a:focus {
-    background: #003840;
-    color: #fff;
-    outline: none;
+.list {
+    background: var(--panel);
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: left;
 }
 
-@media (max-width: 600px) {
-    .wrap {
-        align-items: center;
-        padding: 14px;
-    }
+.row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    padding: 11px 14px;
+    font-size: 16px;
+    font-weight: 600;
+    border-top: 1px solid var(--rule);
+    transition: background .15s ease;
+}
 
-    .logo {
-        font-size: 38px;
-    }
+.row:first-child { border-top: 0; }
+
+.row:hover, .row:focus-visible { background: rgba(255, 255, 255, .55); outline: none; }
+
+.ic {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 6px;
+    background: var(--navy);
+    color: var(--yellow);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.sub {
+    margin-left: auto;
+    color: var(--slate);
+    font-size: 12px;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.email-note {
+    margin: -12px 0 18px;
+    color: var(--navy);
+    font-size: 14px;
+    font-weight: 600;
+    user-select: all;
+}
+
+@media (max-width: 380px) {
+    h1 { font-size: 32px; }
+    .sub { display: none; }
 }
 </style>
 </head>
 
 <body>
 
-<script src="assets/site-menu.js"></script>
+<header class="hero" aria-hidden="true"></header>
 
-<div class="wrap">
-    <div class="card">
+<main class="card">
+    <img class="portrait" src="assets/images/paul-portrait.jpg" alt="Portrait of Paul Hodara" width="128" height="128">
 
-        <div class="createdby">Created by:</div>
+    <div class="createdby">Created by</div>
+    <h1>Paul Hodara</h1>
 
-        <div class="logo">Paul Hodara</div>
-
-        <div class="tagline">
-            More Nonsense than you can shake a stick at. <br>
-        </div>
-
-        <a class="button" href="index.html">
-            Vidiotbox-website
-        </a>
-
-        <a class="button" href="vidiotbox-hardware_docs.html">
-            Vidiotbox-hardware Docs
-        </a>
-
-        <a class="button" href="https://www.instagram.com/phodara" target="_blank">
-            Follow me on Instagram
-        </a>
-
-        <a class="button" href="https://www.paulhodara.com" target="_blank">
-            My Photgraphy
-        </a>
-
-        <a class="button" href="https://www.linkedin.com/in/paulhodara/" target="_blank">
-            Connect with me on LinkedIn
-        </a>
-
-        <a class="button" href="https://github.com/phodara" target="_blank">
-            My stuff on GitHub
-        </a>
-
-        <a class="button" href="https://www.thelivingmuseum.org" target="_blank">
-            The Living Museum
-        </a>
-
-        <button class="button" id="emailButton" type="button">
-            Email
-        </button>
-
-        <a class="button contact-button" href="paul-hodara.vcf">
-            Add to Contacts
-        </a>
-
-        <div class="footer">
-            TOTALLY USELESS DIGITAL NONSENSE
-        </div>
-
+    <div class="cta">
+        <a class="primary" href="paul-hodara.vcf" download>Add to Contacts</a>
+        <a class="secondary" id="emailButton" href="#">Email</a>
     </div>
-</div>
+    <div class="email-note" id="emailNote" hidden></div>
+
+    <h2>Elsewhere</h2>
+    <nav class="list" aria-label="Elsewhere">
+        <a class="row" href="https://github.com/phodara"><span class="ic">GH</span>GitHub<span class="sub">phodara</span></a>
+        <a class="row" href="https://haiku-matic.com/"><span class="ic">HM</span>hAIku-Matic<span class="sub">haiku-matic.com</span></a>
+        <a class="row" href="https://www.instagram.com/phodara"><span class="ic">IG</span>Instagram<span class="sub">@phodara</span></a>
+        <a class="row" href="https://www.linkedin.com/in/paulhodara/"><span class="ic">in</span>LinkedIn<span class="sub">paulhodara</span></a>
+        <a class="row" href="https://www.thelivingmuseum.org"><span class="ic">LM</span>The Living Museum<span class="sub">thelivingmuseum.org</span></a>
+        <a class="row" href="https://netwave.com/"><span class="ic">NW</span>NetWave Technologies<span class="sub">netwave.com</span></a>
+        <a class="row" href="https://www.paulhodara.com"><span class="ic">PH</span>Photography<span class="sub">paulhodara.com</span></a>
+        <a class="row" href="https://www.vidiotbox.net/"><span class="ic">VB</span>Vidiotbox<span class="sub">vidiotbox.net</span></a>
+    </nav>
+
+</main>
 
 <script>
-document.getElementById('emailButton').addEventListener('click', function () {
+(function () {
+    // Address is assembled here so it is not sitting in the HTML for scrapers.
     const user = ['p', 'h', 'o', 'd', 'a', 'r', 'a'].join('');
     const host = ['g', 'm', 'a', 'i', 'l'].join('') + '.' + ['c', 'o', 'm'].join('');
-    window.location.href = 'mailto:' + user + '@' + host;
-});
+    const address = user + '@' + host;
+    const button = document.getElementById('emailButton');
+    const note = document.getElementById('emailNote');
 
+    // A real mailto link works in more places than a script redirect
+    // (in-app browsers and some mobile browsers block the latter).
+    button.href = 'mailto:' + address;
+
+    // Fallback for when no mail app is set up: show the address and copy it.
+    button.addEventListener('click', function () {
+        note.textContent = address;
+        note.hidden = false;
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(address).then(function () {
+                note.textContent = address + ' (copied)';
+            }).catch(function () {});
+        }
+    });
+})();
 </script>
 
 </body>
